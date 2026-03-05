@@ -1,3 +1,19 @@
 spring:
   application:
     name: Gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+
+eureka:
+    client:
+        service-url:
+          defaultZone: http://localhost:${EUREKA_PORT:8761}/eureka/
+
+server:
+  port: ${GATEWAY_PORT:8080}
