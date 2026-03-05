@@ -2,10 +2,14 @@ spring:
   application:
     name: auth-service
 
+# JPA and Hibernate configuration
+
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
+
+# Database configuration
 
   datasource:
     url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_AUTH:5551}/Users
@@ -18,3 +22,11 @@ spring:
 
 server:
   port: ${PORT_AUTH_SERVICE:8081}
+
+# Custom variables
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:my-super-secret-key-for-signing-tokens-yay}
+    expiration: ${JWT_EXPIRATION_MS:3600000} # 1 hour
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION_MS:86400000} # 24 hours
