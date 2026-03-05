@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: auth-service
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_AUTH:5551}/Users
+    username: vpm-dev
+    password: ${POSTGRES_PASSWORD:password}
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: ${PORT_AUTH_SERVICE:8081}
