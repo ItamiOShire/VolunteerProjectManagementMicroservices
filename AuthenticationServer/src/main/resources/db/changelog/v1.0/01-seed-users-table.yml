@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed_users_1
+      author: adam.n
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "test@gmail.com"
+              - column:
+                  name: password
+                  # hash for password "password"
+                  value: "$2a$12$73kzfCUMSEgZLASZxiBa8uYWWWIKsRXJcpNUJKxHdqLlLsm6ZMRHG"
+              - column:
+                    name: role
+                    value: "ADMIN"
+              - column:
+                  name: ID
+                  value: 1

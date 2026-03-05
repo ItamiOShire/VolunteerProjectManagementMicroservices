@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: init_db
+      author: adam.n
+      changes:
+        - createTable:
+            tableName: Users
+            columns:
+              - column:
+                  name: email
+                  type: varchar(320)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ID
+                  type: integer
+                  constraints:
+                    nullable: false
