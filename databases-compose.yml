@@ -1,0 +1,17 @@
+services:
+  postgres-users:
+    image: postgres:17.9-alpine3.22
+    container_name: vpm-database-users
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${PORT_DATABASE_AUTH:-5551}:5432
+    environment:
+      - POSTGRES_USER=vpm-dev
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
+      - POSTGRES_DB=Users
+    volumes:
+        - vpm-db-auth:/var/lib/postgresql/data
+    shm_size: 128mb
+
+volumes:
+  vpm-db-auth:
