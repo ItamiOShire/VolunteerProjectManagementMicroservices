@@ -1,0 +1,80 @@
+package com.vpm.authenticationserver.service;
+
+import com.vpm.authenticationserver.dto.LoginResponse;
+import com.vpm.authenticationserver.dto.UserLogin;
+import com.vpm.authenticationserver.entity.Users;
+import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
+import com.vpm.authenticationserver.exception.user.UserNotFoundException;
+import com.vpm.authenticationserver.repository.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
+public class AuthenticationService {
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UsersRepository usersRepository;
+
+    @Autowired
+    public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, UsersRepository usersRepository) {
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.usersRepository = usersRepository;
+    }
+
+    private void validateLoginException(Exception e) {
+        if (e instanceof UsernameNotFoundException) {
+            log.error("User not found: {}", e.getMessage());
+        } else if (e instanceof AuthenticationException){
+            log.error("Authentication failed: {}", e.getMessage());
+        } else {
+            log.error("An unexpected error occurred during login: {}", e.getMessage());
+        }
+    }
+
+
+    public LoginResponse login(UserLogin userLogin) throws UserNotFoundException {
+
+        log.info("Attempting to authenticate user with email: {}", userLogin.email());
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userLogin.email(),
+                            userLogin.password()
+                    )
+            );
+
+            Users user = (Users) authentication.getPrincipal();
+            assert user != null;
+
+            String jwt = jwtService.generateToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+
+            LoginResponse response = new LoginResponse(
+                    jwt,
+                    refreshToken,
+                    user.getRole(),
+                    user.getId()
+            );
+
+            return response;
+
+        } catch (AuthenticationException e) {
+
+            validateLoginException(e);
+            throw new InvalidCredentialsException();
+
+        }
+
+    }
+
+}
