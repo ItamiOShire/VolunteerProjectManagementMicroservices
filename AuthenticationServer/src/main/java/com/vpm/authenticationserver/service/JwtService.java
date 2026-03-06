@@ -5,6 +5,7 @@ import com.vpm.authenticationserver.entity.Users;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Nullable;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class JwtService {
 
     private final long expirationTime; // in milliseconds
 
+    @Getter
     private final long refreshTokenExpirationTime; // in milliseconds
 
     private final SecretKey key;
