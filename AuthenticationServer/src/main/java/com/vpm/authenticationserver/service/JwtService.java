@@ -1,6 +1,7 @@
 package com.vpm.authenticationserver.service;
 
 import com.vpm.authenticationserver.config.PropertiesConfig;
+import com.vpm.authenticationserver.entity.Users;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Nullable;
@@ -35,13 +36,15 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(this.secretKey.getBytes());
     }
 
-    public String generateToken(String email, @Nullable Map<String, Object> claims) {
+    public String generateToken(Users user) {
 
         Date now = new Date();
 
         return Jwts.builder()
-                .setSubject(email)
-                .addClaims(claims == null ? Map.of() : claims)
+                .setSubject(user.getEmail())
+                .addClaims(generateDefaultClaims(
+                        user.getEmail(),
+                        user.getId()))
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + expirationTime))
                 .signWith(key)
@@ -49,13 +52,15 @@ public class JwtService {
 
     }
 
-    public String generateRefreshToken(String email, @Nullable Map<String, Object> claims) {
+    public String generateRefreshToken(Users user) {
 
         Date now = new Date();
 
         return Jwts.builder()
-                .setSubject(email)
-                .addClaims(claims == null ? Map.of() : claims)
+                .setSubject(user.getEmail())
+                .addClaims(generateDefaultClaims(
+                        user.getEmail(),
+                        user.getId()))
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationTime))
                 .signWith(key)
@@ -63,7 +68,7 @@ public class JwtService {
 
     }
 
-    public Map<String, Object> generateDefaultClaims(String email, long id) {
+    private Map<String, Object> generateDefaultClaims(String email, long id) {
 
         return Map.of(
                 "email", email,
