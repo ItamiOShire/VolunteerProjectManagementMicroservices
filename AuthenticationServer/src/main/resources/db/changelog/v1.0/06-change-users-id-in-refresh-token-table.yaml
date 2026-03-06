@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: change_users_id_in_refresh_token_table
+      author: adam.n
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: refresh_token
+            constraintName: fk_refresh_token_users
+        - dropColumn:
+            columnName: user_id
+            tableName: refresh_token
+        - addColumn:
+            tableName: refresh_token
+            columns:
+            - column:
+                name: user_id
+                type: integer
+                constraints:
+                    nullable: false
+                    foreignKeyName: fk_refresh_token_users
+                    references: users(id)
