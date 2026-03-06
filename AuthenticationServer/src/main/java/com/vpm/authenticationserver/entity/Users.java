@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,6 +28,9 @@ public class Users implements UserDetails {
     private String password;
 
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    List<RefreshToken> refreshTokens;
 
     @Override
     public Set<GrantedAuthority> getAuthorities() {
