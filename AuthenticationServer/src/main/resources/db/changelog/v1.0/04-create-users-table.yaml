@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_users_table_with_primary_key_as_id
+      author: adam.n
+      changes:
+            - createTable:
+                tableName: users
+                columns:
+                    - column:
+                        name: id
+                        type: serial
+                        autoIncrement: true
+                        constraints:
+                            primaryKey: true
+                            nullable: false
+                    - column:
+                        name: email
+                        type: varchar(255)
+                        constraints:
+                          nullable: false
+                          unique: true
+                    - column:
+                        name: password
+                        type: varchar(255)
+                        constraints:
+                          nullable: false
+                    - column:
+                        name: role
+                        type: varchar(15)
+                        constraints:
+                            nullable: false

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: delete_users_table
+      author: adam.n
+      changes:
+          - dropTable:
+              tableName: users
