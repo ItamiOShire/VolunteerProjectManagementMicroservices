@@ -2,9 +2,11 @@ package com.vpm.authenticationserver.service;
 
 import com.vpm.authenticationserver.dto.LoginResponse;
 import com.vpm.authenticationserver.dto.UserLogin;
+import com.vpm.authenticationserver.entity.RefreshToken;
 import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
 import com.vpm.authenticationserver.exception.user.UserNotFoundException;
+import com.vpm.authenticationserver.repository.RefreshTokenRepository;
 import com.vpm.authenticationserver.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +17,23 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UsersRepository usersRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, UsersRepository usersRepository) {
+    public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.usersRepository = usersRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     private void validateLoginException(Exception e) {
@@ -59,14 +65,20 @@ public class AuthenticationService {
             String jwt = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
-            LoginResponse response = new LoginResponse(
+            RefreshToken refreshTokenEntity = new RefreshToken(
+                    refreshToken,
+                    Date.from(Instant.now().plusMillis(jwtService.getRefreshTokenExpirationTime())),
+                    user
+            );
+
+            refreshTokenRepository.save(refreshTokenEntity);
+
+            return new LoginResponse(
                     jwt,
                     refreshToken,
                     user.getRole(),
                     user.getId()
             );
-
-            return response;
 
         } catch (AuthenticationException e) {
 
