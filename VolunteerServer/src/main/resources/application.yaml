@@ -22,4 +22,4 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
 server:
-  port: ${PORT_AUTH_SERVICE:8081}
+  port: ${PORT_VOLUNTEER_SERVICE:8082}
