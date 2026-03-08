@@ -1,6 +1,6 @@
 spring:
   application:
-    name: VolunteerServer
+    name: volunteer-service
 
 
   # JPA and Hibernate configuration

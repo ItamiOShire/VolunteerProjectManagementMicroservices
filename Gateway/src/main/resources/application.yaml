@@ -9,6 +9,10 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
+        - id: volunteer-service
+          uri: lb://volunteer-service
+          predicates:
+              - Path=/api/volunteer/**
 
 eureka:
     client:
