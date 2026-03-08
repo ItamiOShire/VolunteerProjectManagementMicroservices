@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-volunteer-table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_volunteer
+                  name: id
+                  type: SERIAL
+              - column:
+                  constraints:
+                    nullable: false
+                    unique: true
+                  name: user_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: first_name
+                  type: VARCHAR(25)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: last_name
+                  type: VARCHAR(50)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: date_of_birth
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: phone_number
+                  type: VARCHAR(255)
+            tableName: volunteer
+

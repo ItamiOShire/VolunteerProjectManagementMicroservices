@@ -1,0 +1,62 @@
+databaseChangeLog:
+    - changeSet:
+        id: create-volunteers-m-to-n-relations-tables
+        author: adam.n
+        objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+        changes:
+            # Table: Volunteer <N----M> Project
+            - createTable:
+                tableName: volunteer_project
+                columns:
+                    - column:
+                        name: volunteer_id
+                        type: INT
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: project_id
+                        type: INT
+                        constraints:
+                            nullable: false
+            - addPrimaryKey:
+                tableName: volunteer_project
+                columnNames: volunteer_id, project_id
+                constraintName: pk_volunteer_project
+
+            # Table: Volunteer <N----M> Task
+            - createTable:
+                  tableName: volunteer_task
+                  columns:
+                      - column:
+                            name: volunteer_id
+                            type: INT
+                            constraints:
+                                nullable: false
+                      - column:
+                            name: task_id
+                            type: INT
+                            constraints:
+                                nullable: false
+            - addPrimaryKey:
+                  tableName: volunteer_task
+                  columnNames: volunteer_id, task_id
+                  constraintName: pk_volunteer_task
+
+            # Table: Volunteer <N----M> TASK
+            - createTable:
+                  tableName: task_suggestion
+                  columns:
+                      - column:
+                            name: volunteer_id
+                            type: INT
+                            constraints:
+                                nullable: false
+                      - column:
+                            name: task_id
+                            type: INT
+                            constraints:
+                                nullable: false
+            - addPrimaryKey:
+                  tableName: task_suggestion
+                  columnNames: volunteer_id, task_id
+                  constraintName: pk_task_suggestion
