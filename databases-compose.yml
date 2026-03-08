@@ -6,12 +6,72 @@ services:
     ports:
       - 127.0.0.1:${PORT_DATABASE_AUTH:-5551}:5432
     environment:
-      - POSTGRES_USER=vpm-dev
+      - POSTGRES_USER=${POSTGRES_USER:-vpm-dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
-      - POSTGRES_DB=Users
+      - POSTGRES_DB=${DATABASE_AUTH_NAME:-Users}
     volumes:
         - vpm-db-auth:/var/lib/postgresql/data
     shm_size: 128mb
 
+  postgres-volunteers:
+    image: postgres:17.9-alpine3.22
+    container_name: vpm-database-volunteers
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${PORT_DATABASE_VOLUNTEER:-5552}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-vpm-dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
+      - POSTGRES_DB=${DATABASE_VOLUNTEER_NAME:-Volunteers}
+    volumes:
+      - vpm-db-volunteer:/var/lib/postgresql/data
+    shm_size: 128mb
+
+  postgres-organizations:
+    image: postgres:17.9-alpine3.22
+    container_name: vpm-database-organizations
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${PORT_DATABASE_ORGANIZATION:-5553}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-vpm-dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
+      - POSTGRES_DB=${DATABASE_ORGANIZATION_NAME:-Organizations}
+    volumes:
+      - vpm-db-organization:/var/lib/postgresql/data
+    shm_size: 128mb
+
+  postgres-projects:
+    image: postgres:17.9-alpine3.22
+    container_name: vpm-database-projects
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${PORT_DATABASE_PROJECT:-5554}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-vpm-dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
+      - POSTGRES_DB=${DATABASE_PROJECT_NAME:-Projects}
+    volumes:
+      - vpm-db-project:/var/lib/postgresql/data
+    shm_size: 128mb
+
+  postgres-tasks:
+    image: postgres:17.9-alpine3.22
+    container_name: vpm-database-tasks
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${PORT_DATABASE_TASK:-5555}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-vpm-dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-vpm-dev-password}
+      - POSTGRES_DB=${DATABASE_TASK_NAME:-Tasks}
+    volumes:
+      - vpm-db-task:/var/lib/postgresql/data
+    shm_size: 128mb
+
 volumes:
   vpm-db-auth:
+  vpm-db-volunteer:
+  vpm-db-organization:
+  vpm-db-project:
+  vpm-db-task:
