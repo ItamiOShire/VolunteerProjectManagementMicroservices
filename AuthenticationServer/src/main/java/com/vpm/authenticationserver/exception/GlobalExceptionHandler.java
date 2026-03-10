@@ -1,6 +1,6 @@
 package com.vpm.authenticationserver.exception;
 
-import com.vpm.authenticationserver.dto.ErrorResponse;
+import com.vpm.common.error.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
