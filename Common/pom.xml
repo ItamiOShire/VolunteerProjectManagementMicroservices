@@ -1,0 +1,30 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.vpm</groupId>
+        <artifactId>VolunteerProjectManagementMicroservices</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>Common</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version> 2.20.2 </version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version> 1.18.42 </version>
+        </dependency>
+
+    </dependencies>
+
+    <packaging>jar</packaging>
+
+</project>
