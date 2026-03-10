@@ -1,6 +1,6 @@
 package com.vpm.common.dto.request;
 
-public class AuthRequest {
+public class AuthRegistrationRequest {
 
     private String email;
     private String password;
@@ -18,7 +18,7 @@ public class AuthRequest {
         return role;
     }
 
-    public AuthRequest(String email, String password, String role) {
+    public AuthRegistrationRequest(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;

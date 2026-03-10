@@ -1,10 +1,10 @@
 package com.vpm.common.dto.response;
 
-public class AuthResponse {
+public class AuthRegistrationResponse {
 
     private long userId;
 
-    public AuthResponse(long userId) {
+    public AuthRegistrationResponse(long userId) {
         this.userId = userId;
     }
 

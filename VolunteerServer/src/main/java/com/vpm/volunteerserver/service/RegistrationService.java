@@ -3,8 +3,8 @@ package com.vpm.volunteerserver.service;
 
 import com.vpm.volunteerserver.api.internal.AuthClient;
 import com.vpm.volunteerserver.dto.request.VolunteerRegisterRequest;
-import com.vpm.common.dto.request.AuthRequest;
-import com.vpm.common.dto.response.AuthResponse;
+import com.vpm.common.dto.request.AuthRegistrationRequest;
+import com.vpm.common.dto.response.AuthRegistrationResponse;
 import com.vpm.volunteerserver.entity.Volunteer;
 import com.vpm.volunteerserver.entity.mapper.VolunteerMapper;
 import com.vpm.volunteerserver.exception.volunteer.VolunteerAlreadyExistsException;
@@ -40,7 +40,7 @@ public class RegistrationService {
 
         log.info("Registering volunteer with email: {}", request.getEmail());
 
-        AuthRequest authRequest = new AuthRequest(
+        AuthRegistrationRequest authRegistrationRequest = new AuthRegistrationRequest(
                 request.getEmail(),
                 request.getPassword(),
                 "VOLUNTEER"
@@ -50,11 +50,11 @@ public class RegistrationService {
 
             log.info("Sending registration request to auth service for email: {}", request.getEmail());
 
-            AuthResponse authResponse = authClient.registerUserInAuthService(authRequest);
+            AuthRegistrationResponse authRegistrationResponse = authClient.registerUserInAuthService(authRegistrationRequest);
 
-            log.info("Received response from auth service with userId: {}", authResponse.getUserId());
+            log.info("Received response from auth service with userId: {}", authRegistrationResponse.getUserId());
 
-            Volunteer volunteer = VolunteerMapper.map(request, authResponse.getUserId());
+            Volunteer volunteer = VolunteerMapper.map(request, authRegistrationResponse.getUserId());
 
             log.info("Saving volunteer: {}", volunteer.toString());
 
