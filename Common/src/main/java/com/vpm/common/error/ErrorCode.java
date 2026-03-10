@@ -1,0 +1,15 @@
+package com.vpm.common.error;
+
+public enum ErrorCode {
+    USER_NOT_FOUND,
+    USER_ALREADY_EXISTS,
+    SERV0CE_UNAVAILABLE,
+    INVALID_INPUT,
+    INVALID_CREDENTIALS,
+    UNAUTHORIZED,
+    FORBIDDEN,
+    INTERNAL_SERVER_ERROR,
+    BAD_REQUEST,
+    NOT_FOUND,
+    CONFLICT,
+}

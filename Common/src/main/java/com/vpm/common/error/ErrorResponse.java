@@ -1,5 +1,4 @@
-package com.vpm.authenticationserver.dto;
-
+package com.vpm.common.error;
 
 import java.time.LocalDateTime;
 
