@@ -23,3 +23,9 @@ spring:
 
 server:
   port: ${PORT_VOLUNTEER_SERVICE:8082}
+
+# Custom variables
+
+services:
+    auth-service:
+        url: http://auth-service:${PORT_AUTH_SERVICE:8081}/api/internal/auth
