@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vpm</groupId>
+    <artifactId>VolunteerProjectManagementMicroservices</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>AuthenticationServer</module>
+        <module>VolunteerServer</module>
+        <module>Gateway</module>
+        <module>Eureka</module>
+        <module>Common</module>
+    </modules>
+
+</project>
