@@ -14,7 +14,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(VolunteerTaskId.class)
 public class VolunteerTask {
 
     @EmbeddedId
