@@ -1,18 +1,21 @@
 package com.vpm.common.error;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
-    private String errorCode;
+    private ErrorCode errorCode;
     private int status;
     private String message;
     private String path;
 
     public ErrorResponse(
             int status,
-            String errorCode,
+            ErrorCode errorCode,
             String message,
             String path
     ) {

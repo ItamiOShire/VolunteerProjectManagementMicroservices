@@ -1,5 +1,6 @@
 package com.vpm.authenticationserver.exception;
 
+import com.vpm.common.error.ErrorCode;
 import com.vpm.common.error.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,8 +17,8 @@ public class GlobalExceptionHandler {
     ) {
         ErrorResponse error = new ErrorResponse(
                 e.getStatus().value(),
-                e.getMessage(),
                 e.getErrorCode(),
+                e.getMessage(),
                 request.getContextPath()
         );
 
@@ -33,8 +34,8 @@ public class GlobalExceptionHandler {
     ) {
         ErrorResponse error = new ErrorResponse(
                 500,
+                ErrorCode.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",
-                "INTERNAL_SERVER_ERROR",
                 request.getContextPath()
         );
 

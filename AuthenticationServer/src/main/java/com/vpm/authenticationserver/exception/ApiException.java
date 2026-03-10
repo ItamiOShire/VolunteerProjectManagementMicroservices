@@ -8,7 +8,7 @@ import com.vpm.common.error.ErrorCode;
 public abstract class ApiException extends RuntimeException {
 
     private final HttpStatus status;
-    private final String errorCode;
+    private final ErrorCode errorCode;
 
     public ApiException(
             String message,
@@ -17,7 +17,7 @@ public abstract class ApiException extends RuntimeException {
     ) {
         super(message);
         this.status = status;
-        this.errorCode = errorCode.name();
+        this.errorCode = errorCode;
     }
 
 }
