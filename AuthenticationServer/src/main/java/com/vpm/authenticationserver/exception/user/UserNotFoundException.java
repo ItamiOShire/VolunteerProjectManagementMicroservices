@@ -1,6 +1,7 @@
 package com.vpm.authenticationserver.exception.user;
 
 import com.vpm.authenticationserver.exception.ApiException;
+import com.vpm.common.error.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends ApiException {
@@ -9,7 +10,7 @@ public class UserNotFoundException extends ApiException {
         super(
                 String.format("User with email '%s' not found", email),
                 HttpStatus.NOT_FOUND,
-                "USER_NOT_FOUND"
+                ErrorCode.USER_NOT_FOUND
         );
     }
 

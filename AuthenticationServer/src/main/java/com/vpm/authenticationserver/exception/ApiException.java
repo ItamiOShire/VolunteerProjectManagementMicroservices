@@ -2,6 +2,7 @@ package com.vpm.authenticationserver.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import com.vpm.common.error.ErrorCode;
 
 @Getter
 public abstract class ApiException extends RuntimeException {
@@ -12,11 +13,11 @@ public abstract class ApiException extends RuntimeException {
     public ApiException(
             String message,
             HttpStatus status,
-            String errorCode
+            ErrorCode errorCode
     ) {
         super(message);
         this.status = status;
-        this.errorCode = errorCode;
+        this.errorCode = errorCode.name();
     }
 
 }
