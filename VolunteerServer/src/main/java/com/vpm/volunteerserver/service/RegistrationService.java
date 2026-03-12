@@ -50,7 +50,7 @@ public class RegistrationService {
 
             log.info("Sending registration request to auth service for email: {}", request.getEmail());
 
-            AuthRegistrationResponse authRegistrationResponse = authClient.registerUserInAuthService(authRegistrationRequest);
+            AuthRegistrationResponse authRegistrationResponse = authClient.registerVolunteerInAuthService(authRegistrationRequest);
 
             log.info("Received response from auth service with userId: {}", authRegistrationResponse.getUserId());
 

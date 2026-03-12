@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface AuthClient {
 
     @PostMapping("/")
-    AuthRegistrationResponse registerUserInAuthService(AuthRegistrationRequest authRegistrationRequest);
+    AuthRegistrationResponse registerVolunteerInAuthService(AuthRegistrationRequest authRegistrationRequest);
 
 }

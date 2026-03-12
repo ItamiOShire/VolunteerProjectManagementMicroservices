@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class VolunteerErrorDecoder implements ErrorDecoder {
+public class VolunteerFeignErrorDecoder implements ErrorDecoder {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
