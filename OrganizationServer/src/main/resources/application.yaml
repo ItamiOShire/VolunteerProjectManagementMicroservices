@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: organization-server
+
+
+  # JPA and Hibernate configuration
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  # Database configuration
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_ORGANIZATION:5553}/Organization
+    username: ${POSTGRES_USER:vpm-dev}
+    password: ${POSTGRES_PASSWORD:password}
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: ${PORT_ORGANIZATION_SERVICE:8083}
+
+# Custom variables
+
+services:
+  auth-service:
+    url: auth-service:${PORT_AUTH_SERVICE:8081}/api/internal/registration
