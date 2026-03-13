@@ -17,7 +17,12 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: org_name
+                  name: user_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: organization_name
                   type: VARCHAR(50)
               - column:
                   constraints:
@@ -31,7 +36,12 @@ databaseChangeLog:
                   type: VARCHAR(40)
               - column:
                   name: apartment_number
-                  type: INT
+                  type: VARCHAR(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: town
+                  type: VARCHAR(40)
               - column:
                   constraints:
                     nullable: false

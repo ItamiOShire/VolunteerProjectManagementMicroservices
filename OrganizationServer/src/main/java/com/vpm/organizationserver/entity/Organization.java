@@ -2,10 +2,7 @@ package com.vpm.organizationserver.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name= "Organization")
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Organization {
 
     @Id
@@ -20,11 +18,17 @@ public class Organization {
     private long id;
 
     @Column(
-            name = "org_name",
+            name = "user_id",
+            nullable = false
+    )
+    private long userId;
+
+    @Column(
+            name = "organization_name",
             nullable = false,
             length = 50
     )
-    private String orgName;
+    private String organizationName;
 
     @Column(
             name = "krs_number",
@@ -42,9 +46,17 @@ public class Organization {
 
     @Column(
             name = "apartment_number",
-            nullable = true
+            nullable = true,
+            length = 10
     )
-    private int apartmentNumber;
+    private String apartmentNumber;
+
+    @Column(
+            name = "town",
+            nullable = false,
+            length = 40
+    )
+    private String town;
 
     @Column(
             name = "zip_code",
