@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-organization-description-table
+      author: adam.n
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_organization_description
+                  name: organization_id
+                  type: BIGINT
+              - column:
+                  name: description
+                  type: clob
+              - column:
+                  name: image_path
+                  type: VARCHAR(255)
+            tableName: organization_description
+
