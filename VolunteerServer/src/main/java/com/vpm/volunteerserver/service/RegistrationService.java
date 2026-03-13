@@ -54,7 +54,7 @@ public class RegistrationService {
 
             log.info("Received response from auth service with userId: {}", authRegistrationResponse.getUserId());
 
-            Volunteer volunteer = VolunteerMapper.map(request, authRegistrationResponse.getUserId());
+            Volunteer volunteer = VolunteerMapper.mapFromRegisterRequestAndAuthResponse(request, authRegistrationResponse);
 
             log.info("Saving volunteer: {}", volunteer.toString());
 

@@ -1,18 +1,20 @@
 package com.vpm.volunteerserver.entity.mapper;
 
+import com.vpm.common.dto.response.AuthRegistrationResponse;
 import com.vpm.volunteerserver.dto.request.VolunteerRegisterRequest;
 import com.vpm.volunteerserver.entity.Volunteer;
 
 public class VolunteerMapper {
 
-    public static Volunteer map(VolunteerRegisterRequest volunteer, long userId) {
+    public static Volunteer mapFromRegisterRequestAndAuthResponse(
+            VolunteerRegisterRequest request, AuthRegistrationResponse response) {
 
         return Volunteer.builder()
-                .userId(userId)
-                .firstName(volunteer.getFirstName())
-                .lastName(volunteer.getLastName())
-                .dateOfBirth(volunteer.getDateOfBirth())
-                .phoneNumber(volunteer.getPhoneNumber())
+                .userId(response.getUserId())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .dateOfBirth(request.getDateOfBirth())
+                .phoneNumber(request.getPhoneNumber())
                 .build();
     }
 
