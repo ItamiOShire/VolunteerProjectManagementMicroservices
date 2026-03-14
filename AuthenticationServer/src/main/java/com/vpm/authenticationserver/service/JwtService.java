@@ -27,11 +27,8 @@ public class JwtService {
 
     private final SecretKey key;
 
-    private final PropertiesConfig propertiesConfig;
-
     @Autowired
     public JwtService(PropertiesConfig propertiesConfig) {
-        this.propertiesConfig = propertiesConfig;
         this.secretKey = propertiesConfig.getJwtSecretKey();
         this.expirationTime = propertiesConfig.getJwtExpirationTime();
         this.refreshTokenExpirationTime = propertiesConfig.getJwtRefreshTokenExpirationTime();
@@ -46,7 +43,8 @@ public class JwtService {
                 .setSubject(user.getEmail())
                 .addClaims(generateDefaultClaims(
                         user.getEmail(),
-                        user.getId()))
+                        user.getId(),
+                        user.getRole()))
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + expirationTime))
                 .signWith(key)
@@ -62,7 +60,8 @@ public class JwtService {
                 .setSubject(user.getEmail())
                 .addClaims(generateDefaultClaims(
                         user.getEmail(),
-                        user.getId()))
+                        user.getId(),
+                        user.getRole()))
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationTime))
                 .signWith(key)
@@ -70,11 +69,15 @@ public class JwtService {
 
     }
 
-    private Map<String, Object> generateDefaultClaims(String email, long id) {
+    private Map<String, Object> generateDefaultClaims(
+            String email,
+            long id,
+            String role) {
 
         return Map.of(
                 "email", email,
-                "id", id
+                "user_id", id,
+                "role", role
         );
 
     }
