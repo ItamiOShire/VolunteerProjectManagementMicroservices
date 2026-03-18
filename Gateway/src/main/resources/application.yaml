@@ -33,6 +33,5 @@ server:
 
 security:
   jwt:
-    secret: ${JWT_SECRET:my-super-secret-key-for-signing-tokens-yay}
-    expiration: ${JWT_EXPIRATION_MS:3600000} # 1 hour
-    refresh-expiration: ${JWT_REFRESH_EXPIRATION_MS:86400000} # 24 hours
+    expiration: ${JWT_EXPIRATION_S:900} # 15 minutes
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION_S:21600} # 6 hours
