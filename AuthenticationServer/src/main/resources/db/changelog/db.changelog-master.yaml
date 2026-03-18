@@ -11,5 +11,3 @@ databaseChangeLog:
       file: db/changelog/v1.0/05-create-refreshToken-table.yaml
   - include:
       file: db/changelog/v1.0/06-change-users-id-in-refresh-token-table.yaml
-  - include:
-      file: db/changelog/v1.0/12-01-changelog.yaml
