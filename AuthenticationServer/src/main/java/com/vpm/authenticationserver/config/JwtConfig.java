@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -33,6 +32,10 @@ public class JwtConfig {
         this.properties = properties;
     }
 
+    /*
+     * Loading keys from .pem file
+     * All keys should be places in classpath:/certs directory
+     */
     @Bean
     public RSAPrivateKey loadPrivateKey()
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -72,6 +75,12 @@ public class JwtConfig {
         return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     }
 
+    /**
+     * Jwt encoder using RS256 encryption
+     * @param publicKey Should be injected by Spring (RSAKey demands to know public key too, although, it will not be used in generating tokens)
+     * @param privateKey Should be injected by Spring
+     * @return JwtEncoder using Nimbus implementation
+     */
     @Bean
     public JwtEncoder jwtEncoder(
             RSAPublicKey  publicKey,
