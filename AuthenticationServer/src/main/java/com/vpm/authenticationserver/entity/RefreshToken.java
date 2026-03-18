@@ -1,11 +1,9 @@
 package com.vpm.authenticationserver.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -14,6 +12,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class RefreshToken {
 
     @Id
@@ -22,7 +21,7 @@ public class RefreshToken {
 
     private String token;
 
-    private Date expiryDate;
+    private Instant expiryDate;
 
     private boolean revoked;
 
@@ -32,7 +31,7 @@ public class RefreshToken {
 
     public RefreshToken(
             String token,
-            Date expiryDate,
+            Instant expiryDate,
             Users user
     ) {
         this.token = token;

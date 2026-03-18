@@ -5,9 +5,7 @@ import com.vpm.authenticationserver.dto.request.LoginRequest;
 import com.vpm.authenticationserver.entity.RefreshToken;
 import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
-import com.vpm.authenticationserver.exception.user.UserNotFoundException;
 import com.vpm.authenticationserver.repository.RefreshTokenRepository;
-import com.vpm.authenticationserver.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,8 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -56,7 +55,7 @@ public class AuthenticationService {
 
     public LoginResponse login(LoginRequest loginRequest) throws InvalidCredentialsException {
 
-        log.info("Attempting to authenticate user with email: {}", userLogin.email());
+        log.info("Attempting to authenticate user with email: {}", loginRequest.email());
 
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -69,12 +68,12 @@ public class AuthenticationService {
             Users user = (Users) authentication.getPrincipal();
             assert user != null;
 
-            String jwt = jwtService.generateToken(user);
+            String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
             RefreshToken refreshTokenEntity = new RefreshToken(
                     refreshToken,
-                    Date.from(Instant.now().plusMillis(jwtService.getRefreshTokenExpirationTime())),
+                    Instant.now().plusSeconds(jwtService.getRefreshTokenExpirationTime()),
                     user
             );
 
@@ -83,10 +82,9 @@ public class AuthenticationService {
             refreshTokenRepository.save(refreshTokenEntity);
 
             return new LoginResponse(
-                    jwt,
+                    accessToken,
                     refreshToken,
-                    user.getRole(),
-                    user.getId()
+                    user
             );
 
         } catch (Exception e) {
