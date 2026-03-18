@@ -48,10 +48,16 @@ public class RegistrationController {
         }
     }
 
+    /*
+     * Each request should contain at least 2 required headers to identify if the request is from another microservice
+     *  - X-INTERNAL-REQUEST (true/false)
+     *  - X-SERVICE-NAME (String)
+     */
+
     @PostMapping
     public AuthRegistrationResponse registerUser(
-            @RequestHeader ( value = "X-INTERNAL-REQUEST", required = true) String internalRequestHeader,
-            @RequestHeader ( value = "X-SERVICE-NAME", required = true) String serviceNameHeader,
+            @RequestHeader ( value = "X-INTERNAL-REQUEST") String internalRequestHeader,
+            @RequestHeader ( value = "X-SERVICE-NAME") String serviceNameHeader,
             @RequestBody AuthRegistrationRequest request
     ) {
 
