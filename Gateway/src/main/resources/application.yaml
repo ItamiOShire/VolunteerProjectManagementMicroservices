@@ -14,6 +14,13 @@ spring:
           predicates:
               - Path=/api/volunteer/**
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:public-key.pem
+
+
 eureka:
     client:
         service-url:
