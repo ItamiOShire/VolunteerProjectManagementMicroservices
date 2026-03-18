@@ -5,7 +5,7 @@ import com.vpm.common.dto.request.AuthRegistrationRequest;
 
 public class UsersMapper {
 
-    public static Users map(AuthRegistrationRequest request) {
+    public static Users mapByRegistrationRequest(AuthRegistrationRequest request) {
 
         return Users.builder()
                 .email(request.getEmail())

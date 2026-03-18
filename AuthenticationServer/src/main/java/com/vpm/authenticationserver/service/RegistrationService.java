@@ -35,7 +35,7 @@ public class RegistrationService {
             AuthRegistrationRequest request
     ) throws UserAlreadyExistsException {
 
-        Users user = UsersMapper.map(request);
+        Users user = UsersMapper.mapByRegistrationRequest(request);
 
         try {
 
