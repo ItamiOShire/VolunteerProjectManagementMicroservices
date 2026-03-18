@@ -29,6 +29,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final Map<Class<? extends Throwable>, Supplier<String>> errors =
+            new HashMap<>(
+                    Map.of(
+                            UsernameNotFoundException.class, () -> "User not found: ",
+                            AuthenticationException.class, () -> "Authentication failed: "
+                    )
+            );
+
     @Autowired
     public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
@@ -37,13 +45,12 @@ public class AuthenticationService {
     }
 
     private void validateLoginException(Exception e) {
-        if (e instanceof UsernameNotFoundException) {
-            log.error("User not found: {}", e.getMessage());
-        } else if (e instanceof AuthenticationException){
-            log.error("Authentication failed: {}", e.getMessage());
-        } else {
-            log.error("An unexpected error occurred during login: {}", e.getMessage());
-        }
+        Supplier<String> errorMessage = errors
+                .getOrDefault(
+                        e.getClass(),
+                        () -> "Unexpected error during login: "
+                );
+        log.error("{} {}", errorMessage.get(), e.getMessage());
     }
 
 
@@ -71,6 +78,8 @@ public class AuthenticationService {
                     user
             );
 
+            log.info("Refresh token generated: {}", refreshTokenEntity);
+
             refreshTokenRepository.save(refreshTokenEntity);
 
             return new LoginResponse(
@@ -80,7 +89,7 @@ public class AuthenticationService {
                     user.getId()
             );
 
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
 
             validateLoginException(e);
             throw new InvalidCredentialsException();
