@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -18,17 +21,25 @@ public class RegistrationService {
 
     private final UsersRepository usersRepository;
 
+    private final Map<Class<? extends Throwable>, Supplier<String>> errors =
+            new HashMap<>(
+                    Map.of(
+                            UserAlreadyExistsException.class, () -> "Error during registration: "
+                    )
+            );
+
     @Autowired
     public RegistrationService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
 
     private void validateException(Exception e) {
-        if (e instanceof UserAlreadyExistsException) {
-            log.error("Error during registration: {}", e.getMessage());
-        } else {
-            log.error("An unexpected error occurred: {}", e.getMessage());
-        }
+        Supplier<String> errorMessage = errors
+                .getOrDefault(
+                        e.getClass(),
+                        () -> "Unexpected error during registration: "
+                );
+        log.error("{} {}", errorMessage.get(), e.getMessage());
     }
 
     public AuthRegistrationResponse registerUserInAuthService(
@@ -55,6 +66,7 @@ public class RegistrationService {
             return new AuthRegistrationResponse(savedUser.getId());
 
         } catch (Exception e) {
+
             validateException(e);
 
             throw e;
