@@ -1,7 +1,7 @@
 package com.vpm.authenticationserver.controller;
 
 
-import com.vpm.authenticationserver.dto.UserLogin;
+import com.vpm.authenticationserver.dto.request.LoginRequest;
 import com.vpm.authenticationserver.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,10 @@ public class AuthenticationController {
 
     @GetMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody UserLogin userLogin
+            @RequestBody LoginRequest loginRequest
             ) {
         return ResponseEntity
-                .ok(authenticationService.login(userLogin));
+                .ok(authenticationService.login(loginRequest));
     }
 
 }

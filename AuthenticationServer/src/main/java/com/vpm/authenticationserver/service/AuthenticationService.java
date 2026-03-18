@@ -1,7 +1,7 @@
 package com.vpm.authenticationserver.service;
 
-import com.vpm.authenticationserver.dto.LoginResponse;
-import com.vpm.authenticationserver.dto.UserLogin;
+import com.vpm.authenticationserver.dto.response.LoginResponse;
+import com.vpm.authenticationserver.dto.request.LoginRequest;
 import com.vpm.authenticationserver.entity.RefreshToken;
 import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
@@ -47,15 +47,15 @@ public class AuthenticationService {
     }
 
 
-    public LoginResponse login(UserLogin userLogin) throws UserNotFoundException {
+    public LoginResponse login(LoginRequest loginRequest) throws InvalidCredentialsException {
 
         log.info("Attempting to authenticate user with email: {}", userLogin.email());
 
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            userLogin.email(),
-                            userLogin.password()
+                            loginRequest.email(),
+                            loginRequest.password()
                     )
             );
 
