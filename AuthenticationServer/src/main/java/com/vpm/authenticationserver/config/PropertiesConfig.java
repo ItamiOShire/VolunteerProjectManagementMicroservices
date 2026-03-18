@@ -3,6 +3,7 @@ package com.vpm.authenticationserver.config;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,13 +11,16 @@ import org.springframework.stereotype.Component;
 @Getter
 public class PropertiesConfig {
 
-    @Value("${security.jwt.secret}")
-    private String jwtSecretKey;
-
     @Value("${security.jwt.expiration}")
     private long jwtExpirationTime;
 
     @Value("${security.jwt.refresh-expiration}")
     private long jwtRefreshTokenExpirationTime;
+
+    @Value("${security.jwt.private-key-path}")
+    private Resource privateKey;
+
+    @Value("${spring.security.oauth2.resourceserver.jwt.public-key-location}")
+    private Resource publicKey;
 
 }
