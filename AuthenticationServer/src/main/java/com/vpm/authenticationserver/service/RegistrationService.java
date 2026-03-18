@@ -56,7 +56,7 @@ public class RegistrationService {
 
             if (foundUser.isPresent()) {
                 log.warn("User with email {} already exists", request.getEmail());
-                throw new UserAlreadyExistsException("User with email " + request.getEmail() + " already exists");
+                throw new UserAlreadyExistsException(request.getEmail());
             }
 
             Users savedUser = usersRepository.save(user);
