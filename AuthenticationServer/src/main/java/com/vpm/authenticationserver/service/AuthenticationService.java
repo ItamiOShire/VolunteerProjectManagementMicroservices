@@ -69,6 +69,8 @@ public class AuthenticationService {
             Users user = (Users) authentication.getPrincipal();
             assert user != null;
 
+            log.info("User authenticated: {}",  user);
+
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
