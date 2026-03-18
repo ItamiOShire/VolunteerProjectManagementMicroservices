@@ -1,17 +1,14 @@
 package com.vpm.authenticationserver.service;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.vpm.authenticationserver.config.PropertiesConfig;
 import com.vpm.authenticationserver.entity.Users;
-import io.jsonwebtoken.Jwts;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
-import java.security.interfaces.RSAPrivateKey;
 import java.time.Instant;
 import java.util.Map;
 
@@ -24,18 +21,14 @@ public class JwtService {
     @Getter
     private final long refreshTokenExpirationTime; // in milliseconds
 
-    private final RSAPrivateKey privateKey;
-
     private final JwtEncoder  jwtEncoder;
 
     @Autowired
     public JwtService(
             PropertiesConfig propertiesConfig,
-            RSAPrivateKey privateKey,
             JwtEncoder jwtEncoder) {
         this.accessTokenExpirationTime = propertiesConfig.getJwtExpirationTime();
         this.refreshTokenExpirationTime = propertiesConfig.getJwtRefreshTokenExpirationTime();
-        this.privateKey = privateKey;
         this.jwtEncoder = jwtEncoder;
     }
 
@@ -62,7 +55,7 @@ public class JwtService {
 
         return Map.of(
                 "email", user.getEmail(),
-                "user_id", user.getId(),
+                "userId", user.getId(),
                 "role", user.getRole()
         );
 
