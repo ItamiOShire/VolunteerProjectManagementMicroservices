@@ -9,6 +9,7 @@ import com.vpm.authenticationserver.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,7 +33,7 @@ public class AuthenticationService {
             new HashMap<>(
                     Map.of(
                             UsernameNotFoundException.class, () -> "User not found: ",
-                            AuthenticationException.class, () -> "Authentication failed: "
+                            BadCredentialsException.class, () -> "Authentication failed: "
                     )
             );
 
