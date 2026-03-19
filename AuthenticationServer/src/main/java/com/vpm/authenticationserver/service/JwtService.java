@@ -16,10 +16,10 @@ import java.util.Map;
 @Slf4j
 public class JwtService {
 
-    private final long accessTokenExpirationTime; // in milliseconds
+    private final long accessTokenExpirationTime; // in seconds
 
     @Getter
-    private final long refreshTokenExpirationTime; // in milliseconds
+    private final long refreshTokenExpirationTime; // in seconds
 
     private final JwtEncoder  jwtEncoder;
 

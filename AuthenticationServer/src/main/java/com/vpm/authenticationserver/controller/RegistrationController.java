@@ -36,10 +36,12 @@ public class RegistrationController {
 
     private void validateInternalRequest(String internalRequestHeader, String serviceNameHeader) {
 
+        //TODO: improve validation so headers name are not hardcoded (request headers are handled automatically by advisor!!!)
+
         if (internalRequestHeader == null || serviceNameHeader == null) {
             List<String> headers = new ArrayList<>();
-            if (internalRequestHeader == null) headers.add(internalRequestHeader);
-            if (serviceNameHeader == null) headers.add(serviceNameHeader);
+            if (internalRequestHeader == null) headers.add("X-INTERNAL-REQUEST");
+            if (serviceNameHeader == null) headers.add("X-SERVICE-NAME");
             throw new MissingRequiredHeaderException(headers);
         }
 

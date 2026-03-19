@@ -46,9 +46,10 @@ public class RegistrationService {
             AuthRegistrationRequest request
     ) throws UserAlreadyExistsException {
 
-        Users user = UsersMapper.mapByRegistrationRequest(request);
 
         try {
+
+            Users user = UsersMapper.mapByRegistrationRequest(request);
 
             log.info("Attempting to register user with email: {}", request.getEmail());
 
