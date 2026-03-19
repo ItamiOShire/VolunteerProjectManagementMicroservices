@@ -8,6 +8,7 @@ import com.vpm.authenticationserver.service.AuthenticationService;
 import com.vpm.authenticationserver.service.JwtService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -110,6 +111,7 @@ public class AuthenticationServiceTest {
      */
 
     @Test
+    @DisplayName("Testing successful user login")
     public void successfulLogin() {
 
         Authentication mockAuthentication = mock(Authentication.class);
@@ -146,6 +148,7 @@ public class AuthenticationServiceTest {
      */
 
     @Test
+    @DisplayName("Should throw one error on failing finding user in database")
     public void shouldThrowErrorOnNotFindingUser() {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -162,6 +165,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw one error on authentication failing")
     public void shouldThrowErrorOnAuthenticationFailure() {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
