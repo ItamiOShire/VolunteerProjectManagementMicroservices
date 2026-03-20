@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Entity
 @Table(name = "refresh_token")
@@ -21,7 +20,7 @@ public class RefreshToken {
 
     private String token;
 
-    private Instant expiryDate;
+    private Instant expiresAt;
 
     private boolean revoked;
 
@@ -31,11 +30,11 @@ public class RefreshToken {
 
     public RefreshToken(
             String token,
-            Instant expiryDate,
+            Instant expiresAt,
             Users user
     ) {
         this.token = token;
-        this.expiryDate = expiryDate;
+        this.expiresAt = expiresAt;
         this.revoked = false;
         this.user = user;
     }

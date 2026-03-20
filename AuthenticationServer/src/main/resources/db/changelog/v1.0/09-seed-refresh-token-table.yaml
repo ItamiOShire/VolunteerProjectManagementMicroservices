@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed_refresh_token_table
+      author: adam.n
+      changes:
+        - insert:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: token
+                  value: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3N1ZXIiOiJodHRwOi8vbG9jYWxob3N0OjgwODEiLCJzdWIiOiJ0ZXN0dm9sdW50ZWVyQGdtYWlsLmNvbSIsImV4cGlyZXNBdCI6MTc3NDEwNjU0MjM0LCJpYXQiOjE3NzQxMDYxMzksImVtYWlsIjoidGVzdHZvbHVudGVlckBnbWFpbC5jb20iLCJ1c2VySWQiOjEsInJvbGUiOiJWT0xVTlRFRVIifQ.Fs5grZfpH4-lvgLmCavP0bKl_17XoCPbQrwhivqlFS5xPgnEFiYPcDBAGdMI4Ti5Q8W8EP_XmTyj_TPWuDoW5u-5OH4VmASkxFOH8kM8vKvS7jRJBGxAeJADLQ9dL9jqF7eDwyZz4Gnfd7zZUNKyg2VYULTT3qFRCj5oD0qtW4GRMq8vQTzr-DrS3jh3ip-uZkWVnksYOvhdGAWm5X-lmtjiFfEpjMMKylA5RtuUFLqMx9XN--MqZBUD3ilQPpXQPKEmSJ6v5XmFXrlGMkmRJJ6HDjWrDRZDvXeAVDZTMUsP6pKO0dZpoIVa0eKEkplDa8xyr14JHu26s-2Kyk99gQ"
+              - column:
+                  name: expires_at
+                  value: 2027-03-21T15:23:21.356476249Z
+              - column:
+                  name: revoked
+                  value: false
+              - column:
+                  name: user_id
+                  value: 1
+        - insert:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: token
+                  value: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaXNzdWVyIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxIiwiaWF0IjoxNzc0MTA2NDE1LCJlbWFpbCI6InRlc3Rvcmdhbml6YXRpb25AZ21haWwuY29tIiwidXNlcklkIjoyLCJyb2xlIjoiT1JHQU5JWkFUSU9OIn0.iwPFmQfE-DIyMqgJQeFxq9MZWG0J_Lpn0S4DxFkB4TirXM8JXxYudgtFxQWIqgpC-E_jX_YW57m11JUhQHUDkk8Ok3MjJVZdy_tagBOPYdZDdUpOIxw6Ae3pKDaxMqNEOE20XUgQ0OHqKUbMwgTmXvqbDj2BNf3pcj534L2MsTcnrPSJ57u5DIqm3w5byxDW4TyO_X84DVYaKChEUfIg6d8A7PGGzMDpJxDrMwyoeB_RXjGwARu3bjOy5NpVImcbfrLGBpDHO0hdIOzV43TMzIBtZiQg39Yns6uIONSD7zioThUNXcpUnMVy11uK0ZNSSLpzjbNWstPV5sbXSO8Yzw"
+              - column:
+                  name: revoked
+                  value: false
+              - column:
+                  name: user_id
+                  value: 2
+              - column:
+                  name: expires_at
+                  value: 2027-03-21T15:23:21.356476249Z

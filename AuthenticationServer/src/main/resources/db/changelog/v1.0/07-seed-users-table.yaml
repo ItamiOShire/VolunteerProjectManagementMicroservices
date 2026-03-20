@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed_users_table
+      author: adam.n
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "testvolunteer@gmail.com"
+              - column:
+                  name: password
+                  # hash for password "password"
+                  # https://bcrypt-generator.com/
+                  value: "$2a$12$nFUraUk1hU8vKz9ZV2iKtuRIhtm4h2TdKazKt4c/M4gPu5P3mrMk."
+              - column:
+                  name: role
+                  value: "VOLUNTEER"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "testorganization@gmail.com"
+              - column:
+                  name: password
+                  # hash for password "password"
+                  # https://bcrypt-generator.com/
+                  value: "$2a$12$nFUraUk1hU8vKz9ZV2iKtuRIhtm4h2TdKazKt4c/M4gPu5P3mrMk."
+              - column:
+                  name: role
+                  value: "ORGANIZATION"

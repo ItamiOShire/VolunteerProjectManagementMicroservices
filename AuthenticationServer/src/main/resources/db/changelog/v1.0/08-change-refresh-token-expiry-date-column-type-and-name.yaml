@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-refresh-token-expiry-date-column-type-and-name-and-token-length
+      author: adam.n
+      changes:
+        - dropColumn:
+            tableName: refresh_token
+            columnName: expiry_date
+        - addColumn:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: expires_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+        - dropColumn:
+            tableName: refresh_token
+            columnName: token
+        - addColumn:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: token
+                  type: varchar(1000)
+                  constraints:
+                    nullable: false
+                    unique: false
