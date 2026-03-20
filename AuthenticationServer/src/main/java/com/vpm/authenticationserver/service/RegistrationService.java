@@ -8,6 +8,8 @@ import com.vpm.common.dto.request.AuthRegistrationRequest;
 import com.vpm.common.dto.response.AuthRegistrationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import java.util.function.Supplier;
 public class RegistrationService {
 
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private final Map<Class<? extends Throwable>, Supplier<String>> errors =
             new HashMap<>(
@@ -29,8 +32,11 @@ public class RegistrationService {
             );
 
     @Autowired
-    public RegistrationService(UsersRepository usersRepository) {
+    public RegistrationService(
+            UsersRepository usersRepository,
+            PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private void validateException(Exception e) {
@@ -59,6 +65,8 @@ public class RegistrationService {
                 log.warn("User with email {} already exists", request.getEmail());
                 throw new UserAlreadyExistsException(request.getEmail());
             }
+
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             Users savedUser = usersRepository.save(user);
 
