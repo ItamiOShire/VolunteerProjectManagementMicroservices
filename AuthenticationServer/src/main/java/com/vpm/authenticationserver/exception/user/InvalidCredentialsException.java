@@ -9,7 +9,7 @@ public class InvalidCredentialsException extends ApiException {
     public InvalidCredentialsException() {
         super(
                 "Invalid email or password",
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.valueOf(401),
                 ErrorCode.INVALID_CREDENTIALS
         );
     }
