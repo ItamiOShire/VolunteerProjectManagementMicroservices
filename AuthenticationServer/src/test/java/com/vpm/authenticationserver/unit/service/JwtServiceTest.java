@@ -76,8 +76,6 @@ public class JwtServiceTest {
     @DisplayName("Testing access token")
     public class AccessTokenTest {
 
-        private long accessTokenExpirationTimeTest = 900L;
-
         /*
          * Positive testing
          */
