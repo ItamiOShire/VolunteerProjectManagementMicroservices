@@ -29,6 +29,7 @@ public class Users implements UserDetails {
     private String role;
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     List<RefreshToken> refreshTokens;
 
     @Override

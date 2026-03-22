@@ -1,7 +1,6 @@
 package com.vpm.authenticationserver.integration.service;
 
 
-import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.UserAlreadyExistsException;
 import com.vpm.authenticationserver.service.RegistrationService;
 import com.vpm.common.dto.request.AuthRegistrationRequest;
