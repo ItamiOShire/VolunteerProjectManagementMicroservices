@@ -1,0 +1,61 @@
+package com.vpm.projectserver.entity;
+
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Entity
+@Table(name = "project")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class Project {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(
+            name = "description",
+            nullable = false
+    )
+    private String description;
+
+    @Column(
+            name = "img_path",
+            nullable = false,
+            length = 400
+    )
+    private String imgPath;
+
+    @Column(
+            name = "organization_id",
+            nullable = false
+    )
+    private long organizationId;
+
+    @OneToMany(
+            mappedBy = "project", // name of field in other table (with ManyToOne)
+            orphanRemoval = true
+    )
+    private List<ProjectVolunteer> volunteers = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_tag",
+            joinColumns =
+                    @JoinColumn( name = "project_id"),
+            inverseJoinColumns =
+                    @JoinColumn( name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
+}

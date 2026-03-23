@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-n-to-m-relation-table-to-project-and-volunteer-table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: volunteer_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: project_id
+                  type: BIGINT
+            tableName: project_volunteer
+  - changeSet:
+      id: add-primary-key-to-table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addPrimaryKey:
+            columnNames: project_id, volunteer_id
+            constraintName: pk_project_volunteer
+            tableName: project_volunteer
+  - changeSet:
+      id: add-foreign-key-to-table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: project_id
+            baseTableName: project_volunteer
+            constraintName: FK_PROJECT_VOLUNTEER_ON_PROJECT
+            referencedColumnNames: id
+            referencedTableName: project
+

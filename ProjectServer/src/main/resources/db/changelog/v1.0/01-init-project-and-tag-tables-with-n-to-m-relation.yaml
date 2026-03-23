@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_project_table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_project
+                  name: id
+                  type: SERIAL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: CLOB
+              - column:
+                  constraints:
+                    nullable: false
+                  name: img_path
+                  type: VARCHAR(400)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: organization_id
+                  type: INT
+            tableName: project
+  - changeSet:
+      id: add_n_to_m_relation_project_tag_table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: project_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tag_id
+                  type: BIGINT
+            tableName: project_tag
+  - changeSet:
+      id: add_foreign_key_to_project_id
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: project_id
+            baseTableName: project_tag
+            constraintName: fk_protag_on_project
+            referencedColumnNames: id
+            referencedTableName: project
+  - changeSet:
+      id: add_foreign_key_to_tag_id
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tag_id
+            baseTableName: project_tag
+            constraintName: fk_protag_on_tag
+            referencedColumnNames: id
+            referencedTableName: tag
+  - changeSet:
+      id: add_primary_key_to_n_to_m_relation_table
+      author: Adam
+      changes:
+        - addPrimaryKey:
+            tableName: project_tag
+            columnNames: project_id, tag_id
+            constraintName: pk_project_tag
+
