@@ -12,4 +12,5 @@ public enum ErrorCode {
     BAD_REQUEST,
     NOT_FOUND,
     CONFLICT,
+    PROJECT_NOT_FOUND,
 }
