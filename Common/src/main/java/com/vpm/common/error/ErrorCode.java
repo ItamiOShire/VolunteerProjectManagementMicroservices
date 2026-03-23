@@ -13,4 +13,5 @@ public enum ErrorCode {
     NOT_FOUND,
     CONFLICT,
     PROJECT_NOT_FOUND,
+    MISSING_HEADER
 }
