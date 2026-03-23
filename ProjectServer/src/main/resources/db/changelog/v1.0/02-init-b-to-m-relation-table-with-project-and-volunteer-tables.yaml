@@ -10,12 +10,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: volunteer_id
-                  type: BIGINT
+                  type: INT
               - column:
                   constraints:
                     nullable: false
                   name: project_id
-                  type: BIGINT
+                  type: INT
             tableName: project_volunteer
   - changeSet:
       id: add-primary-key-to-table

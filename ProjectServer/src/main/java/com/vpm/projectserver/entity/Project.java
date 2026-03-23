@@ -24,6 +24,13 @@ public class Project {
     private long id;
 
     @Column(
+            name = "title",
+            nullable = false,
+            length = 80
+    )
+    private String title;
+
+    @Column(
             name = "description",
             nullable = false
     )
@@ -36,11 +43,24 @@ public class Project {
     )
     private String imgPath;
 
+    // TODO: MAKE CLEAR THIS IS 'user_id' FROM 'Users' TABLE!!!
     @Column(
             name = "organization_id",
             nullable = false
     )
     private long organizationId;
+
+   /*
+    * To minimalize synchronous communication between services to retrieve certain information, it is better to duplicate data
+    * Especially if it is single field data - better efficiency, risk of inconsistency
+    */
+
+    @Column(
+            name = "organization_name",
+            nullable = false,
+            length = 50
+    )
+    private String organizationName;
 
     @OneToMany(
             mappedBy = "project", // name of field in other table (with ManyToOne)

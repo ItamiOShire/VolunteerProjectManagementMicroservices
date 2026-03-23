@@ -17,6 +17,11 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  name: title
+                  type: VARCHAR(80)
+              - column:
+                  constraints:
+                    nullable: false
                   name: description
                   type: CLOB
               - column:
@@ -29,9 +34,38 @@ databaseChangeLog:
                     nullable: false
                   name: organization_id
                   type: INT
+              # To minimalize synchronous communication between services to retrieve certain information, it is better to duplicate data
+              # Especially if it is single field data - better efficiency, risk of inconsistency
+              - column:
+                  constraints:
+                    nullable: false
+                  name: organization_name
+                  type: VARCHAR(50)
             tableName: project
+
   - changeSet:
-      id: add_n_to_m_relation_project_tag_table
+      id: create_tag_table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_tag
+                  name: id
+                  type: SERIAL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(40)
+            tableName: tag
+  - changeSet:
+      id: create_n_to_m_relation_project_tag_table
       author: Adam
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:

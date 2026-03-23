@@ -1,6 +1,7 @@
 package com.vpm.projectserver.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,11 +22,11 @@ public class Tag {
     private long id;
 
     @Column(
-            name = "description",
+            name = "name",
             nullable = false,
             length = 40
     )
-    private String description;
+    private String name;
 
     @ManyToMany
     @JoinTable(
