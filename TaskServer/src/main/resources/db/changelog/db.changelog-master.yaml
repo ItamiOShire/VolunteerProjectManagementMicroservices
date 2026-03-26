@@ -1,0 +1,8 @@
+databaseChangeLog:
+
+  - include:
+      file: db/changelog/v1.0/01-create-base-tables-for-task-database.yaml
+  - include:
+      file: db/changelog/v1.0/02-create-n-to-m-relation-tables.yaml
+  - include:
+      file: db/changelog/v1.0/03-fix-n-to-m-relation-table.yaml
