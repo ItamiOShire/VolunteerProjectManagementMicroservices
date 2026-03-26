@@ -2,7 +2,6 @@ spring:
   application:
     name: task-service
 
-
   # JPA and Hibernate configuration
 
   jpa:
@@ -13,7 +12,7 @@ spring:
   # Database configuration
 
   datasource:
-    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_TASK:5554}/Tasks
+    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_TASK:5555}/Tasks
     username: ${POSTGRES_USER:vpm-dev}
     password: ${POSTGRES_PASSWORD:password}
 
