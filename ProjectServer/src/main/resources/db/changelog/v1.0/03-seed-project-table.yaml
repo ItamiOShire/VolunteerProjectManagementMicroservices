@@ -16,7 +16,7 @@ databaseChangeLog:
                   name: img_path
                   value: "images/test_img.png"
               - column:
-                  name: organization_id
+                  name: organization_user_id
                   value: 2
               - column:
                   name: organization_name
@@ -34,7 +34,7 @@ databaseChangeLog:
                   name: img_path
                   value: "images/test_img.png"
               - column:
-                  name: organization_id
+                  name: organization_user_id
                   value: 2
               - column:
                   name: organization_name

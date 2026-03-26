@@ -25,9 +25,9 @@ public class ProjectVolunteer {
     private Project project;
 
     @Column(
-            name = "volunteer_id",
+            name = "volunteer_user_id",
             insertable = false,
             updatable = false
     )
-    private long volunteerId;
+    private long volunteerUserId;
 }

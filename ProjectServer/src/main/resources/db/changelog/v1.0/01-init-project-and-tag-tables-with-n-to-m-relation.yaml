@@ -32,7 +32,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: organization_id
+                  name: organization_user_id
                   type: INT
               # To minimalize synchronous communication between services to retrieve certain information, it is better to duplicate data
               # Especially if it is single field data - better efficiency, risk of inconsistency

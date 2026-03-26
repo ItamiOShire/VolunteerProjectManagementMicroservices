@@ -22,9 +22,9 @@ public class ProjectVolunteerId implements Serializable {
     private long projectId;
 
     @Column(
-            name = "volunteer_id",
+            name = "volunteer_user_id",
             nullable = false
     )
-    private long volunteerId;
+    private long volunteerUserId;
 
 }

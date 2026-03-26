@@ -57,7 +57,7 @@ public class ProjectService {
     public List<ProjectTemplate> getAllOrganizationProjects(
             long organizationId
     ) {
-        List<ProjectTemplate> projects = projectRepository.getProjectsByOrganizationId(organizationId)
+        List<ProjectTemplate> projects = projectRepository.getProjectsByOrganizationUserId(organizationId)
                 .stream()
                 .map(ProjectMapper::mapToProjectTemplateFromProjectEntity)
                 .toList();

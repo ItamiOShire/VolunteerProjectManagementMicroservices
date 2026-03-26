@@ -45,10 +45,10 @@ public class Project {
 
     // TODO: MAKE CLEAR THIS IS 'user_id' FROM 'Users' TABLE!!!
     @Column(
-            name = "organization_id",
+            name = "organization_user_id",
             nullable = false
     )
-    private long organizationId;
+    private long organizationUserId;
 
    /*
     * To minimalize synchronous communication between services to retrieve certain information, it is better to duplicate data

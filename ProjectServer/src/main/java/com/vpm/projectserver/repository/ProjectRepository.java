@@ -14,10 +14,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("""
     SELECT p FROM Project p
     JOIN FETCH p.volunteers v
-    WHERE v.volunteerId == :volunteerId
+    WHERE v.volunteerUserId = :volunteerId
 """)
     List<Project> getProjectsByVolunteerId(@Param("volunteerId") Long id);
 
-    List<Project> getProjectsByOrganizationId(Long id);
+    List<Project> getProjectsByOrganizationUserId(Long id);
 
 }

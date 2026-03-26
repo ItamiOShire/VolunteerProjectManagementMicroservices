@@ -9,7 +9,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: volunteer_id
+                  name: volunteer_user_id
                   type: INT
               - column:
                   constraints:
@@ -23,8 +23,8 @@ databaseChangeLog:
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addPrimaryKey:
-            columnNames: project_id, volunteer_id
-            constraintName: pk_project_volunteer
+            columnNames: project_id, volunteer_user_id
+            constraintName: pk_project_volunteer_user
             tableName: project_volunteer
   - changeSet:
       id: add-foreign-key-to-table
