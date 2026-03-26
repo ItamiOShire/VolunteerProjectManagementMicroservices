@@ -1,7 +1,7 @@
 package com.vpm.projectserver.security;
 
 
-import com.vpm.projectserver.exception.project.MissingRequiredHeaderException;
+import com.vpm.projectserver.exception.request.MissingRequiredHeaderException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +9,22 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 public class RequestFilter extends OncePerRequestFilter {
+
+    /*
+     * Set of required headers - those headers are signature of authorized request
+     * Gateway adds those headers if user is authorized
+     */
+    private final Set<String> requiredHeaders = new HashSet<>(
+            Set.of(
+                    "X-User-Id",
+                    "X-User-Role"
+            )
+    );
 
     @Override
     @NullMarked
@@ -20,15 +34,16 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws MissingRequiredHeaderException {
 
-        String userId = request.getHeader("X-User-Id");
-        String userRole = request.getHeader("X-User-Role");
+        for (String header : requiredHeaders) {
 
-        if (userId == null) {
-            throw new MissingRequiredHeaderException("X-User-Id");
-        }
+            String headerValue = request.getHeader(header);
 
-        if (userRole == null) {
-            throw new MissingRequiredHeaderException("X-User-Role");
+            if (headerValue == null || headerValue.isEmpty()) {
+
+                throw new MissingRequiredHeaderException(header);
+
+            }
+
         }
 
     }
