@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed_project_table
+      author: Adam
+      changes:
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: "test project title 1"
+              - column:
+                  name: description
+                  value: "This is a test description for test project. Its gonna be awesome."
+              - column:
+                  name: img_path
+                  value: "images/test_img.png"
+              - column:
+                  name: organization_id
+                  value: 2
+              - column:
+                  name: organization_name
+                  value: "test organization name"
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: "test project title 2"
+              - column:
+                  name: description
+                  value: "This is a second test description for test project. Its gonna be awesome too."
+              - column:
+                  name: img_path
+                  value: "images/test_img.png"
+              - column:
+                  name: organization_id
+                  value: 2
+              - column:
+                  name: organization_name
+                  value: "test organization name"

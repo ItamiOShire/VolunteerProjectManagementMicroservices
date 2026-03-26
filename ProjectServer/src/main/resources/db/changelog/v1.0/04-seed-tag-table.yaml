@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed_tag_table
+      author: Adam
+      changes:
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: seniorzy
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: wsparcie
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: bezdomni
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: recykling
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: schronisko
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: edukacja
+        - insert:
+            tableName: tag
+            columns:
+              - column:
+                  name: name
+                  value: zdrowie

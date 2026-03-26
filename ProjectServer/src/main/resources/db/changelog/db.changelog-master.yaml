@@ -3,3 +3,7 @@ databaseChangeLog:
       file: /db/changelog/v1.0/01-init-project-and-tag-tables-with-n-to-m-relation.yaml
   - include:
       file: /db/changelog/v1.0/02-init-b-to-m-relation-table-with-project-and-volunteer-tables.yaml
+  - include:
+      file: /db/changelog/v1.0/03-seed-project-table.yaml
+  - include:
+      file: /db/changelog/v1.0/04-seed-tag-table.yaml
