@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop_faulty_generated_columns
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: volunteer_id
+            tableName: task_suggestion
+  - changeSet:
+      id: 1774523404293-2
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: volunteer_id
+            tableName: volunteer_task
+

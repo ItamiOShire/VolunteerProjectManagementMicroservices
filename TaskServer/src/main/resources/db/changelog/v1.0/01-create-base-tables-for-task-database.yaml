@@ -1,0 +1,75 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1774522887163-1
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_priority
+                  name: id
+                  type: SERIAL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(20)
+            tableName: priority
+  - changeSet:
+      id: 1774522887163-2
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_task
+                  name: id
+                  type: SERIAL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: CLOB
+              - column:
+                  constraints:
+                    nullable: false
+                  name: deadline
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: title
+                  type: VARCHAR(50)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: project_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: priority_id
+                  type: BIGINT
+            tableName: task
+  - changeSet:
+      id: 1774522887163-3
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: priority_id
+            baseTableName: task
+            constraintName: FK_TASK_ON_PRIORITY
+            referencedColumnNames: id
+            referencedTableName: priority
+
