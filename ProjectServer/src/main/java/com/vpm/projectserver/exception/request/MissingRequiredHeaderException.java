@@ -1,4 +1,4 @@
-package com.vpm.projectserver.exception.project;
+package com.vpm.projectserver.exception.request;
 
 import com.vpm.common.error.ErrorCode;
 import com.vpm.projectserver.exception.ApiException;
