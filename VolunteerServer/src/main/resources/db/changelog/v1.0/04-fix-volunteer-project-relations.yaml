@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1774526087646-8
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: volunteer_id
+            tableName: volunteer_project
+        - dropColumn:
+            columnName: project_id
+            tableName: volunteer_project
+  - changeSet:
+      id: 1774526087646-2
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_volunteer_project
+                    validateNullable: true
+                  name: project_id
+                  type: BIGINT
+            tableName: volunteer_project
+  - changeSet:
+      id: 1774526087646-4
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropPrimaryKey:
+            tableName: volunteer_project
+            constraintName: volunteer_project_pkey
+            dropIndex: true
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: volunteer_project
+            constraintName: FK_VOLUNTEER_PROJECT_ON_VOLUNTEER_USER
+            referencedColumnNames: user_id
+            referencedTableName: volunteer
+        - addPrimaryKey:
+            columnNames: volunteer_user_id, project_id
+            constraintName: pk_volunteer_project
+            tableName: volunteer_project
+

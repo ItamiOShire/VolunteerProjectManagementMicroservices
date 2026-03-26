@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1774525801794-8
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: volunteer_id
+            tableName: task_suggestion
+        - dropColumn:
+            columnName: task_id
+            tableName: task_suggestion
+  - changeSet:
+      id: 1774525801794-2
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_task_suggestion
+                    validateNullable: true
+                  name: task_id
+                  type: BIGINT
+            tableName: task_suggestion
+  - changeSet:
+      id: 1774525801794-4
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropPrimaryKey:
+            tableName: task_suggestion
+            constraintName: task_suggestion_pkey
+            dropIndex: true
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: task_suggestion
+            constraintName: FK_TASK_SUGGESTION_ON_VOLUNTEER_USER
+            referencedColumnNames: user_id
+            referencedTableName: volunteer
+        - addPrimaryKey:
+            columnNames: volunteer_user_id, task_id
+            constraintName: pk_task_suggestion
+            tableName: task_suggestion
+

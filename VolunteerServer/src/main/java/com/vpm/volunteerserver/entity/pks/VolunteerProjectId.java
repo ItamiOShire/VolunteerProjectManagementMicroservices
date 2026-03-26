@@ -15,10 +15,10 @@ import java.io.Serializable;
 public class VolunteerProjectId implements Serializable {
 
     @Column(
-            name = "volunteer_id",
+            name = "volunteer_user_id",
             nullable = false
     )
-    private long volunteerId;
+    private long volunteerUserId;
 
     @Column(
             name = "project_id",

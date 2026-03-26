@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -52,5 +53,23 @@ public class Volunteer {
             nullable = false
     )
     private String phoneNumber;
+
+    @OneToMany(
+            mappedBy = "volunteer",
+            orphanRemoval = true
+    )
+    private List<VolunteerTask> volunteerTasks;
+
+    @OneToMany(
+            mappedBy = "volunteer",
+            orphanRemoval = true
+    )
+    private List<VolunteerProject> volunteerProjects;
+
+    @OneToMany(
+            mappedBy = "volunteer",
+            orphanRemoval = true
+    )
+    private List<TaskSuggestion> volunteerTaskSuggestions;
 
 }

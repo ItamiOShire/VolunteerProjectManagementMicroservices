@@ -19,4 +19,19 @@ public class VolunteerProject {
     @EmbeddedId
     private VolunteerProjectId volunteerProjectId;
 
+    @MapsId("volunteerUserId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "volunteer_user_id",
+            referencedColumnName = "user_id"
+    )
+    private Volunteer volunteer;
+
+    @Column(
+            name = "project_id",
+            insertable = false,
+            updatable = false
+    )
+    private long projectId;
+
 }

@@ -14,10 +14,10 @@ import lombok.*;
 public class TaskSuggestionId {
 
     @Column (
-            name = "volunteer_id",
+            name = "volunteer_user_id",
             nullable = false
     )
-    private long volunteerId;
+    private long volunteerUserId;
     @Column (
             name = "task_id",
             nullable = false
