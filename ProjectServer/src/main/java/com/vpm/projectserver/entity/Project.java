@@ -43,7 +43,6 @@ public class Project {
     )
     private String imgPath;
 
-    // TODO: MAKE CLEAR THIS IS 'user_id' FROM 'Users' TABLE!!!
     @Column(
             name = "organization_user_id",
             nullable = false

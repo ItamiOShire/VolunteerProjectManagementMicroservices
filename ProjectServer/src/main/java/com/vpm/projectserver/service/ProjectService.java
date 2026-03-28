@@ -44,7 +44,7 @@ public class ProjectService {
         Optional<Project> project = projectRepository.findById(id);
 
         if(project.isEmpty()){
-            log.warn("Project with id {} not found", id);
+            log.error("Project with id {} not found", id);
             throw new NoSuchProjectException(id);
         }
 
