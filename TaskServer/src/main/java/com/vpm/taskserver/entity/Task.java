@@ -1,5 +1,6 @@
 package com.vpm.taskserver.entity;
 
+import com.vpm.taskserver.dto.request.UpdateTaskRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,5 +65,12 @@ public class Task {
             orphanRemoval = true
     )
     private List<TaskSuggestion> taskSuggestions;
+
+    public void update(UpdateTaskRequest request, Priority priority) {
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+        this.deadline = request.getDeadline();
+        this.priority = priority;
+    }
 
 }
