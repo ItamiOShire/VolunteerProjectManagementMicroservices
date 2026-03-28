@@ -13,5 +13,7 @@ public enum ErrorCode {
     NOT_FOUND,
     CONFLICT,
     PROJECT_NOT_FOUND,
-    MISSING_HEADER
+    MISSING_HEADER,
+    PRIORITY_NOT_FOUND,
+    TASK_NOT_FOUND
 }
