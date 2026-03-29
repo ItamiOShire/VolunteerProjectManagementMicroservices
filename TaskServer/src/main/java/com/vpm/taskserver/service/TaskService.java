@@ -5,11 +5,16 @@ import com.vpm.taskserver.dto.request.UpdateTaskRequest;
 import com.vpm.taskserver.dto.template.TaskTemplate;
 import com.vpm.taskserver.entity.Priority;
 import com.vpm.taskserver.entity.Task;
+import com.vpm.taskserver.entity.VolunteerTask;
 import com.vpm.taskserver.entity.mapper.TaskMapper;
 import com.vpm.taskserver.exception.priority.NoSuchPriorityException;
+import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
 import com.vpm.taskserver.repository.TaskRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -120,7 +125,7 @@ public class TaskService {
         );
 
         if (priority.isEmpty()) {
-            log.error("Priority not found for id {}", request.getPriorityId());
+            TaskServiceLogger.priorityNotFound(request.getPriorityId());
             throw new NoSuchPriorityException(request.getPriorityId());
         }
 
@@ -147,14 +152,14 @@ public class TaskService {
         );
 
         if (priority.isEmpty()) {
-            log.error("Priority not found for id {}", request.getPriorityId());
+            TaskServiceLogger.priorityNotFound(request.getPriorityId());
             throw new NoSuchPriorityException(request.getPriorityId());
         }
 
         Optional<Task> task = taskRepository.findById(taskId);
 
         if (task.isEmpty()) {
-            log.error("Task not found for id {}", taskId);
+            TaskServiceLogger.taskNotFound(taskId);
             throw new NoSuchTaskException(taskId);
         }
 
@@ -167,12 +172,128 @@ public class TaskService {
         taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Method for PATCH HTTP method. It allows to update only some fields of Task entity.
+     * For example, if client wants to update only title and priority of task, he can send request with body: {"title": "New title", "priorityId": 2}
+     * How it works:
+     * 1. Find the task in database - if no task present - throw NoSuchTaskException
+     * 2. Use beanWrapper to dynamically set task properties
+     * 3. Handle special case of priority ID - if present in updates map, get priority from database, update task and remove priorityId from updates
+     *    If no priority found under given priorityId - throw NoSuchPriorityException
+     * 4. Update the rest of task using update map
+     * @param updates Holds all fields of Task that needs to be updated - key is field name and value is new value of the field. For example: {"title": "New title", "priorityId": 2}
+     *                Key name must be equal to Task field name
+     * @param taskId ID of task
+     * @throws NoSuchTaskException Thrown when no task were found under task ID
+     * @throws NoSuchPriorityException Thrown when no Priority were found under priorityId key in updates map
+     * @throws BeansException Thrown when key in updates map is not equal to any field name in Task entity or when value type is not compatible with field type
+     */
+
     public void patchTask(
             Map<String, Object> updates,
             long taskId
-    )  throws NoSuchTaskException, NoSuchPriorityException {
+    )  throws NoSuchTaskException, NoSuchPriorityException, BeansException {
+
+        Optional<Task> task = taskRepository.findById(taskId);
 
 
+        if (task.isEmpty()) {
+            TaskServiceLogger.taskNotFound(taskId);
+            throw new NoSuchTaskException(taskId);
+        }
+
+        Task taskToPatch = task.get();
+        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(taskToPatch);
+
+        if (updates.containsKey("priorityId")) {
+
+            Long priorityId = (Long) updates.get("priorityId");
+
+            Optional<Priority> priority = priorityService.getPriorityById(priorityId);
+
+            if (priority.isEmpty()) {
+
+                TaskServiceLogger.priorityNotFound(priorityId);
+                throw new NoSuchPriorityException(priorityId);
+
+            }
+
+            beanWrapper.setPropertyValue("priority", priority.get());
+
+            updates.remove("priorityId");
+
+        }
+
+        beanWrapper.setPropertyValues(updates);
+
+        taskRepository.save(taskToPatch);
+    }
+
+    /*
+     * DELETE HTTP method
+     */
+
+    // To delete task, task cannot have volunteer assigned to it
+
+    public void deleteTask(
+            long taskId
+    ) throws NoSuchTaskException {
+
+        Optional<Task>  task = taskRepository.findById(taskId);
+
+        if (task.isEmpty()) {
+
+            TaskServiceLogger.taskNotFound(taskId);
+            throw new NoSuchTaskException(taskId);
+
+        }
+
+        if (!task.get().getVolunteerTasks().isEmpty()) {
+            
+            String volunteersInfo = TaskServiceLogger.formatVolunteerTasksList(task.get().getVolunteerTasks());
+            TaskServiceLogger.taskIndelible(volunteersInfo);
+            throw new AssignedVolunteersException(volunteersInfo);
+            
+        }
+
+        taskRepository.deleteById(taskId);
+
+    }
+
+    /*
+     * Task service logger
+     */
+
+    private static class TaskServiceLogger {
+
+        public static void taskNotFound(long id) {
+            log.error("Task with id {} not found", id);
+        }
+
+        public static void priorityNotFound(long id) {
+            log.error("Priority with id {} not found", id);
+        }
+        
+        public static void taskIndelible(String volunteersWithTasks) {
+            log.error("Cannot delete task - volunteers are assigned to this task: {}", volunteersWithTasks);
+        }
+
+        /**
+         * Formats a list of VolunteerTasks into a readable string representation
+         * @param volunteersWithTasks List of VolunteerTask objects to format
+         * @return Formatted string with volunteer and task IDs
+         */
+        public static String formatVolunteerTasksList(List<VolunteerTask> volunteersWithTasks) {
+            StringBuilder sb = new StringBuilder();
+            for (VolunteerTask volunteerTask : volunteersWithTasks) {
+                sb.append("Volunteer Id: ")
+                        .append(volunteerTask.getId().getVolunteerUserId())
+                        .append(", TaskId: ")
+                        .append(volunteerTask.getId().getTaskId())
+                        .append("\n");
+            }
+            return sb.toString();
+        }
 
     }
 
