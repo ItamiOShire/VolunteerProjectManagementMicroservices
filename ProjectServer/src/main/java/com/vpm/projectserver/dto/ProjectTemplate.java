@@ -1,6 +1,5 @@
 package com.vpm.projectserver.dto;
 
-import com.vpm.projectserver.entity.Tag;
 import lombok.*;
 
 import java.util.List;

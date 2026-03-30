@@ -3,6 +3,7 @@ package com.vpm.projectserver.exception;
 
 import com.vpm.common.error.ErrorCode;
 import com.vpm.common.error.ErrorResponse;
+import com.vpm.projectserver.exception.request.MissingRequiredHeaderException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ExceptionHandler(MissingRequiredHeaderException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(
             MissingRequestHeaderException e,
             WebRequest request
