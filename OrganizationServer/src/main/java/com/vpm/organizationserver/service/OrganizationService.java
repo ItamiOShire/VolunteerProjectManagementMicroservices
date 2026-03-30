@@ -44,7 +44,7 @@ public class OrganizationService {
             long organizationUserId
     ) throws NoSuchOrganizationException {
 
-        Optional<Organization> organization = organizationRepository.findById(organizationUserId);
+        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
 
         if (organization.isEmpty()) {
             log.error("Organization with id {} not found", organizationUserId);
@@ -60,7 +60,7 @@ public class OrganizationService {
             long organizationUserId
     ) throws NoSuchOrganizationException {
 
-        Optional<Organization> organization = organizationRepository.findById(organizationUserId);
+        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
 
         if (organization.isEmpty()) {
             log.error("Organization with id {} not found", organizationUserId);
@@ -92,7 +92,7 @@ public class OrganizationService {
 
         log.info("Creating organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findById(organizationUserId);
+        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
 
         if (organization.isEmpty()) {
             log.error("Organization with id {} not found", organizationUserId);
@@ -118,7 +118,7 @@ public class OrganizationService {
 
         log.info("Updating organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findById(organizationUserId);
+        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
 
         if (organization.isEmpty()) {
 
@@ -152,7 +152,7 @@ public class OrganizationService {
 
         log.info("Patching organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findById(organizationUserId);
+        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
 
         if (organization.isEmpty()) {
             log.error("Organization with id {} not found", organizationUserId);
