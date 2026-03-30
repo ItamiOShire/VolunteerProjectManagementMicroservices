@@ -25,6 +25,8 @@ public class RequestFilter extends OncePerRequestFilter {
             )
     );
 
+    // TODO: change hardcoded values of headers in filter
+
     @Override
     @NullMarked
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

@@ -15,6 +15,8 @@ import java.util.Set;
 @Component
 public class RequestFilter extends OncePerRequestFilter {
 
+    // TODO: Thrown exception in filtering does not go into controller adviser, need to handle it in filter itself and send appropriate response
+
     /*
      * Set of required headers - those headers are signature of authorized request
      * Gateway adds those headers if user is authorized
@@ -34,15 +36,19 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws MissingRequiredHeaderException {
 
-        for (String header : requiredHeaders) {
+        try {
+            for (String header : requiredHeaders) {
 
-            String headerValue = request.getHeader(header);
+                String headerValue = request.getHeader(header);
 
-            if (headerValue == null || headerValue.isEmpty()) {
+                if (headerValue == null || headerValue.isEmpty()) {
 
-                throw new MissingRequiredHeaderException(header);
+                    throw new MissingRequiredHeaderException(header);
 
+                }
             }
+        } catch (MissingRequiredHeaderException e) {
+
 
         }
 

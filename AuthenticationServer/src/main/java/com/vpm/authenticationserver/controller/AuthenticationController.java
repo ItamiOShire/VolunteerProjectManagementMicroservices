@@ -27,4 +27,6 @@ public class AuthenticationController {
                 .ok(authenticationService.login(loginRequest));
     }
 
+    //TODO: logout functionality
+
 }
