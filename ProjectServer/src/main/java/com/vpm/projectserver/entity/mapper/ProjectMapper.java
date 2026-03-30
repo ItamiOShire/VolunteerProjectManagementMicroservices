@@ -2,7 +2,11 @@ package com.vpm.projectserver.entity.mapper;
 
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
+import com.vpm.projectserver.dto.request.CreateProjectRequest;
 import com.vpm.projectserver.entity.Project;
+import com.vpm.projectserver.entity.Tag;
+
+import java.util.Set;
 
 public class ProjectMapper {
 
@@ -22,6 +26,21 @@ public class ProjectMapper {
                                         .build()
                         ).toList()
                 ).build();
+
+    }
+
+    public static Project fromCreateProjectRequest(
+            CreateProjectRequest request,
+            Set<Tag> tags) {
+
+        return Project.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .imgPath(request.getImgPath())
+                .organizationUserId(request.getOrganizationUserId())
+                .organizationName(request.getOrganizationName())
+                .tags(tags)
+                .build();
 
     }
 

@@ -1,6 +1,7 @@
 package com.vpm.projectserver.entity;
 
 
+import com.vpm.projectserver.dto.ProjectTemplate;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -76,5 +77,16 @@ public class Project {
                     @JoinColumn( name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+
+    public void update(
+            ProjectTemplate projectTemplate,
+            Set<Tag> tags) {
+
+        this.title = projectTemplate.getProjectTitle();
+        this.description = projectTemplate.getProjectDescription();
+        this.imgPath = projectTemplate.getImgPath();
+        this.tags = tags;
+
+    }
 
 }
