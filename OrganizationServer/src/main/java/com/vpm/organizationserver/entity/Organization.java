@@ -19,7 +19,8 @@ public class Organization {
 
     @Column(
             name = "user_id",
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private long userId;
 

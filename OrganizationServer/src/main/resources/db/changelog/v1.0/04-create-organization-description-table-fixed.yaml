@@ -25,6 +25,15 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: organization_description
   - changeSet:
+      id: 1774861623028-4
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: user_id
+            constraintName: uc_organization_organization_user
+            tableName: organization
+  - changeSet:
       id: 1774861623028-2
       author: Adam
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
