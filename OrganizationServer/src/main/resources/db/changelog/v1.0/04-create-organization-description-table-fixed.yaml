@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1774861623028-1
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_organization_description
+                  name: id
+                  type: SERIAL
+              - column:
+                  name: organization_user_id
+                  type: BIGINT
+              - column:
+                  name: description
+                  type: CLOB
+              - column:
+                  name: image_path
+                  type: VARCHAR(255)
+            tableName: organization_description
+  - changeSet:
+      id: 1774861623028-2
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: organization_user_id
+            constraintName: uc_organization_description_organization_user
+            tableName: organization_description
+  - changeSet:
+      id: 1774861623028-3
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: organization_user_id
+            baseTableName: organization_description
+            constraintName: FK_ORGANIZATION_DESCRIPTION_ON_ORGANIZATION_USER
+            referencedColumnNames: user_id
+            referencedTableName: organization
+

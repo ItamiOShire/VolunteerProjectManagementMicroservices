@@ -1,11 +1,9 @@
 package com.vpm.organizationserver.entity;
 
 
+import com.vpm.organizationserver.dto.request.UpdateDescriptionRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "organization_description")
@@ -13,15 +11,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OrganizationDescription {
 
     @Id
-    @Column(
-            name = "organization_id"
-    )
-    private long organizationId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @Lob
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "organization_user_id",
+            referencedColumnName = "user_id"
+    )
+    private Organization organization;
+
     @Column (
             name = "description",
             nullable = true

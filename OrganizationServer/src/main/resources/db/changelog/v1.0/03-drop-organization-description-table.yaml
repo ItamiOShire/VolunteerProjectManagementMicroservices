@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop_organization_description_table
+      author: admin
+      changes:
+        - dropTable:
+            tableName: organization_description
+            cascadeConstraints: true

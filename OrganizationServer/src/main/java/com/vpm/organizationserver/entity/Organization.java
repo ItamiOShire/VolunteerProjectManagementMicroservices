@@ -86,4 +86,10 @@ public class Organization {
     )
     private String phoneNumber;
 
+    @OneToOne(
+            mappedBy = "organization",
+            orphanRemoval = true
+    )
+    private OrganizationDescription organizationDescription;
+
 }
