@@ -86,6 +86,13 @@ public class Organization {
     )
     private String phoneNumber;
 
+    @Column(
+            name = "contact_email",
+            nullable = false,
+            length = 400
+    )
+    private String contactEmail;
+
     @OneToOne(
             mappedBy = "organization",
             orphanRemoval = true

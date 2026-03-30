@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-contact-email-column-to-organization-table
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: contact_email
+                  type: VARCHAR(400)
+            tableName: organization
+  - changeSet:
+      id: 1774890377694-6
+      author: Adam
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addNotNullConstraint:
+            columnName: contact_email
+            tableName: organization
+
