@@ -37,4 +37,11 @@ public class OrganizationDescription {
     )
     private String imagePath;
 
+    public void update(
+            UpdateDescriptionRequest request
+    ) {
+        this.description = request.getDescription();
+        this.imagePath = request.getImagePath();
+    }
+
 }
