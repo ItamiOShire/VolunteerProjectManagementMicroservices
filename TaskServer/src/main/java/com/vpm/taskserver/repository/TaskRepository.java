@@ -16,7 +16,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("""
     SELECT t FROM Task t
     JOIN FETCH t.volunteerTasks vt
-    ON vt.id.volunteerUserId = :volunteerId
+    WHERE vt.id.volunteerUserId = :volunteerId
 """)
     List<Task> getTasksByVolunteerId(@Param("volunteerId")  Long volunteerId);
 
