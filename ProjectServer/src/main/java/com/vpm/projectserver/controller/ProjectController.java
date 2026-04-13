@@ -2,13 +2,13 @@ package com.vpm.projectserver.controller;
 
 
 import com.vpm.projectserver.dto.ProjectTemplate;
+import com.vpm.projectserver.dto.request.CreateProjectRequest;
 import com.vpm.projectserver.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Rest controller for handling request purely concerning projects - without any dependencies, like user ID
@@ -42,6 +42,56 @@ public class ProjectController {
     ) {
         return ResponseEntity
                 .ok(projectService.getProjectById(id));
+    }
+
+    @PostMapping()
+    public ResponseEntity<?> createProject(
+            @RequestBody CreateProjectRequest request
+    ) {
+
+        projectService.createProject(request);
+
+        return ResponseEntity
+                .ok().build();
+    }
+
+    // TODO: consider making another dto for updating or patching project
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProject(
+            @RequestBody ProjectTemplate projectTemplate
+    ) {
+
+        projectService.updateProject(projectTemplate);
+
+        return ResponseEntity
+                .ok().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateProject(
+            @PathVariable("id") Long projectId,
+            @RequestBody Map<String, Object> updates
+    ) {
+
+        projectService.patchProject(
+                updates,
+                projectId
+        );
+
+        return ResponseEntity
+                .ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProject(
+            @PathVariable("id") Long projectId
+    ) {
+
+        projectService.deleteProject(projectId);
+
+        return ResponseEntity
+                .ok().build();
     }
 
 }
