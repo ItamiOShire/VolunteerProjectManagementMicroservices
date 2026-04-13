@@ -13,7 +13,6 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -63,6 +62,8 @@ public class VolunteerService {
     /*
      * PUT / PATCH HTTP method
      */
+
+    // TODO: implement PUT method with changing email and password (with auth service)
 
     public void patchVolunteerProfile(
             Map<String, Object> updates,
