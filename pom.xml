@@ -14,6 +14,9 @@
         <module>Gateway</module>
         <module>Eureka</module>
         <module>Common</module>
+        <module>ProjectServer</module>
+        <module>OrganizationServer</module>
+        <module>TaskServer</module>
     </modules>
 
 </project>
