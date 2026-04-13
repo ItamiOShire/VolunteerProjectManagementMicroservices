@@ -12,6 +12,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 @RestControllerAdvice
@@ -64,6 +65,25 @@ public class GlobalExceptionHandler {
         );
 
         log.error("Error during body conversion: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex,
+            WebRequest request
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                400,
+                ErrorCode.BAD_REQUEST,
+                String.format("Error during path parameter conversion: Exception - %s, message - %s", ex.getClass().getName(), ex.getMessage()),
+                request.getContextPath()
+        );
+
+        log.error("Error during path parameter conversion: {}", ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
