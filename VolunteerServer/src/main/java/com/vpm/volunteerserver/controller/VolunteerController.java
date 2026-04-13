@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/volunteer")
+@RequestMapping("/api/volunteers")
 public class VolunteerController {
 
     private final RegistrationService registrationService;
@@ -55,7 +55,7 @@ public class VolunteerController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchVolunteerProfile(
             @PathVariable("id") Long id,
-            Map<String, Object> updates
+            @RequestBody Map<String, Object> updates
     ) {
 
         volunteerService.patchVolunteerProfile(
