@@ -81,7 +81,7 @@ public class VolunteerService {
 
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(volunteer);
 
-        log.info("Patching...");
+        log.info("Patching: {}", updates);
 
         beanWrapper.setPropertyValues(updates);
 
