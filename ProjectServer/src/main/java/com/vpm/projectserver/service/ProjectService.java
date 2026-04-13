@@ -207,7 +207,7 @@ public class ProjectService {
 
         log.info("Deleting project with id {}", projectId);
 
-        if (projectRepository.existsById(projectId)){
+        if (!projectRepository.existsById(projectId)){
             log.error("Project with id {} does not exist", projectId);
             throw new NoSuchProjectException(projectId);
         }
