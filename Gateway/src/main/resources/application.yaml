@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Gateway
+    name: gateway
 
   cloud:
     gateway:
@@ -9,10 +9,27 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
+
         - id: volunteer-service
           uri: lb://volunteer-service
           predicates:
-              - Path=/api/volunteer/**
+              - Path=/api/volunteers/**
+
+        - id: organization-service
+          uri: lb://organization-service
+          predicates:
+              - Path=/api/organizations/**
+
+        - id: project-service
+          uri: lb://project-service
+          predicates:
+              - Path=/api/projects/**, /api/organizations/**/projects, /api/volunteers/**/projects
+
+        - id: task-service
+          uri: lb://task-service
+          predicates:
+              - Path=/api/tasks/**, /api/projects/**/tasks, /api/volunteers/**/tasks, /api/volunteers/**/tasks/suggestions
+
 
   security:
     oauth2:
