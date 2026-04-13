@@ -2,12 +2,14 @@ package com.vpm.taskserver.security;
 
 import com.vpm.taskserver.exception.request.MissingRequiredHeaderException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,18 +33,25 @@ public class RequestFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws MissingRequiredHeaderException {
+    ) throws IOException, ServletException {
 
-        for (String header : requiredHeaders) {
+        try {
+            for (String header : requiredHeaders) {
 
-            String headerValue = request.getHeader(header);
+                String headerValue = request.getHeader(header);
 
-            if (headerValue == null || headerValue.isEmpty()) {
+                if (headerValue == null || headerValue.isEmpty()) {
 
-                throw new MissingRequiredHeaderException(header);
+                    throw new MissingRequiredHeaderException(header);
 
+                }
             }
 
+            filterChain.doFilter(request, response);
+
+        } catch (MissingRequiredHeaderException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Missing required header: " + e.getMessage());
         }
 
     }
