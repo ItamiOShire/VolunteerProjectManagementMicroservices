@@ -12,6 +12,7 @@ import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
 import com.vpm.taskserver.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,8 +79,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("GetTaskTests")
     class GetTaskTests {
         @Test
+        @DisplayName("Should return all tasks successfully")
         void testGetAllTasks_Success() {
             Task task2 = Task.builder()
                     .id(2L)
@@ -102,6 +105,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return empty list when no tasks exist")
         void testGetAllTasks_EmptyList() {
             when(taskRepository.findAll()).thenReturn(Collections.emptyList());
             List<TaskTemplate> result = taskService.getAllTasks();
@@ -111,6 +115,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return all project tasks successfully")
         void testGetAllProjectTasks_Success() {
             long projectId = 100L;
             when(taskRepository.getTasksByProjectId(projectId)).thenReturn(List.of(testTask));
@@ -122,6 +127,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return empty list when project has no tasks")
         void testGetAllProjectTasks_EmptyList() {
             long projectId = 100L;
             when(taskRepository.getTasksByProjectId(projectId)).thenReturn(Collections.emptyList());
@@ -132,6 +138,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return all volunteer tasks successfully")
         void testGetAllVolunteerTasks_Success() {
             long volunteerId = 1L;
             when(taskRepository.getTasksByVolunteerId(volunteerId)).thenReturn(List.of(testTask));
@@ -143,6 +150,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return empty list when volunteer has no tasks")
         void testGetAllVolunteerTasks_EmptyList() {
             long volunteerId = 1L;
             when(taskRepository.getTasksByVolunteerId(volunteerId)).thenReturn(Collections.emptyList());
@@ -153,6 +161,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return volunteer tasks in project successfully")
         void testGetAllVolunteerTasksInProject_Success() {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -166,6 +175,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return empty list when volunteer has no tasks in project")
         void testGetAllVolunteerTasksInProject_EmptyList() {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -178,6 +188,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return task suggestions for volunteer in project successfully")
         void testGetTaskSuggestionsInProjectByVolunteerId_Success() {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -191,6 +202,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should return empty list when no task suggestions available")
         void testGetTaskSuggestionsInProjectByVolunteerId_EmptyList() {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -204,8 +216,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("CreateTaskTests")
     class CreateTaskTests {
         @Test
+        @DisplayName("Should create task successfully with valid priority")
         void testCreateTask_Success() throws NoSuchPriorityException {
             when(priorityService.getPriorityById(createTaskRequest.getPriorityId()))
                     .thenReturn(Optional.of(testPriority));
@@ -218,6 +232,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when priority not found during creation")
         void testCreateTask_PriorityNotFound() {
             when(priorityService.getPriorityById(createTaskRequest.getPriorityId()))
                     .thenReturn(Optional.empty());
@@ -229,8 +244,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("UpdateTaskTests")
     class UpdateTaskTests {
         @Test
+        @DisplayName("Should update task successfully with valid data")
         void testUpdateTask_Success() throws NoSuchTaskException, NoSuchPriorityException {
             long taskId = 1L;
             when(priorityService.getPriorityById(updateTaskRequest.getPriorityId()))
@@ -246,6 +263,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when task not found during update")
         void testUpdateTask_TaskNotFound() {
             long taskId = 1L;
             when(priorityService.getPriorityById(updateTaskRequest.getPriorityId()))
@@ -257,6 +275,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when priority not found during update")
         void testUpdateTask_PriorityNotFound() {
             long taskId = 1L;
             when(priorityService.getPriorityById(updateTaskRequest.getPriorityId()))
@@ -269,8 +288,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("PatchTaskTests")
     class PatchTaskTests {
         @Test
+        @DisplayName("Should patch task successfully with priority update")
         void testPatchTask_Success_WithPriorityId() throws NoSuchTaskException, NoSuchPriorityException {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -294,6 +315,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should patch task successfully without priority update")
         void testPatchTask_Success_WithoutPriorityId() throws NoSuchTaskException, NoSuchPriorityException {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -311,6 +333,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when task not found during patch")
         void testPatchTask_TaskNotFound() {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -324,6 +347,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when priority not found during patch")
         void testPatchTask_PriorityNotFound() {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -339,6 +363,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should handle patch with empty updates")
         void testPatchTask_EmptyUpdates() throws NoSuchTaskException, NoSuchPriorityException {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -354,8 +379,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("DeleteTaskTests")
     class DeleteTaskTests {
         @Test
+        @DisplayName("Should delete task successfully")
         void testDeleteTask_Success() throws NoSuchTaskException {
             long taskId = 1L;
             Task taskToDelete = Task.builder()
@@ -377,6 +404,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when task not found during deletion")
         void testDeleteTask_TaskNotFound() {
             long taskId = 1L;
             when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
@@ -387,6 +415,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when task has assigned volunteers")
         void testDeleteTask_WithAssignedVolunteers() {
             long taskId = 1L;
             VolunteerTaskId volunteerTaskId = new VolunteerTaskId(1L, taskId);
@@ -412,6 +441,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when task has multiple assigned volunteers")
         void testDeleteTask_WithMultipleAssignedVolunteers() {
             long taskId = 1L;
             VolunteerTaskId volunteerTaskId1 = new VolunteerTaskId(1L, taskId);
@@ -443,8 +473,10 @@ class TaskServiceTest {
     }
 
     @Nested
+    @DisplayName("IntegrationTests")
     class IntegrationTests {
         @Test
+        @DisplayName("Should create and update task in sequence")
         void testCreateTaskAndUpdateTask_IntegrationScenario() throws NoSuchTaskException, NoSuchPriorityException {
             when(priorityService.getPriorityById(1L)).thenReturn(Optional.of(testPriority));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
@@ -458,6 +490,7 @@ class TaskServiceTest {
         }
 
         @Test
+        @DisplayName("Should patch task with multiple fields and priority update")
         void testPatchTask_MultipleFieldsWithPriority() throws NoSuchTaskException, NoSuchPriorityException {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();

@@ -9,6 +9,7 @@ import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
 import com.vpm.taskserver.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +77,10 @@ class TaskControllerTest {
     }
 
     @Nested
+    @DisplayName("GetTasksTests")
     class GetTasksTests {
         @Test
+        @DisplayName("GET /api/tasks - Should return all tasks successfully")
         void testGetAllTasks_Success() throws Exception {
             TaskTemplate task2 = TaskTemplate.builder()
                     .itemId(2L)
@@ -103,6 +106,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/tasks - Should return empty list when no tasks exist")
         void testGetAllTasks_EmptyList() throws Exception {
             when(taskService.getAllTasks()).thenReturn(new ArrayList<>());
 
@@ -116,6 +120,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/tasks - Should return 400 when X-User-Id header is missing")
         void testGetAllTasks_MissingUserIdHeader() throws Exception {
             mockMvc.perform(get("/api/tasks")
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE))
@@ -123,6 +128,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/tasks - Should return 400 when X-User-Role header is missing")
         void testGetAllTasks_MissingUserRoleHeader() throws Exception {
             mockMvc.perform(get("/api/tasks")
                             .header(USER_ID_HEADER, USER_ID_VALUE))
@@ -131,8 +137,10 @@ class TaskControllerTest {
     }
 
     @Nested
+    @DisplayName("CreateTaskTests")
     class CreateTaskTests {
         @Test
+        @DisplayName("POST /api/tasks - Should create task successfully")
         void testCreateTask_Success() throws Exception {
             doNothing().when(taskService).createTask(any(CreateTaskRequest.class));
 
@@ -147,6 +155,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("POST /api/tasks - Should return 400 when priority not found")
         void testCreateTask_PriorityNotFound() throws Exception {
             doThrow(new NoSuchPriorityException(999L))
                     .when(taskService).createTask(any(CreateTaskRequest.class));
@@ -162,6 +171,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("POST /api/tasks - Should return 400 when headers are missing")
         void testCreateTask_MissingHeaders() throws Exception {
             mockMvc.perform(post("/api/tasks")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -171,8 +181,10 @@ class TaskControllerTest {
     }
 
     @Nested
+    @DisplayName("UpdateTaskTests")
     class UpdateTaskTests {
         @Test
+        @DisplayName("PUT /api/tasks/{id} - Should update task successfully")
         void testUpdateTask_Success() throws Exception {
             long taskId = 1L;
             doNothing().when(taskService).updateTask(any(UpdateTaskRequest.class), anyLong());
@@ -188,6 +200,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PUT /api/tasks/{id} - Should return 400 when task not found")
         void testUpdateTask_TaskNotFound() throws Exception {
             long taskId = 999L;
             doThrow(new NoSuchTaskException(taskId))
@@ -204,6 +217,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PUT /api/tasks/{id} - Should return 400 when priority not found")
         void testUpdateTask_PriorityNotFound() throws Exception {
             long taskId = 1L;
             doThrow(new NoSuchPriorityException(999L))
@@ -220,6 +234,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PUT /api/tasks/{id} - Should return 400 when headers are missing")
         void testUpdateTask_MissingHeaders() throws Exception {
             mockMvc.perform(put("/api/tasks/{id}", 1L)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -229,8 +244,10 @@ class TaskControllerTest {
     }
 
     @Nested
+    @DisplayName("PatchTaskTests")
     class PatchTaskTests {
         @Test
+        @DisplayName("PATCH /api/tasks/{id} - Should patch task successfully")
         void testPatchTask_Success() throws Exception {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -250,6 +267,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PATCH /api/tasks/{id} - Should return 400 when task not found")
         void testPatchTask_TaskNotFound() throws Exception {
             long taskId = 999L;
             Map<String, Object> updates = new HashMap<>();
@@ -269,6 +287,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PATCH /api/tasks/{id} - Should return 400 when priority not found")
         void testPatchTask_PriorityNotFound() throws Exception {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
@@ -288,6 +307,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("PATCH /api/tasks/{id} - Should return 400 when headers are missing")
         void testPatchTask_MissingHeaders() throws Exception {
             mockMvc.perform(patch("/api/tasks/{id}", 1L)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -297,8 +317,10 @@ class TaskControllerTest {
     }
 
     @Nested
+    @DisplayName("DeleteTaskTests")
     class DeleteTaskTests {
         @Test
+        @DisplayName("DELETE /api/tasks/{id} - Should delete task successfully")
         void testDeleteTask_Success() throws Exception {
             long taskId = 1L;
             doNothing().when(taskService).deleteTask(anyLong());
@@ -312,6 +334,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("DELETE /api/tasks/{id} - Should return 400 when task not found")
         void testDeleteTask_TaskNotFound() throws Exception {
             long taskId = 999L;
             doThrow(new NoSuchTaskException(taskId))
@@ -326,6 +349,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("DELETE /api/tasks/{id} - Should return 400 when task has assigned volunteers")
         void testDeleteTask_WithAssignedVolunteers() throws Exception {
             long taskId = 1L;
             doThrow(new AssignedVolunteersException("Volunteer Id: 1, TaskId: 1\n"))
@@ -340,6 +364,7 @@ class TaskControllerTest {
         }
 
         @Test
+        @DisplayName("DELETE /api/tasks/{id} - Should return 400 when headers are missing")
         void testDeleteTask_MissingHeaders() throws Exception {
             mockMvc.perform(delete("/api/tasks/{id}", 1L))
                     .andExpect(status().isBadRequest());

@@ -3,6 +3,7 @@ package com.vpm.taskserver.controller;
 import com.vpm.taskserver.dto.template.TaskTemplate;
 import com.vpm.taskserver.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,10 @@ class VolunteerTaskControllerTest {
     }
 
     @Nested
+    @DisplayName("GetAllVolunteerTasksTests")
     class GetAllVolunteerTasksTests {
         @Test
+        @DisplayName("GET /api/volunteers/{id}/tasks - Should return all volunteer tasks successfully")
         void testGetAllVolunteerTasks_Success() throws Exception {
             long volunteerId = 1L;
             TaskTemplate task2 = TaskTemplate.builder()
@@ -77,6 +80,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{id}/tasks - Should return empty list when volunteer has no tasks")
         void testGetAllVolunteerTasks_EmptyList() throws Exception {
             long volunteerId = 999L;
             when(taskService.getAllVolunteerTasks(volunteerId))
@@ -92,6 +96,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{id}/tasks - Should return 400 when X-User-Id header is missing")
         void testGetAllVolunteerTasks_MissingUserIdHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{id}/tasks", 1L)
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE))
@@ -99,6 +104,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{id}/tasks - Should return 400 when X-User-Role header is missing")
         void testGetAllVolunteerTasks_MissingUserRoleHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{id}/tasks", 1L)
                             .header(USER_ID_HEADER, USER_ID_VALUE))
@@ -107,8 +113,10 @@ class VolunteerTaskControllerTest {
     }
 
     @Nested
+    @DisplayName("GetVolunteerTasksInProjectTests")
     class GetVolunteerTasksInProjectTests {
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks - Should return tasks successfully")
         void testGetAllVolunteerTasksInProject_Success() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -137,6 +145,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks - Should return empty list")
         void testGetAllVolunteerTasksInProject_EmptyList() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -155,6 +164,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks - Should return single task with correct structure")
         void testGetAllVolunteerTasksInProject_SingleTask() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -176,6 +186,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks - Should return 400 when X-User-Id header is missing")
         void testGetAllVolunteerTasksInProject_MissingUserIdHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{volunteerId}/projects/{projectId}/tasks", 1L, 100L)
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE))
@@ -183,6 +194,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks - Should return 400 when X-User-Role header is missing")
         void testGetAllVolunteerTasksInProject_MissingUserRoleHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{volunteerId}/projects/{projectId}/tasks", 1L, 100L)
                             .header(USER_ID_HEADER, USER_ID_VALUE))
@@ -191,8 +203,10 @@ class VolunteerTaskControllerTest {
     }
 
     @Nested
+    @DisplayName("GetTaskSuggestionsTests")
     class GetTaskSuggestionsTests {
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions - Should return suggestions successfully")
         void testGetAllVolunteerTasksSuggestionsInProject_Success() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -231,6 +245,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions - Should return empty list when no suggestions")
         void testGetAllVolunteerTasksSuggestionsInProject_EmptyList() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -249,6 +264,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions - Should return single suggestion with correct structure")
         void testGetAllVolunteerTasksSuggestionsInProject_SingleSuggestion() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
@@ -278,6 +294,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions - Should return 400 when X-User-Id header is missing")
         void testGetAllVolunteerTasksSuggestionsInProject_MissingUserIdHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions",
                             1L, 100L)
@@ -286,6 +303,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions - Should return 400 when X-User-Role header is missing")
         void testGetAllVolunteerTasksSuggestionsInProject_MissingUserRoleHeader() throws Exception {
             mockMvc.perform(get("/api/volunteers/{volunteerId}/projects/{projectId}/tasks/suggestions",
                             1L, 100L)
@@ -295,8 +313,10 @@ class VolunteerTaskControllerTest {
     }
 
     @Nested
+    @DisplayName("IntegrationTests")
     class IntegrationTests {
         @Test
+        @DisplayName("Should handle multiple volunteers with independent data")
         void testMultipleVolunteersIndependentData() throws Exception {
             long volunteer1 = 1L;
             long volunteer2 = 2L;
@@ -339,6 +359,7 @@ class VolunteerTaskControllerTest {
         }
 
         @Test
+        @DisplayName("Should differentiate between tasks in specific project vs all tasks")
         void testGetTasksInProjectVsGetAllTasks() throws Exception {
             long volunteerId = 1L;
             long projectId = 100L;
