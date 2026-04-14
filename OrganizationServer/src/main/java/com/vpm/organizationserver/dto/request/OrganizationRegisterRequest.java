@@ -1,9 +1,10 @@
 package com.vpm.organizationserver.dto.request;
 
-import com.vpm.organizationserver.entity.Organization;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class OrganizationRegisterRequest {
 
     private String organizationName;

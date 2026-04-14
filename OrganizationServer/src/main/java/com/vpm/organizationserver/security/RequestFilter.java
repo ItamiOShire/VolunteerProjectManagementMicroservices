@@ -33,24 +33,26 @@ public class RequestFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws MissingRequiredHeaderException, IOException, ServletException {
+    ) throws IOException, ServletException {
 
-        for (String header : requiredHeaders) {
+        try {
+            for (String header : requiredHeaders) {
 
-            String headerValue = request.getHeader(header);
+                String headerValue = request.getHeader(header);
 
-            if (headerValue == null || headerValue.isEmpty()) {
+                if (headerValue == null || headerValue.isEmpty()) {
 
-                response.sendError(
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        String.format("Missing required header: %s", header)
-                );
+                    throw new MissingRequiredHeaderException(header);
 
+                }
             }
 
-        }
+            filterChain.doFilter(request, response);
 
-        filterChain.doFilter(request, response);
+        } catch (MissingRequiredHeaderException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Missing required header: " + e.getMessage());
+        }
 
     }
 
