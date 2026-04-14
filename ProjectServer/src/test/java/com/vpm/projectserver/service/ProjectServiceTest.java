@@ -51,7 +51,7 @@ class ProjectServiceTest {
         testTag.setName("Java");
 
         testTagTemplate = TagTemplate.builder()
-                .tagId(1L)
+                .itemId(1L)
                 .tagName("Java")
                 .build();
 
@@ -66,7 +66,7 @@ class ProjectServiceTest {
                 .build();
 
         testProjectTemplate = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("Test Project")
                 .projectDescription("This is a test project")
                 .imgPath("/path/to/image.jpg")
@@ -98,7 +98,7 @@ class ProjectServiceTest {
   
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(testProject.getId(), result.get(0).getProjectId());
+        assertEquals(testProject.getId(), result.get(0).getItemId());
         assertEquals(testProject.getTitle(), result.get(0).getProjectTitle());
         verify(projectRepository, times(1)).findAll();
     }
@@ -129,7 +129,7 @@ class ProjectServiceTest {
 
   
         assertNotNull(result);
-        assertEquals(testProject.getId(), result.getProjectId());
+        assertEquals(testProject.getId(), result.getItemId());
         assertEquals(testProject.getTitle(), result.getProjectTitle());
         verify(projectRepository, times(1)).findById(1L);
     }
@@ -159,7 +159,7 @@ class ProjectServiceTest {
   
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(testProject.getId(), result.get(0).getProjectId());
+        assertEquals(testProject.getId(), result.get(0).getItemId());
         verify(projectRepository, times(1)).getProjectsByOrganizationUserId(organizationId);
     }
 
@@ -194,7 +194,7 @@ class ProjectServiceTest {
   
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(testProject.getId(), result.get(0).getProjectId());
+        assertEquals(testProject.getId(), result.get(0).getItemId());
         verify(projectRepository, times(1)).getProjectsByVolunteerId(volunteerId);
     }
 
@@ -296,7 +296,7 @@ class ProjectServiceTest {
     @DisplayName("Should throw NoSuchProjectException when updating non-existent project")
     void testUpdateProject_NotFound() {
   
-        testProjectTemplate.setProjectId(999L);
+        testProjectTemplate.setItemId(999L);
         when(projectRepository.findById(999L)).thenReturn(Optional.empty());
 
  
@@ -442,14 +442,14 @@ class ProjectServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         ProjectTemplate template = result.get(0);
-        assertEquals(testProject.getId(), template.getProjectId());
+        assertEquals(testProject.getId(), template.getItemId());
         assertEquals(testProject.getTitle(), template.getProjectTitle());
         assertEquals(testProject.getDescription(), template.getProjectDescription());
         assertEquals(testProject.getImgPath(), template.getImgPath());
         assertEquals(testProject.getOrganizationName(), template.getOrganizationName());
         assertNotNull(template.getTags());
         assertEquals(1, template.getTags().size());
-        assertEquals(testTag.getId(), template.getTags().get(0).getTagId());
+        assertEquals(testTag.getId(), template.getTags().get(0).getItemId());
         assertEquals(testTag.getName(), template.getTags().get(0).getTagName());
     }
 
@@ -479,8 +479,8 @@ class ProjectServiceTest {
 
   
         assertEquals(2, result.size());
-        assertEquals(testProject.getId(), result.get(0).getProjectId());
-        assertEquals(project2.getId(), result.get(1).getProjectId());
+        assertEquals(testProject.getId(), result.get(0).getItemId());
+        assertEquals(project2.getId(), result.get(1).getItemId());
         assertEquals(1, result.get(0).getTags().size());
         assertEquals(1, result.get(1).getTags().size());
     }
