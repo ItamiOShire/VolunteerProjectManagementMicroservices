@@ -3,19 +3,19 @@ package com.vpm.projectserver.security;
 
 import com.vpm.projectserver.exception.request.MissingRequiredHeaderException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
 public class RequestFilter extends OncePerRequestFilter {
-
-    // TODO: Thrown exception in filtering does not go into controller adviser, need to handle it in filter itself and send appropriate response
 
     /*
      * Set of required headers - those headers are signature of authorized request
@@ -34,7 +34,7 @@ public class RequestFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws MissingRequiredHeaderException {
+    ) throws IOException, ServletException {
 
         try {
             for (String header : requiredHeaders) {
@@ -47,9 +47,12 @@ public class RequestFilter extends OncePerRequestFilter {
 
                 }
             }
+
+            filterChain.doFilter(request, response);
+
         } catch (MissingRequiredHeaderException e) {
-
-
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Missing required header: " + e.getMessage());
         }
 
     }
