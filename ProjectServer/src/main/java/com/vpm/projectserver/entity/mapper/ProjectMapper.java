@@ -13,7 +13,7 @@ public class ProjectMapper {
     public static ProjectTemplate mapToProjectTemplateFromProjectEntity(Project project) {
 
         return ProjectTemplate.builder()
-                .projectId(project.getId())
+                .itemId(project.getId())
                 .projectTitle(project.getTitle())
                 .organizationName(project.getOrganizationName())
                 .projectDescription(project.getDescription())
@@ -21,7 +21,7 @@ public class ProjectMapper {
                 .tags(
                         project.getTags().stream().map(
                                 tag -> TagTemplate.builder()
-                                        .tagId(tag.getId())
+                                        .itemId(tag.getId())
                                         .tagName(tag.getName())
                                         .build()
                         ).toList()

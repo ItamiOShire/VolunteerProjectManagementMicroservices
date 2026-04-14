@@ -130,18 +130,18 @@ public class ProjectService {
             ProjectTemplate projectTemplate
     ) throws NoSuchProjectException {
 
-        log.info("Updating project with id {}", projectTemplate.getProjectId());
+        log.info("Updating project with id {}", projectTemplate.getItemId());
 
-        Optional<Project> project = projectRepository.findById(projectTemplate.getProjectId());
+        Optional<Project> project = projectRepository.findById(projectTemplate.getItemId());
 
         if (project.isEmpty()){
-            log.error("Project with id {} does not exist", projectTemplate.getProjectId());
-            throw new NoSuchProjectException(projectTemplate.getProjectId());
+            log.error("Project with id {} does not exist", projectTemplate.getItemId());
+            throw new NoSuchProjectException(projectTemplate.getItemId());
         }
 
         Set<Tag> tags = tagService.getTagsById(
                 projectTemplate.getTags().stream()
-                        .map(TagTemplate::getTagId)
+                        .map(TagTemplate::getItemId)
                         .collect(Collectors.toSet())
         );
 
