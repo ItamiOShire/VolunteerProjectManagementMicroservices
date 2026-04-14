@@ -5,7 +5,6 @@ import com.vpm.projectserver.dto.TagTemplate;
 import com.vpm.projectserver.dto.request.CreateProjectRequest;
 import com.vpm.projectserver.entity.Project;
 import com.vpm.projectserver.entity.Tag;
-import com.vpm.projectserver.entity.mapper.ProjectMapper;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +43,9 @@ class ProjectServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize test data
+        /*
+         * Initialize test data
+         */
         testTag = new Tag();
         testTag.setId(1L);
         testTag.setName("Java");
