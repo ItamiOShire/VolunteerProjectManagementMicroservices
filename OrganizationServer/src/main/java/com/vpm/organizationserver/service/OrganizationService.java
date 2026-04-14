@@ -43,31 +43,24 @@ public class OrganizationService {
             long organizationUserId
     ) throws NoSuchOrganizationException {
 
-        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
-
-        if (organization.isEmpty()) {
-            log.error("Organization with id {} not found", organizationUserId);
-            throw new NoSuchOrganizationException(organizationUserId);
-        }
-
+        Organization organization = getOrganizationByUserId(
+                organizationUserId
+        );
 
         return OrganizationMapper
-                .toOrganizationProfileResponse(organization.get());
+                .toOrganizationProfileResponse(organization);
     }
 
     public OrganizationDescriptionResponse getOrganizationDescription(
             long organizationUserId
     ) throws NoSuchOrganizationException {
 
-        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
-
-        if (organization.isEmpty()) {
-            log.error("Organization with id {} not found", organizationUserId);
-            throw new NoSuchOrganizationException(organizationUserId);
-        }
+        Organization organization = getOrganizationByUserId(
+                organizationUserId
+        );
 
         Optional<OrganizationDescription> organizationDescription =
-                organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization.get());
+                organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization);
 
         if (organizationDescription.isEmpty()) {
             log.warn("Organization with id {} does not have a description", organizationUserId);
@@ -76,7 +69,7 @@ public class OrganizationService {
         }
 
         return  OrganizationMapper
-                .toOrganizationDescriptionResponse(organization.get());
+                .toOrganizationDescriptionResponse(organization);
 
     }
 
@@ -91,20 +84,15 @@ public class OrganizationService {
 
         log.info("Creating organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
-
-        if (organization.isEmpty()) {
-            log.error("Organization with id {} not found", organizationUserId);
-            throw new NoSuchOrganizationException(organizationUserId);
-        }
+        Organization organization = getOrganizationByUserId(
+                organizationUserId
+        );
 
         OrganizationDescription organizationDescription = OrganizationDescriptionMapper
-                .fromCreateDescriptionRequest(request, organization.get());
+                .fromCreateDescriptionRequest(request, organization);
 
         organizationDescriptionRepository.save(organizationDescription);
     }
-
-    // TODO: make logger class for similar logs and handler for empty entities
 
     /*
      * PUT / PATCH HTTP methods
@@ -117,31 +105,19 @@ public class OrganizationService {
 
         log.info("Updating organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
+        Organization organization = getOrganizationByUserId(
+                organizationUserId
+        );
 
-        if (organization.isEmpty()) {
+        OrganizationDescription organizationDescription = getOrganizationDescriptionByOrganization(
+                organization
+        );
 
-            log.error("Organization with id {} not found", organizationUserId);
-            throw new NoSuchOrganizationException(organizationUserId);
-
-        }
-
-        Optional<OrganizationDescription> organizationDescription =
-                organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization.get());
-
-
-        if (organizationDescription.isEmpty()) {
-            log.error("Cannot update. Organization with id {} does not have a description", organizationUserId);
-            throw new NoSuchOrganizationDescriptionException(organizationUserId);
-        }
-
-        OrganizationDescription descriptionToUpdate = organizationDescription.get();
-
-        descriptionToUpdate.update(
+        organizationDescription.update(
                 request
         );
 
-        organizationDescriptionRepository.save(descriptionToUpdate);
+        organizationDescriptionRepository.save(organizationDescription);
     }
 
     public void patchOrganizationDescription(
@@ -151,30 +127,52 @@ public class OrganizationService {
 
         log.info("Patching organization description for organization with id {}", organizationUserId);
 
-        Optional<Organization> organization = organizationRepository.findByUserId(organizationUserId);
+        Organization organization = getOrganizationByUserId(
+                organizationUserId
+        );
 
-        if (organization.isEmpty()) {
-            log.error("Organization with id {} not found", organizationUserId);
-            throw new NoSuchOrganizationException(organizationUserId);
-        }
+        OrganizationDescription organizationDescription = getOrganizationDescriptionByOrganization(
+                organization
+        );
 
-        Optional<OrganizationDescription> organizationDescription =
-                organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization.get());
-
-        if (organizationDescription.isEmpty()) {
-            log.error("Cannot patch. Organization with id {} does not have a description", organizationUserId);
-            throw new NoSuchOrganizationDescriptionException(organizationUserId);
-        }
-
-        OrganizationDescription descriptionToPatch = organizationDescription.get();
-
-        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(updates);
+        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(organizationDescription);
 
         log.info("Patching: {}", updates);
 
         beanWrapper.setPropertyValues(updates);
 
-        organizationDescriptionRepository.save(descriptionToPatch);
+        organizationDescriptionRepository.save(organizationDescription);
+    }
+
+    private Organization getOrganizationByUserId(long organizationUserId) throws NoSuchOrganizationException {
+        return organizationRepository
+                .findByUserId(organizationUserId)
+                .orElseThrow( () -> {
+                            OrganizationServiceLogger.organizationNotFound(organizationUserId);
+                            return new NoSuchOrganizationException(organizationUserId);
+                        }
+                );
+    }
+
+    private OrganizationDescription getOrganizationDescriptionByOrganization(Organization organization) throws NoSuchOrganizationDescriptionException {
+        return organizationDescriptionRepository
+                        .findOrganizationDescriptionByOrganization(organization)
+                        .orElseThrow( () -> {
+                            OrganizationServiceLogger.organizationDescriptionNotFound(organization.getUserId());
+                            return new NoSuchOrganizationDescriptionException(organization.getId());
+                        });
+    }
+
+    private static class OrganizationServiceLogger {
+
+        public static void organizationNotFound(long id) {
+            log.error("Organization with user id {} not found", id);
+        }
+
+        public static void organizationDescriptionNotFound(long id) {
+            log.error("Cannot perform action. Organization with user id {} does not have a description", id);
+        }
+
     }
 
 }
