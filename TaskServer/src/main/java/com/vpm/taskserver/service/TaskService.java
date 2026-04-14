@@ -122,18 +122,13 @@ public class TaskService {
             CreateTaskRequest request
     ) throws NoSuchPriorityException {
 
-        Optional<Priority> priority = priorityService.getPriorityById(
+        Priority priority = getPriorityById(
                 request.getPriorityId()
         );
 
-        if (priority.isEmpty()) {
-            TaskServiceLogger.priorityNotFound(request.getPriorityId());
-            throw new NoSuchPriorityException(request.getPriorityId());
-        }
-
         Task task = TaskMapper.fromCreateTaskRequest(
                 request,
-                priority.get()
+                priority
         );
 
         taskRepository.save(task);
@@ -149,29 +144,20 @@ public class TaskService {
             long taskId
     ) throws NoSuchTaskException, NoSuchPriorityException {
 
-        Optional<Priority> priority = priorityService.getPriorityById(
+        Priority priority = getPriorityById(
                 request.getPriorityId()
         );
 
-        if (priority.isEmpty()) {
-            TaskServiceLogger.priorityNotFound(request.getPriorityId());
-            throw new NoSuchPriorityException(request.getPriorityId());
-        }
-
-        Optional<Task> task = taskRepository.findById(taskId);
-
-        if (task.isEmpty()) {
-            TaskServiceLogger.taskNotFound(taskId);
-            throw new NoSuchTaskException(taskId);
-        }
-
-        Task taskToUpdate = task.get();
-        taskToUpdate.update(
-                request,
-                priority.get()
+        Task task = getTaskById(
+                taskId
         );
 
-        taskRepository.save(taskToUpdate);
+        task.update(
+                request,
+                priority
+        );
+
+        taskRepository.save(task);
     }
 
     /**
@@ -196,31 +182,21 @@ public class TaskService {
             long taskId
     )  throws NoSuchTaskException, NoSuchPriorityException, BeansException {
 
-        Optional<Task> task = taskRepository.findById(taskId);
+        Task task = getTaskById(
+                taskId
+        );
 
-
-        if (task.isEmpty()) {
-            TaskServiceLogger.taskNotFound(taskId);
-            throw new NoSuchTaskException(taskId);
-        }
-
-        Task taskToPatch = task.get();
-        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(taskToPatch);
+        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(task);
 
         if (updates.containsKey("priorityId")) {
 
             Long priorityId = (Long) updates.get("priorityId");
 
-            Optional<Priority> priority = priorityService.getPriorityById(priorityId);
+            Priority priority = getPriorityById(
+                    priorityId
+            );
 
-            if (priority.isEmpty()) {
-
-                TaskServiceLogger.priorityNotFound(priorityId);
-                throw new NoSuchPriorityException(priorityId);
-
-            }
-
-            beanWrapper.setPropertyValue("priority", priority.get());
+            beanWrapper.setPropertyValue("priority", priority);
 
             updates.remove("priorityId");
 
@@ -228,31 +204,26 @@ public class TaskService {
 
         beanWrapper.setPropertyValues(updates);
 
-        taskRepository.save(taskToPatch);
+        taskRepository.save(task);
     }
 
     /*
      * DELETE HTTP method
+     *
+     * To delete task, task cannot have volunteer assigned to it
      */
-
-    // To delete task, task cannot have volunteer assigned to it
 
     public void deleteTask(
             long taskId
     ) throws NoSuchTaskException {
 
-        Optional<Task>  task = taskRepository.findById(taskId);
+        Task task = getTaskById(
+                taskId
+        );
 
-        if (task.isEmpty()) {
-
-            TaskServiceLogger.taskNotFound(taskId);
-            throw new NoSuchTaskException(taskId);
-
-        }
-
-        if (!task.get().getVolunteerTasks().isEmpty()) {
+        if (!task.getVolunteerTasks().isEmpty()) {
             
-            String volunteersInfo = TaskServiceLogger.formatVolunteerTasksList(task.get().getVolunteerTasks());
+            String volunteersInfo = TaskServiceLogger.formatVolunteerTasksList(task.getVolunteerTasks());
             TaskServiceLogger.taskIndelible(volunteersInfo);
             throw new AssignedVolunteersException(volunteersInfo);
             
@@ -296,6 +267,40 @@ public class TaskService {
             }
             return sb.toString();
         }
+
+    }
+
+    /*
+     * Helper methods
+     */
+
+    private Task getTaskById(
+            long taskId
+    ) throws NoSuchTaskException {
+
+        return taskRepository
+                .findById(taskId)
+                .orElseThrow(
+                        () -> {
+                            TaskServiceLogger.taskNotFound(taskId);
+                            return new NoSuchTaskException(taskId);
+                        }
+                );
+
+    }
+
+    private Priority getPriorityById(
+            long priorityId
+    ) throws NoSuchPriorityException {
+
+        return priorityService
+                .getPriorityById(priorityId)
+                .orElseThrow(
+                        () -> {
+                            TaskServiceLogger.priorityNotFound(priorityId);
+                            return new NoSuchPriorityException(priorityId);
+                        }
+                );
 
     }
 
