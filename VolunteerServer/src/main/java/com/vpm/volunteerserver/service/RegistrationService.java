@@ -13,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 @Service
 @Slf4j
 public class RegistrationService {
@@ -26,12 +30,19 @@ public class RegistrationService {
         this.authClient = authClient;
     }
 
+    private final Map<Class<? extends Throwable>, Supplier<String>> errors = new HashMap<>(
+            Map.of(
+                    VolunteerAlreadyExistsException.class, () -> "Volunteer with this email already exists."
+            )
+    );
+
     private void validateException(Exception e) {
-        if (e instanceof VolunteerAlreadyExistsException) {
-            log.error("Error during registration: {}", e.getMessage());
-        } else {
-            log.error("An unexpected error occurred: {}", e.getMessage());
-        }
+        Supplier<String> error = errors
+                .getOrDefault(
+                        e.getClass(),
+                        () -> "Unexpected error during volunteer registration: "
+                );
+        log.error("Error during volunteer registration: {}, {}", error.get(), e.getMessage());
     }
 
     public void registerVolunteer(

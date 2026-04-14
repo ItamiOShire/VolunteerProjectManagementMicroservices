@@ -17,8 +17,8 @@ import java.util.Set;
 public class RequestFilter extends OncePerRequestFilter {
 
     /*
-     * Set of required headers - those headers are signature of authorized request
-     * Gateway adds those headers if user is authorized
+     * Set of required headers - those headers are signature of authorized and authenticated request
+     * Gateway adds those headers if user is authenticated
      */
     private final Set<String> requiredHeaders = new HashSet<>(
             Set.of(

@@ -27,19 +27,6 @@ public class VolunteerService {
     }
 
     /*
-     * Logger helper class
-     */
-
-    private static class Logger {
-
-        public static void VolunteerNotFound(long volunteerUserId) {
-            log.error("Volunteer with user id {} not found", volunteerUserId);
-        }
-
-    }
-
-
-    /*
      * GET HTTP method
      */
 
@@ -47,12 +34,9 @@ public class VolunteerService {
             Long volunteerUserId
     ) throws NoSuchVolunteerException {
 
-        Volunteer volunteer =
-                volunteerRepository.findByUserId(volunteerUserId)
-                        .orElseThrow(() -> {
-                            Logger.VolunteerNotFound(volunteerUserId);
-                            return new NoSuchVolunteerException(volunteerUserId);}
-                        );
+        Volunteer volunteer = getVolunteerByUserId(
+                volunteerUserId
+        );
 
         return VolunteerMapper.toVolunteerProfileResponse(
                 volunteer
@@ -72,12 +56,10 @@ public class VolunteerService {
 
         log.info("Patching Volunteer Profile with user id {}", volunteerUserId);
 
-        Volunteer volunteer =
-                volunteerRepository.findByUserId(volunteerUserId)
-                        .orElseThrow(() -> {
-                            Logger.VolunteerNotFound(volunteerUserId);
-                            return new NoSuchVolunteerException(volunteerUserId);}
-                        );
+        Volunteer volunteer = getVolunteerByUserId(
+                volunteerUserId
+        );
+
 
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(volunteer);
 
@@ -86,6 +68,30 @@ public class VolunteerService {
         beanWrapper.setPropertyValues(updates);
 
         volunteerRepository.save(volunteer);
+
+    }
+
+    /*
+     * Logger helper class
+     */
+
+    private static class Logger {
+
+        public static void VolunteerNotFound(long volunteerUserId) {
+            log.error("Volunteer with user id {} not found", volunteerUserId);
+        }
+
+    }
+
+    private Volunteer getVolunteerByUserId(
+            long volunteerUserId
+    ) throws NoSuchVolunteerException {
+
+        return volunteerRepository.findByUserId(volunteerUserId)
+                .orElseThrow(() -> {
+                    Logger.VolunteerNotFound(volunteerUserId);
+                    return new NoSuchVolunteerException(volunteerUserId);}
+                );
 
     }
 
