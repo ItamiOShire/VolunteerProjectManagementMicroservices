@@ -43,7 +43,7 @@ public class TaskService {
 
     public List<TaskTemplate> getAllTasks() {
 
-        return taskRepository.findAll().stream()
+        return taskRepository.getAllTasksWithPriority().stream()
                 .map(TaskMapper::toTaskTemplate)
                 .toList();
 
@@ -118,7 +118,7 @@ public class TaskService {
 
     // TODO: replace Optional<Object> with Object and .orElseThrow with Optional API in every service and module!
 
-    public void createTask(
+    public TaskTemplate createTask(
             CreateTaskRequest request
     ) throws NoSuchPriorityException {
 
@@ -131,7 +131,10 @@ public class TaskService {
                 priority
         );
 
-        taskRepository.save(task);
+        return TaskMapper
+                .toTaskTemplate(
+                        taskRepository.save(task)
+                );
 
     }
 
@@ -139,7 +142,7 @@ public class TaskService {
      * PUT / PATCH HTTP methods
      */
 
-    public void updateTask(
+    public TaskTemplate updateTask(
             UpdateTaskRequest request,
             long taskId
     ) throws NoSuchTaskException, NoSuchPriorityException {
@@ -157,7 +160,10 @@ public class TaskService {
                 priority
         );
 
-        taskRepository.save(task);
+        return TaskMapper
+                .toTaskTemplate(
+                        taskRepository.save(task)
+                );
     }
 
     /**
@@ -177,7 +183,7 @@ public class TaskService {
      * @throws BeansException Thrown when key in updates map is not equal to any field name in Task entity or when value type is not compatible with field type
      */
 
-    public void patchTask(
+    public TaskTemplate patchTask(
             Map<String, Object> updates,
             long taskId
     )  throws NoSuchTaskException, NoSuchPriorityException, BeansException {
@@ -204,7 +210,9 @@ public class TaskService {
 
         beanWrapper.setPropertyValues(updates);
 
-        taskRepository.save(task);
+        return TaskMapper.toTaskTemplate(
+                taskRepository.save(task)
+        );
     }
 
     /*
@@ -217,7 +225,7 @@ public class TaskService {
             long taskId
     ) throws NoSuchTaskException {
 
-        Task task = getTaskById(
+        Task task = getTaskByIdWithVolunteers(
                 taskId
         );
 
@@ -279,7 +287,7 @@ public class TaskService {
     ) throws NoSuchTaskException {
 
         return taskRepository
-                .findById(taskId)
+                .getTaskById(taskId)
                 .orElseThrow(
                         () -> {
                             TaskServiceLogger.taskNotFound(taskId);
@@ -287,6 +295,19 @@ public class TaskService {
                         }
                 );
 
+    }
+
+    private Task getTaskByIdWithVolunteers(
+            long taskId
+    ) throws NoSuchTaskException {
+        return taskRepository
+                .getTaskByIdWithVolunteers(taskId)
+                .orElseThrow(
+                        () -> {
+                            TaskServiceLogger.taskNotFound(taskId);
+                            return new NoSuchTaskException(taskId);
+                        }
+                );
     }
 
     private Priority getPriorityById(

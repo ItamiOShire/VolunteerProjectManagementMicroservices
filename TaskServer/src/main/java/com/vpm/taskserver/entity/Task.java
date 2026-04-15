@@ -47,7 +47,10 @@ public class Task {
     )
     private long projectId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.MERGE
+    )
     @JoinColumn(
             name = "priority_id",
             nullable = false
@@ -56,13 +59,15 @@ public class Task {
 
     @OneToMany(
             mappedBy = "task",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.PERSIST
     )
     private List<VolunteerTask>  volunteerTasks;
 
     @OneToMany(
             mappedBy = "task",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.PERSIST
     )
     private List<TaskSuggestion> taskSuggestions;
 

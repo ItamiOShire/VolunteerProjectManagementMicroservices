@@ -2,11 +2,13 @@ package com.vpm.taskserver.controller;
 
 import com.vpm.taskserver.dto.request.CreateTaskRequest;
 import com.vpm.taskserver.dto.request.UpdateTaskRequest;
+import com.vpm.taskserver.dto.template.TaskTemplate;
 import com.vpm.taskserver.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Map;
 
 
@@ -35,10 +37,13 @@ public class TaskController {
             @RequestBody CreateTaskRequest request
     ) {
 
-        taskService.createTask(request);
+        TaskTemplate created = taskService.createTask(request);
 
         return ResponseEntity
-                .ok().build();
+                .created(
+                        URI.create("/api/tasks/" + created.getItemId())
+                )
+                .body(created);
     }
 
     @PutMapping("/{id}")
@@ -47,13 +52,15 @@ public class TaskController {
             @RequestBody UpdateTaskRequest request
     ) {
 
-        taskService.updateTask(
+        TaskTemplate updated = taskService.updateTask(
                 request,
                 taskId
         );
 
         return ResponseEntity
-                .ok().build();
+                .ok(
+                        updated
+                );
 
     }
 
@@ -63,13 +70,15 @@ public class TaskController {
             Map<String, Object> updates
     ) {
 
-        taskService.patchTask(
+        TaskTemplate patched = taskService.patchTask(
                 updates,
                 taskId
         );
 
         return ResponseEntity
-                .ok().build();
+                .ok(
+                        patched
+                );
 
     }
 
