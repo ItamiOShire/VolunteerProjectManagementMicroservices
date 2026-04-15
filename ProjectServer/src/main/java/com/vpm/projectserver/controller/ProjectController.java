@@ -6,8 +6,10 @@ import com.vpm.projectserver.dto.request.CreateProjectRequest;
 import com.vpm.projectserver.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Map;
 
 /**
@@ -46,26 +48,27 @@ public class ProjectController {
 
     @PostMapping()
     public ResponseEntity<?> createProject(
-            @RequestBody CreateProjectRequest request
+            @Validated @RequestBody CreateProjectRequest request
     ) {
 
-        projectService.createProject(request);
+        ProjectTemplate created = projectService.createProject(request);
 
         return ResponseEntity
-                .ok().build();
+                .created(URI.create("/api/projects/" + created.getItemId()))
+                .body(created);
     }
 
     // TODO: consider making another dto for updating or patching project
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProject(
-            @RequestBody ProjectTemplate projectTemplate
+            @Validated @RequestBody ProjectTemplate projectTemplate
     ) {
 
-        projectService.updateProject(projectTemplate);
+        ProjectTemplate updated = projectService.updateProject(projectTemplate);
 
         return ResponseEntity
-                .ok().build();
+                .ok(updated);
     }
 
     @PatchMapping("/{id}")
@@ -74,13 +77,13 @@ public class ProjectController {
             @RequestBody Map<String, Object> updates
     ) {
 
-        projectService.patchProject(
+        ProjectTemplate patched = projectService.patchProject(
                 updates,
                 projectId
         );
 
         return ResponseEntity
-                .ok().build();
+                .ok(patched);
     }
 
     @DeleteMapping("/{id}")

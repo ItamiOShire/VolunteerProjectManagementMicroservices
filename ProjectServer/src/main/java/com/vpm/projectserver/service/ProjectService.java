@@ -45,7 +45,7 @@ public class ProjectService {
      */
 
     public List<ProjectTemplate> getAllProjects() {
-        return projectRepository.findAll().stream()
+        return projectRepository.getAllProjectsWithTags().stream()
                 .map(ProjectMapper::mapToProjectTemplateFromProjectEntity)
                 .toList();
     }
@@ -54,15 +54,11 @@ public class ProjectService {
             long id
     ) throws NoSuchProjectException {
 
-        Optional<Project> project = projectRepository.findById(id);
+        Project project = findProjectById(id);
 
-        if(project.isEmpty()){
-            log.error("Project with id {} not found", id);
-            throw new NoSuchProjectException(id);
-        }
 
         return  ProjectMapper.mapToProjectTemplateFromProjectEntity(
-                project.get()
+                project
         );
 
     }
@@ -102,7 +98,7 @@ public class ProjectService {
      * POST HTTP method
      */
 
-    public void createProject(
+    public ProjectTemplate createProject(
             CreateProjectRequest request
     ) {
 
@@ -116,28 +112,26 @@ public class ProjectService {
 
         Project project = ProjectMapper.fromCreateProjectRequest(request, tags);
 
-        projectRepository.save(project);
+        project = projectRepository.save(project);
 
         log.info("Project with id {} created", project.getId());
 
+        return  ProjectMapper.mapToProjectTemplateFromProjectEntity(project);
     }
 
     /*
      * PUT / PATCH HTTP method
      */
 
-    public void updateProject(
+    public ProjectTemplate updateProject(
             ProjectTemplate projectTemplate
     ) throws NoSuchProjectException {
 
         log.info("Updating project with id {}", projectTemplate.getItemId());
 
-        Optional<Project> project = projectRepository.findById(projectTemplate.getItemId());
-
-        if (project.isEmpty()){
-            log.error("Project with id {} does not exist", projectTemplate.getItemId());
-            throw new NoSuchProjectException(projectTemplate.getItemId());
-        }
+        Project project = findProjectById(
+                projectTemplate.getItemId()
+        );
 
         Set<Tag> tags = tagService.getTagsById(
                 projectTemplate.getTags().stream()
@@ -149,32 +143,29 @@ public class ProjectService {
             log.warn("No tags were selected to project");
         }
 
-        Project projectToUpdate = project.get();
-
-        projectToUpdate.update(
+        project.update(
                 projectTemplate,
                 tags
         );
 
+        return ProjectMapper.mapToProjectTemplateFromProjectEntity(
+                projectRepository.save(project)
+        );
+
     }
 
-    public void patchProject (
+    public ProjectTemplate patchProject (
             Map<String, Object> updates,
             long projectId
     ) throws NoSuchProjectException {
 
         log.info("Patching project with id {}", projectId);
 
-        Optional<Project> project = projectRepository.findById(projectId);
+        Project project = findProjectById(
+                projectId
+        );
 
-        if (project.isEmpty()){
-            log.error("Project with id {} does not exist", projectId);
-            throw new NoSuchProjectException(projectId);
-        }
-
-        Project projectToPatch = project.get();
-
-        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(projectToPatch);
+        BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(project);
 
         if (updates.containsKey("tags")) {
 
@@ -193,8 +184,9 @@ public class ProjectService {
 
         beanWrapper.setPropertyValues(updates);
 
-        projectRepository.save(projectToPatch);
-
+        return ProjectMapper.mapToProjectTemplateFromProjectEntity(
+                projectRepository.save(project)
+        );
     }
 
     /*
@@ -213,6 +205,23 @@ public class ProjectService {
         }
 
         projectRepository.deleteById(projectId);
+
+    }
+
+    /*
+     * Helper methods
+     */
+
+    private Project findProjectById(
+            long projectId
+    ) throws NoSuchProjectException {
+
+        return projectRepository
+                .getProjectById(projectId)
+                .orElseThrow( () -> {
+                    log.error("Project with id {} does not exist", projectId);
+                    return new NoSuchProjectException(projectId);
+                });
 
     }
 

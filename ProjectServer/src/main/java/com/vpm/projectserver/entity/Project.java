@@ -64,7 +64,8 @@ public class Project {
 
     @OneToMany(
             mappedBy = "project", // name of field in other table (with ManyToOne)
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.PERSIST
     )
     private List<ProjectVolunteer> volunteers = new ArrayList<>();
 
