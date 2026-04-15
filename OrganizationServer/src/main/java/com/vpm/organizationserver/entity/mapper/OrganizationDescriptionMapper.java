@@ -1,6 +1,7 @@
 package com.vpm.organizationserver.entity.mapper;
 
 import com.vpm.organizationserver.dto.request.CreateDescriptionRequest;
+import com.vpm.organizationserver.dto.response.OrganizationDescriptionResponse;
 import com.vpm.organizationserver.entity.Organization;
 import com.vpm.organizationserver.entity.OrganizationDescription;
 
@@ -15,6 +16,16 @@ public class OrganizationDescriptionMapper {
                 .description(request.getDescription())
                 .imagePath(request.getImagePath())
                 .organization(organization)
+                .build();
+    }
+
+    public static OrganizationDescriptionResponse toOrganizationDescriptionResponse(
+            OrganizationDescription organizationDescription
+    ) {
+        return OrganizationDescriptionResponse.builder()
+                .organizationName(organizationDescription.getOrganization().getOrganizationName())
+                .description(organizationDescription.getDescription())
+                .imagePath(organizationDescription.getImagePath())
                 .build();
     }
 
