@@ -1,6 +1,7 @@
 package com.vpm.authenticationserver.integration.service;
 
 
+import com.vpm.authenticationserver.config.IntegrationTestsDBConfig;
 import com.vpm.authenticationserver.exception.user.UserAlreadyExistsException;
 import com.vpm.authenticationserver.service.RegistrationService;
 import com.vpm.common.dto.request.AuthRegistrationRequest;
@@ -10,33 +11,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+
 
 import static  org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Testcontainers
+/*
+ * By this import, you enable Testcontainers -> see this configuration class
+ */
+@Import(IntegrationTestsDBConfig.class)
 public class RegistrationServiceTest {
-
-    @Container
-    static PostgreSQLContainer<?> database =
-            new PostgreSQLContainer<>("postgres:17.9")
-                    .withDatabaseName("Users")
-                    .withPassword("password")
-                    .withUsername("admin");
-
-
-    @DynamicPropertySource
-    static void configureProperties (DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", database::getJdbcUrl);
-        registry.add("spring.datasource.password", database::getPassword);
-        registry.add("spring.datasource.username", database::getUsername);
-    }
 
     @Autowired
     private RegistrationService registrationService;

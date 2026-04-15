@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import static  org.junit.jupiter.api.Assertions.*;
 
@@ -20,9 +19,6 @@ public class AuthenticationServiceTest {
 
     @Autowired
     private AuthenticationService authenticationService;
-
-    @Autowired
-    private PostgreSQLContainer<?> database;
 
 
     /*
