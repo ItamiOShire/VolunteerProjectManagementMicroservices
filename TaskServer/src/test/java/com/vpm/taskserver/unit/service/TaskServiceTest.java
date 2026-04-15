@@ -1,4 +1,4 @@
-package com.vpm.taskserver.service;
+package com.vpm.taskserver.unit.service;
 
 import com.vpm.taskserver.dto.request.CreateTaskRequest;
 import com.vpm.taskserver.dto.request.UpdateTaskRequest;
@@ -11,6 +11,8 @@ import com.vpm.taskserver.exception.priority.NoSuchPriorityException;
 import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
 import com.vpm.taskserver.repository.TaskRepository;
+import com.vpm.taskserver.service.PriorityService;
+import com.vpm.taskserver.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -95,23 +97,23 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.findAll()).thenReturn(Arrays.asList(testTask, task2));
+            when(taskRepository.getAllTasksWithPriority()).thenReturn(Arrays.asList(testTask, task2));
             List<TaskTemplate> result = taskService.getAllTasks();
 
             assertEquals(2, result.size());
             assertEquals(1L, result.get(0).getItemId());
             assertEquals(2L, result.get(1).getItemId());
-            verify(taskRepository, times(1)).findAll();
+            verify(taskRepository, times(1)).getAllTasksWithPriority();
         }
 
         @Test
         @DisplayName("Should return empty list when no tasks exist")
         void testGetAllTasks_EmptyList() {
-            when(taskRepository.findAll()).thenReturn(Collections.emptyList());
+            when(taskRepository.getAllTasksWithPriority()).thenReturn(Collections.emptyList());
             List<TaskTemplate> result = taskService.getAllTasks();
 
             assertTrue(result.isEmpty());
-            verify(taskRepository, times(1)).findAll();
+            verify(taskRepository, times(1)).getAllTasksWithPriority();
         }
 
         @Test
@@ -225,8 +227,10 @@ class TaskServiceTest {
                     .thenReturn(Optional.of(testPriority));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.createTask(createTaskRequest);
+            TaskTemplate result = taskService.createTask(createTaskRequest);
 
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
             verify(priorityService, times(1)).getPriorityById(createTaskRequest.getPriorityId());
             verify(taskRepository, times(1)).save(any(Task.class));
         }
@@ -252,13 +256,15 @@ class TaskServiceTest {
             long taskId = 1L;
             when(priorityService.getPriorityById(updateTaskRequest.getPriorityId()))
                     .thenReturn(Optional.of(testPriority));
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.updateTask(updateTaskRequest, taskId);
+            TaskTemplate result = taskService.updateTask(updateTaskRequest, taskId);
 
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
             verify(priorityService, times(1)).getPriorityById(updateTaskRequest.getPriorityId());
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, times(1)).save(any(Task.class));
         }
 
@@ -268,7 +274,7 @@ class TaskServiceTest {
             long taskId = 1L;
             when(priorityService.getPriorityById(updateTaskRequest.getPriorityId()))
                     .thenReturn(Optional.of(testPriority));
-            when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.empty());
 
             assertThrows(NoSuchTaskException.class, () -> taskService.updateTask(updateTaskRequest, taskId));
             verify(taskRepository, never()).save(any(Task.class));
@@ -303,13 +309,15 @@ class TaskServiceTest {
                     .name("High")
                     .build();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(priorityService.getPriorityById(1L)).thenReturn(Optional.of(newPriority));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.patchTask(updates, taskId);
+            TaskTemplate result = taskService.patchTask(updates, taskId);
 
-            verify(taskRepository, times(1)).findById(taskId);
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(priorityService, times(1)).getPriorityById(1L);
             verify(taskRepository, times(1)).save(any(Task.class));
         }
@@ -322,12 +330,14 @@ class TaskServiceTest {
             updates.put("title", "Patched Title");
             updates.put("description", "Patched Description");
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.patchTask(updates, taskId);
+            TaskTemplate result = taskService.patchTask(updates, taskId);
 
-            verify(taskRepository, times(1)).findById(taskId);
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(priorityService, never()).getPriorityById(anyLong());
             verify(taskRepository, times(1)).save(any(Task.class));
         }
@@ -339,10 +349,10 @@ class TaskServiceTest {
             Map<String, Object> updates = new HashMap<>();
             updates.put("title", "Patched Title");
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.empty());
 
             assertThrows(NoSuchTaskException.class, () -> taskService.patchTask(updates, taskId));
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, never()).save(any(Task.class));
         }
 
@@ -353,11 +363,11 @@ class TaskServiceTest {
             Map<String, Object> updates = new HashMap<>();
             updates.put("priorityId", 999L);
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(priorityService.getPriorityById(999L)).thenReturn(Optional.empty());
 
             assertThrows(NoSuchPriorityException.class, () -> taskService.patchTask(updates, taskId));
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(priorityService, times(1)).getPriorityById(999L);
             verify(taskRepository, never()).save(any(Task.class));
         }
@@ -368,12 +378,14 @@ class TaskServiceTest {
             long taskId = 1L;
             Map<String, Object> updates = new HashMap<>();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.patchTask(updates, taskId);
+            TaskTemplate result = taskService.patchTask(updates, taskId);
 
-            verify(taskRepository, times(1)).findById(taskId);
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, times(1)).save(any(Task.class));
         }
     }
@@ -396,10 +408,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskToDelete));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskToDelete));
             taskService.deleteTask(taskId);
 
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, times(1)).deleteById(taskId);
         }
 
@@ -407,10 +419,10 @@ class TaskServiceTest {
         @DisplayName("Should throw exception when task not found during deletion")
         void testDeleteTask_TaskNotFound() {
             long taskId = 1L;
-            when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.empty());
 
             assertThrows(NoSuchTaskException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
 
@@ -433,10 +445,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskWithVolunteers));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskWithVolunteers));
 
             assertThrows(AssignedVolunteersException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
 
@@ -464,10 +476,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskWithMultipleVolunteers));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskWithMultipleVolunteers));
 
             assertThrows(AssignedVolunteersException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).findById(taskId);
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
     }
@@ -480,11 +492,13 @@ class TaskServiceTest {
         void testCreateTaskAndUpdateTask_IntegrationScenario() throws NoSuchTaskException, NoSuchPriorityException {
             when(priorityService.getPriorityById(1L)).thenReturn(Optional.of(testPriority));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
-            when(taskRepository.findById(1L)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(1L)).thenReturn(Optional.of(testTask));
 
-            taskService.createTask(createTaskRequest);
-            taskService.updateTask(updateTaskRequest, 1L);
+            TaskTemplate createdResult = taskService.createTask(createTaskRequest);
+            TaskTemplate updatedResult = taskService.updateTask(updateTaskRequest, 1L);
 
+            assertNotNull(createdResult);
+            assertNotNull(updatedResult);
             verify(priorityService, times(2)).getPriorityById(1L);
             verify(taskRepository, times(2)).save(any(Task.class));
         }
@@ -503,13 +517,15 @@ class TaskServiceTest {
                     .name("Low")
                     .build();
 
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(testTask));
+            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(testTask));
             when(priorityService.getPriorityById(2L)).thenReturn(Optional.of(newPriority));
             when(taskRepository.save(any(Task.class))).thenReturn(testTask);
 
-            taskService.patchTask(updates, taskId);
+            TaskTemplate result = taskService.patchTask(updates, taskId);
 
-            verify(taskRepository, times(1)).findById(taskId);
+            assertNotNull(result);
+            assertEquals(testTask.getId(), result.getItemId());
+            verify(taskRepository, times(1)).getTaskById(taskId);
             verify(priorityService, times(1)).getPriorityById(2L);
             verify(taskRepository, times(1)).save(any(Task.class));
         }
