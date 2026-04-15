@@ -1,5 +1,6 @@
-package com.vpm.projectserver.controller;
+package com.vpm.projectserver.unit.controller;
 
+import com.vpm.projectserver.controller.VolunteersProjectsController;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
 import com.vpm.projectserver.service.ProjectService;
@@ -37,12 +38,12 @@ class VolunteersProjectsControllerTest {
     @BeforeEach
     void setUp() {
         TagTemplate tagTemplate1 = TagTemplate.builder()
-                .tagId(1L)
+                .itemId(1L)
                 .tagName("Java")
                 .build();
 
         testProjectTemplate = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("Volunteer Project 1")
                 .projectDescription("First volunteer project")
                 .imgPath("/path/to/image1.jpg")
@@ -51,12 +52,12 @@ class VolunteersProjectsControllerTest {
                 .build();
 
         TagTemplate tagTemplate2 = TagTemplate.builder()
-                .tagId(2L)
+                .itemId(2L)
                 .tagName("Python")
                 .build();
 
         testProjectTemplate2 = ProjectTemplate.builder()
-                .projectId(2L)
+                .itemId(2L)
                 .projectTitle("Volunteer Project 2")
                 .projectDescription("Second volunteer project")
                 .imgPath("/path/to/image2.jpg")
@@ -65,12 +66,12 @@ class VolunteersProjectsControllerTest {
                 .build();
 
         TagTemplate tagTemplate3 = TagTemplate.builder()
-                .tagId(3L)
+                .itemId(3L)
                 .tagName("JavaScript")
                 .build();
 
         testProjectTemplate3 = ProjectTemplate.builder()
-                .projectId(3L)
+                .itemId(3L)
                 .projectTitle("Volunteer Project 3")
                 .projectDescription("Third volunteer project")
                 .imgPath("/path/to/image3.jpg")
@@ -102,10 +103,10 @@ class VolunteersProjectsControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].projectId").value(1L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
                 .andExpect(jsonPath("$[0].projectTitle").value("Volunteer Project 1"))
-                .andExpect(jsonPath("$[1].projectId").value(2L))
-                .andExpect(jsonPath("$[2].projectId").value(3L));
+                .andExpect(jsonPath("$[1].itemId").value(2L))
+                .andExpect(jsonPath("$[2].itemId").value(3L));
 
         verify(projectService, times(1)).getAllVolunteerProjects(volunteerId);
     }
@@ -144,7 +145,7 @@ class VolunteersProjectsControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].projectId").value(1L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
                 .andExpect(jsonPath("$[0].projectTitle").value("Volunteer Project 1"));
 
         verify(projectService, times(1)).getAllVolunteerProjects(volunteerId);
@@ -186,7 +187,7 @@ class VolunteersProjectsControllerTest {
                 .header("X-User-Id", 12)
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].projectId").exists())
+                .andExpect(jsonPath("$[0].itemId").exists())
                 .andExpect(jsonPath("$[0].projectTitle").exists())
                 .andExpect(jsonPath("$[0].projectDescription").exists())
                 .andExpect(jsonPath("$[0].imgPath").exists())
@@ -259,15 +260,15 @@ class VolunteersProjectsControllerTest {
         long volunteerId = 200L;
 
         ProjectTemplate projectWithMultipleTags = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("Multi-tag Project")
                 .projectDescription("Project with multiple tags")
                 .imgPath("/path/to/image.jpg")
                 .organizationName("Organization")
                 .tags(List.of(
-                        TagTemplate.builder().tagId(1L).tagName("Java").build(),
-                        TagTemplate.builder().tagId(2L).tagName("Python").build(),
-                        TagTemplate.builder().tagId(3L).tagName("JavaScript").build()
+                        TagTemplate.builder().itemId(1L).tagName("Java").build(),
+                        TagTemplate.builder().itemId(2L).tagName("Python").build(),
+                        TagTemplate.builder().itemId(3L).tagName("JavaScript").build()
                 ))
                 .build();
 
@@ -281,9 +282,9 @@ class VolunteersProjectsControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tags", hasSize(3)))
-                .andExpect(jsonPath("$[0].tags[0].tagId").value(1L))
-                .andExpect(jsonPath("$[0].tags[1].tagId").value(2L))
-                .andExpect(jsonPath("$[0].tags[2].tagId").value(3L));
+                .andExpect(jsonPath("$[0].tags[0].itemId").value(1L))
+                .andExpect(jsonPath("$[0].tags[1].itemId").value(2L))
+                .andExpect(jsonPath("$[0].tags[2].itemId").value(3L));
 
         verify(projectService, times(1)).getAllVolunteerProjects(volunteerId);
     }
@@ -295,7 +296,7 @@ class VolunteersProjectsControllerTest {
         long volunteerId = 200L;
 
         ProjectTemplate projectWithoutTags = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("No Tags Project")
                 .projectDescription("Project without tags")
                 .imgPath("/path/to/image.jpg")

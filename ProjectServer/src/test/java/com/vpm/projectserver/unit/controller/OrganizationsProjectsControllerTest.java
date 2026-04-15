@@ -1,5 +1,6 @@
-package com.vpm.projectserver.controller;
+package com.vpm.projectserver.unit.controller;
 
+import com.vpm.projectserver.controller.OrganizationsProjectsController;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
 import com.vpm.projectserver.service.ProjectService;
@@ -37,12 +38,12 @@ class OrganizationsProjectsControllerTest {
     @BeforeEach
     void setUp() {
         TagTemplate testTagTemplate = TagTemplate.builder()
-                .tagId(1L)
+                .itemId(1L)
                 .tagName("Java")
                 .build();
 
         testProjectTemplate = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("Organization Project 1")
                 .projectDescription("First project for organization")
                 .imgPath("/path/to/image1.jpg")
@@ -51,12 +52,12 @@ class OrganizationsProjectsControllerTest {
                 .build();
 
         TagTemplate testTagTemplate2 = TagTemplate.builder()
-                .tagId(2L)
+                .itemId(2L)
                 .tagName("Python")
                 .build();
 
         testProjectTemplate2 = ProjectTemplate.builder()
-                .projectId(2L)
+                .itemId(2L)
                 .projectTitle("Organization Project 2")
                 .projectDescription("Second project for organization")
                 .imgPath("/path/to/image2.jpg")
@@ -87,10 +88,10 @@ class OrganizationsProjectsControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].projectId").value(1L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
                 .andExpect(jsonPath("$[0].projectTitle").value("Organization Project 1"))
                 .andExpect(jsonPath("$[0].organizationName").value("Tech Corp"))
-                .andExpect(jsonPath("$[1].projectId").value(2L))
+                .andExpect(jsonPath("$[1].itemId").value(2L))
                 .andExpect(jsonPath("$[1].projectTitle").value("Organization Project 2"))
                 .andExpect(jsonPath("$[1].tags", hasSize(1)));
 
@@ -130,7 +131,7 @@ class OrganizationsProjectsControllerTest {
                 .header("X-User-Id", 12)
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].projectId").value(1L));
+                .andExpect(jsonPath("$[0].itemId").value(1L));
 
         verify(projectService, times(1)).getAllOrganizationProjects(42L);
     }
@@ -149,13 +150,13 @@ class OrganizationsProjectsControllerTest {
                 .header("X-User-Id", 12)
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].projectId").exists())
+                .andExpect(jsonPath("$[0].itemId").exists())
                 .andExpect(jsonPath("$[0].projectTitle").exists())
                 .andExpect(jsonPath("$[0].projectDescription").exists())
                 .andExpect(jsonPath("$[0].imgPath").exists())
                 .andExpect(jsonPath("$[0].organizationName").exists())
                 .andExpect(jsonPath("$[0].tags").exists())
-                .andExpect(jsonPath("$[0].projectId").value(1L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
                 .andExpect(jsonPath("$[0].projectTitle").value("Organization Project 1"))
                 .andExpect(jsonPath("$[0].projectDescription").value("First project for organization"))
                 .andExpect(jsonPath("$[0].imgPath").value("/path/to/image1.jpg"))
@@ -179,7 +180,7 @@ class OrganizationsProjectsControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].projectId").value(1L));
+                .andExpect(jsonPath("$[0].itemId").value(1L));
 
         verify(projectService, times(1)).getAllOrganizationProjects(organizationId);
     }
@@ -192,7 +193,7 @@ class OrganizationsProjectsControllerTest {
         ProjectTemplate projectWithTags = testProjectTemplate;
 
         ProjectTemplate projectWithoutTags = ProjectTemplate.builder()
-                .projectId(3L)
+                .itemId(3L)
                 .projectTitle("No Tags Project")
                 .projectDescription("Project without tags")
                 .imgPath("/path/to/image3.jpg")
