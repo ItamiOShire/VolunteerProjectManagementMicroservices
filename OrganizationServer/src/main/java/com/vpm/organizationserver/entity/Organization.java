@@ -96,7 +96,8 @@ public class Organization {
 
     @OneToOne(
             mappedBy = "organization",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.PERSIST
     )
     private OrganizationDescription organizationDescription;
 

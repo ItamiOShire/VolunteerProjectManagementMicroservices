@@ -3,11 +3,14 @@ package com.vpm.organizationserver.controller;
 import com.vpm.organizationserver.dto.request.CreateDescriptionRequest;
 import com.vpm.organizationserver.dto.request.OrganizationRegisterRequest;
 import com.vpm.organizationserver.dto.request.UpdateDescriptionRequest;
+import com.vpm.organizationserver.dto.response.OrganizationDescriptionResponse;
 import com.vpm.organizationserver.service.OrganizationService;
 import com.vpm.organizationserver.service.RegistrationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -43,7 +46,7 @@ public class OrganizationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerOrganization(
-            @RequestBody OrganizationRegisterRequest request
+            @RequestBody @Validated OrganizationRegisterRequest request
     ) {
 
         registrationService.register(
@@ -61,13 +64,14 @@ public class OrganizationController {
             @RequestBody CreateDescriptionRequest request
     ) {
 
-        organizationService.createOrganizationDescription(
+        OrganizationDescriptionResponse response = organizationService.createOrganizationDescription(
                 request,
                 organizationUserId
         );
 
         return ResponseEntity
-                .ok().build();
+                .created(URI.create("/api/organizations/" + organizationUserId + "/description"))
+                .body(response);
     }
 
     @PutMapping("/{id}/description")
@@ -76,13 +80,13 @@ public class OrganizationController {
             @RequestBody UpdateDescriptionRequest request
     ) {
 
-        organizationService.updateOrganizationDescription(
+        OrganizationDescriptionResponse response = organizationService.updateOrganizationDescription(
                 request,
                 organizationUserId
         );
 
         return ResponseEntity
-                .ok().build();
+                .ok(response);
     }
 
     @PatchMapping("/{id}/description")
@@ -91,13 +95,13 @@ public class OrganizationController {
             @RequestBody Map<String, Object> updates
     ) {
 
-        organizationService.patchOrganizationDescription(
+        OrganizationDescriptionResponse response = organizationService.patchOrganizationDescription(
                 updates,
                 organizationUserId
         );
 
         return ResponseEntity
-                .ok().build();
+                .ok(response);
     }
 
 }

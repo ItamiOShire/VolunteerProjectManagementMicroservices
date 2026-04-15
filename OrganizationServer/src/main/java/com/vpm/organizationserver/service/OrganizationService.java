@@ -77,7 +77,7 @@ public class OrganizationService {
      * POST HTTP method
      */
 
-    public void createOrganizationDescription(
+    public OrganizationDescriptionResponse createOrganizationDescription(
             CreateDescriptionRequest request,
             long organizationUserId
     )  throws NoSuchOrganizationException {
@@ -91,14 +91,17 @@ public class OrganizationService {
         OrganizationDescription organizationDescription = OrganizationDescriptionMapper
                 .fromCreateDescriptionRequest(request, organization);
 
-        organizationDescriptionRepository.save(organizationDescription);
+       return OrganizationDescriptionMapper
+                       .toOrganizationDescriptionResponse(
+                               organizationDescriptionRepository.save(organizationDescription)
+                       );
     }
 
     /*
      * PUT / PATCH HTTP methods
      */
 
-    public void updateOrganizationDescription(
+    public OrganizationDescriptionResponse updateOrganizationDescription(
             UpdateDescriptionRequest request,
             long organizationUserId
     ) throws NoSuchOrganizationException, NoSuchOrganizationDescriptionException {
@@ -117,10 +120,13 @@ public class OrganizationService {
                 request
         );
 
-        organizationDescriptionRepository.save(organizationDescription);
+        return OrganizationDescriptionMapper
+                .toOrganizationDescriptionResponse(
+                        organizationDescriptionRepository.save(organizationDescription)
+                );
     }
 
-    public void patchOrganizationDescription(
+    public OrganizationDescriptionResponse patchOrganizationDescription(
             Map<String, Object> updates,
             long organizationUserId
     )  throws NoSuchOrganizationException, NoSuchOrganizationDescriptionException {
@@ -141,7 +147,10 @@ public class OrganizationService {
 
         beanWrapper.setPropertyValues(updates);
 
-        organizationDescriptionRepository.save(organizationDescription);
+        return OrganizationDescriptionMapper
+                .toOrganizationDescriptionResponse(
+                        organizationDescriptionRepository.save(organizationDescription)
+                );
     }
 
     private Organization getOrganizationByUserId(long organizationUserId) throws NoSuchOrganizationException {
