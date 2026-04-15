@@ -1,5 +1,6 @@
-package com.vpm.taskserver.controller;
+package com.vpm.taskserver.unit.controller;
 
+import com.vpm.taskserver.controller.ProjectTaskController;
 import com.vpm.taskserver.dto.template.TaskTemplate;
 import com.vpm.taskserver.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;

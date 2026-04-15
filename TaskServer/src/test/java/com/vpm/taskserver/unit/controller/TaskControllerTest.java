@@ -1,6 +1,7 @@
-package com.vpm.taskserver.controller;
+package com.vpm.taskserver.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vpm.taskserver.controller.TaskController;
 import com.vpm.taskserver.dto.request.CreateTaskRequest;
 import com.vpm.taskserver.dto.request.UpdateTaskRequest;
 import com.vpm.taskserver.dto.template.TaskTemplate;
@@ -142,14 +143,16 @@ class TaskControllerTest {
         @Test
         @DisplayName("POST /api/tasks - Should create task successfully")
         void testCreateTask_Success() throws Exception {
-            doNothing().when(taskService).createTask(any(CreateTaskRequest.class));
+            when(taskService.createTask(any(CreateTaskRequest.class))).thenReturn(taskTemplate);
 
             mockMvc.perform(post("/api/tasks")
                             .header(USER_ID_HEADER, USER_ID_VALUE)
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createTaskRequest)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.itemId").value(1L))
+                    .andExpect(jsonPath("$.title").value("Test Task"));
 
             verify(taskService, times(1)).createTask(any(CreateTaskRequest.class));
         }
@@ -187,14 +190,15 @@ class TaskControllerTest {
         @DisplayName("PUT /api/tasks/{id} - Should update task successfully")
         void testUpdateTask_Success() throws Exception {
             long taskId = 1L;
-            doNothing().when(taskService).updateTask(any(UpdateTaskRequest.class), anyLong());
+            when(taskService.updateTask(any(UpdateTaskRequest.class), anyLong())).thenReturn(taskTemplate);
 
             mockMvc.perform(put("/api/tasks/{id}", taskId)
                             .header(USER_ID_HEADER, USER_ID_VALUE)
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(updateTaskRequest)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.itemId").value(1L));
 
             verify(taskService, times(1)).updateTask(any(UpdateTaskRequest.class), eq(taskId));
         }
@@ -254,14 +258,15 @@ class TaskControllerTest {
             updates.put("title", "Patched Title");
             updates.put("description", "Patched Description");
 
-            doNothing().when(taskService).patchTask(any(), anyLong());
+            when(taskService.patchTask(any(), anyLong())).thenReturn(taskTemplate);
 
             mockMvc.perform(patch("/api/tasks/{id}", taskId)
                             .header(USER_ID_HEADER, USER_ID_VALUE)
                             .header(USER_ROLE_HEADER, USER_ROLE_VALUE)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(updates)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.itemId").value(1L));
 
             verify(taskService, times(1)).patchTask(any(), eq(taskId));
         }
