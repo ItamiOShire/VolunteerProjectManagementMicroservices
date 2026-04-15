@@ -36,7 +36,7 @@ public class RegistrationService {
     }
 
     public void register(
-        OrganizationRegisterRequest request
+            OrganizationRegisterRequest request
     ) throws OrganizationAlreadyExistsException {
 
         AuthRegistrationRequest authRequest = new AuthRegistrationRequest(
@@ -57,7 +57,7 @@ public class RegistrationService {
                     request, authRegistrationResponse
             );
 
-            log.info("Saving volunteer: {}", organization.toString());
+            log.info("Saving organization: {}", organization.toString());
 
             Organization saved = organizationRepository.save(organization);
 
