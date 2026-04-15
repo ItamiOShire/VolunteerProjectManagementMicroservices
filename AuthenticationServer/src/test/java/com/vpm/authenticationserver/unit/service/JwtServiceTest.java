@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -17,6 +19,8 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
+// Silents 'unnecessary stubbing exception'
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class JwtServiceTest {
 
     @Mock
@@ -55,9 +59,6 @@ public class JwtServiceTest {
 
     @BeforeEach
     public void setUp() {
-
-        System.out.println("--- BEGIN OF TEST ---\n");
-
         // Mocks behaviour
         //TODO: move those mocks into classes as not all tests cover utility of all mocks
         when(prop.getJwtExpirationTime()).thenReturn(900L);
@@ -67,10 +68,6 @@ public class JwtServiceTest {
 
     }
 
-    @AfterEach
-    public void closeUp() {
-        System.out.println("\n--- END OF TEST ---\n");
-    }
 
     @Nested
     @DisplayName("Testing access token")
