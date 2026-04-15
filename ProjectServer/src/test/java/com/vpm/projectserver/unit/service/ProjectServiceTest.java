@@ -1,4 +1,4 @@
-package com.vpm.projectserver.service;
+package com.vpm.projectserver.unit.service;
 
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
@@ -7,6 +7,8 @@ import com.vpm.projectserver.entity.Project;
 import com.vpm.projectserver.entity.Tag;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
+import com.vpm.projectserver.service.ProjectService;
+import com.vpm.projectserver.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,7 +92,7 @@ class ProjectServiceTest {
     void testGetAllProjects_Success() {
   
         List<Project> projects = List.of(testProject);
-        when(projectRepository.findAll()).thenReturn(projects);
+        when(projectRepository.getAllProjectsWithTags()).thenReturn(projects);
 
   
         List<ProjectTemplate> result = projectService.getAllProjects();
@@ -100,14 +102,14 @@ class ProjectServiceTest {
         assertEquals(1, result.size());
         assertEquals(testProject.getId(), result.get(0).getItemId());
         assertEquals(testProject.getTitle(), result.get(0).getProjectTitle());
-        verify(projectRepository, times(1)).findAll();
+        verify(projectRepository, times(1)).getAllProjectsWithTags();
     }
 
     @Test
     @DisplayName("Should return empty list when no projects exist")
     void testGetAllProjects_EmptyList() {
   
-        when(projectRepository.findAll()).thenReturn(Collections.emptyList());
+        when(projectRepository.getAllProjectsWithTags()).thenReturn(Collections.emptyList());
 
   
         List<ProjectTemplate> result = projectService.getAllProjects();
@@ -115,14 +117,14 @@ class ProjectServiceTest {
   
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(projectRepository, times(1)).findAll();
+        verify(projectRepository, times(1)).getAllProjectsWithTags();
     }
 
     @Test
     @DisplayName("Should return project by ID successfully")
     void testGetProjectById_Success() throws NoSuchProjectException {
   
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(testProject));
+        when(projectRepository.getProjectById(1L)).thenReturn(Optional.of(testProject));
 
   
         ProjectTemplate result = projectService.getProjectById(1L);
@@ -131,18 +133,18 @@ class ProjectServiceTest {
         assertNotNull(result);
         assertEquals(testProject.getId(), result.getItemId());
         assertEquals(testProject.getTitle(), result.getProjectTitle());
-        verify(projectRepository, times(1)).findById(1L);
+        verify(projectRepository, times(1)).getProjectById(1L);
     }
 
     @Test
     @DisplayName("Should throw NoSuchProjectException when project not found by ID")
     void testGetProjectById_NotFound() {
   
-        when(projectRepository.findById(999L)).thenReturn(Optional.empty());
+        when(projectRepository.getProjectById(999L)).thenReturn(Optional.empty());
 
  
         assertThrows(NoSuchProjectException.class, () -> projectService.getProjectById(999L));
-        verify(projectRepository, times(1)).findById(999L);
+        verify(projectRepository, times(1)).getProjectById(999L);
     }
 
     @Test
@@ -217,134 +219,144 @@ class ProjectServiceTest {
 
     // ========== POST Tests ==========
 
-    @Test
-    @DisplayName("Should create project successfully with tags")
-    void testCreateProject_Success() {
-  
-        Set<Tag> tags = Set.of(testTag);
-        when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(tags);
-        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+     @Test
+     @DisplayName("Should create project successfully with tags")
+     void testCreateProject_Success() {
 
-  
-        projectService.createProject(createProjectRequest);
+         Set<Tag> tags = Set.of(testTag);
+         when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(tags);
+         when(projectRepository.save(any(Project.class))).thenReturn(testProject);
 
-  
-        verify(tagService, times(1)).getTagsById(createProjectRequest.getTagIds());
-        verify(projectRepository, times(1)).save(any(Project.class));
-    }
 
-    @Test
-    @DisplayName("Should create project successfully without tags")
-    void testCreateProject_NoTags() {
-  
-        createProjectRequest.setTagIds(Collections.emptySet());
-        Set<Tag> emptyTags = Collections.emptySet();
-        when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(emptyTags);
-        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+         ProjectTemplate result = projectService.createProject(createProjectRequest);
 
-  
-        projectService.createProject(createProjectRequest);
 
-  
-        verify(tagService, times(1)).getTagsById(createProjectRequest.getTagIds());
-        verify(projectRepository, times(1)).save(any(Project.class));
-    }
+         assertNotNull(result);
+         assertEquals(testProject.getId(), result.getItemId());
+         verify(tagService, times(1)).getTagsById(createProjectRequest.getTagIds());
+         verify(projectRepository, times(1)).save(any(Project.class));
+     }
 
-    @Test
-    @DisplayName("Should create project with correct properties")
-    void testCreateProject_CorrectProperties() {
-  
-        Set<Tag> tags = Set.of(testTag);
-        when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(tags);
+     @Test
+     @DisplayName("Should create project successfully without tags")
+     void testCreateProject_NoTags() {
 
-        // Capture the project being saved
-        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
-        when(projectRepository.save(projectCaptor.capture())).thenReturn(testProject);
+         createProjectRequest.setTagIds(Collections.emptySet());
+         Set<Tag> emptyTags = Collections.emptySet();
+         when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(emptyTags);
+         when(projectRepository.save(any(Project.class))).thenReturn(testProject);
 
-  
-        projectService.createProject(createProjectRequest);
 
-  
-        Project savedProject = projectCaptor.getValue();
-        assertEquals(createProjectRequest.getTitle(), savedProject.getTitle());
-        assertEquals(createProjectRequest.getDescription(), savedProject.getDescription());
-        assertEquals(createProjectRequest.getImgPath(), savedProject.getImgPath());
-        assertEquals(createProjectRequest.getOrganizationUserId(), savedProject.getOrganizationUserId());
-        assertEquals(createProjectRequest.getOrganizationName(), savedProject.getOrganizationName());
-        assertEquals(tags, savedProject.getTags());
-    }
+         ProjectTemplate result = projectService.createProject(createProjectRequest);
+
+
+         assertNotNull(result);
+         assertEquals(testProject.getId(), result.getItemId());
+         verify(tagService, times(1)).getTagsById(createProjectRequest.getTagIds());
+         verify(projectRepository, times(1)).save(any(Project.class));
+     }
+
+     @Test
+     @DisplayName("Should create project with correct properties")
+     void testCreateProject_CorrectProperties() {
+
+         Set<Tag> tags = Set.of(testTag);
+         when(tagService.getTagsById(createProjectRequest.getTagIds())).thenReturn(tags);
+
+         // Capture the project being saved
+         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+         when(projectRepository.save(projectCaptor.capture())).thenReturn(testProject);
+
+
+         ProjectTemplate result = projectService.createProject(createProjectRequest);
+
+
+         assertNotNull(result);
+         Project savedProject = projectCaptor.getValue();
+         assertEquals(createProjectRequest.getTitle(), savedProject.getTitle());
+         assertEquals(createProjectRequest.getDescription(), savedProject.getDescription());
+         assertEquals(createProjectRequest.getImgPath(), savedProject.getImgPath());
+         assertEquals(createProjectRequest.getOrganizationUserId(), savedProject.getOrganizationUserId());
+         assertEquals(createProjectRequest.getOrganizationName(), savedProject.getOrganizationName());
+         assertEquals(tags, savedProject.getTags());
+     }
 
     // ========== PUT/PATCH Tests ==========
 
-    @Test
-    @DisplayName("Should update project successfully")
-    void testUpdateProject_Success() throws NoSuchProjectException {
-  
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(testProject));
-        when(tagService.getTagsById(any())).thenReturn(Set.of(testTag));
+     @Test
+     @DisplayName("Should update project successfully")
+     void testUpdateProject_Success() throws NoSuchProjectException {
 
-  
-        projectService.updateProject(testProjectTemplate);
+         when(projectRepository.getProjectById(1L)).thenReturn(Optional.of(testProject));
+         when(tagService.getTagsById(any())).thenReturn(Set.of(testTag));
+         when(projectRepository.save(any(Project.class))).thenReturn(testProject);
 
-  
-        assertEquals("Test Project", testProject.getTitle());
-        verify(projectRepository, times(1)).findById(1L);
-        verify(tagService, times(1)).getTagsById(any());
-    }
+
+         ProjectTemplate result = projectService.updateProject(testProjectTemplate);
+
+
+         assertNotNull(result);
+         assertEquals("Test Project", testProject.getTitle());
+         verify(projectRepository, times(1)).getProjectById(1L);
+         verify(tagService, times(1)).getTagsById(any());
+         verify(projectRepository, times(1)).save(any(Project.class));
+     }
 
     @Test
     @DisplayName("Should throw NoSuchProjectException when updating non-existent project")
     void testUpdateProject_NotFound() {
   
         testProjectTemplate.setItemId(999L);
-        when(projectRepository.findById(999L)).thenReturn(Optional.empty());
+        when(projectRepository.getProjectById(999L)).thenReturn(Optional.empty());
 
  
         assertThrows(NoSuchProjectException.class, () -> projectService.updateProject(testProjectTemplate));
-        verify(projectRepository, times(1)).findById(999L);
+        verify(projectRepository, times(1)).getProjectById(999L);
     }
 
-    @Test
-    @DisplayName("Should patch project successfully")
-    void testPatchProject_Success() throws NoSuchProjectException {
-  
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("title", "Updated Title");
-        updates.put("description", "Updated Description");
-        updates.put("tags", Set.of(1L));
+     @Test
+     @DisplayName("Should patch project successfully")
+     void testPatchProject_Success() throws NoSuchProjectException {
 
-        Project projectToPatch = testProject;
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(projectToPatch));
-        when(tagService.getTagsById(Set.of(1L))).thenReturn(Set.of(testTag));
-        when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
+         Map<String, Object> updates = new HashMap<>();
+         updates.put("title", "Updated Title");
+         updates.put("description", "Updated Description");
+         updates.put("tags", Set.of(1L));
 
-  
-        projectService.patchProject(updates, 1L);
+         Project projectToPatch = testProject;
+         when(projectRepository.getProjectById(1L)).thenReturn(Optional.of(projectToPatch));
+         when(tagService.getTagsById(Set.of(1L))).thenReturn(Set.of(testTag));
+         when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
 
-  
-        verify(projectRepository, times(1)).findById(1L);
-        verify(tagService, times(1)).getTagsById(Set.of(1L));
-        verify(projectRepository, times(1)).save(projectToPatch);
-    }
 
-    @Test
-    @DisplayName("Should patch project with only title")
-    void testPatchProject_TitleOnly() throws NoSuchProjectException {
-  
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("title", "New Title");
+         ProjectTemplate result = projectService.patchProject(updates, 1L);
 
-        Project projectToPatch = testProject;
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(projectToPatch));
-        when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
 
-  
-        projectService.patchProject(updates, 1L);
+         assertNotNull(result);
+         verify(projectRepository, times(1)).getProjectById(1L);
+         verify(tagService, times(1)).getTagsById(Set.of(1L));
+         verify(projectRepository, times(1)).save(projectToPatch);
+     }
 
-  
-        verify(projectRepository, times(1)).findById(1L);
-        verify(projectRepository, times(1)).save(projectToPatch);
-    }
+     @Test
+     @DisplayName("Should patch project with only title")
+     void testPatchProject_TitleOnly() throws NoSuchProjectException {
+
+         Map<String, Object> updates = new HashMap<>();
+         updates.put("title", "New Title");
+
+         Project projectToPatch = testProject;
+         when(projectRepository.getProjectById(1L)).thenReturn(Optional.of(projectToPatch));
+         when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
+
+
+         ProjectTemplate result = projectService.patchProject(updates, 1L);
+
+
+         assertNotNull(result);
+         verify(projectRepository, times(1)).getProjectById(1L);
+         verify(projectRepository, times(1)).save(projectToPatch);
+     }
 
     @Test
     @DisplayName("Should throw NoSuchProjectException when patching non-existent project")
@@ -352,33 +364,34 @@ class ProjectServiceTest {
   
         Map<String, Object> updates = new HashMap<>();
         updates.put("title", "Updated Title");
-        when(projectRepository.findById(999L)).thenReturn(Optional.empty());
+        when(projectRepository.getProjectById(999L)).thenReturn(Optional.empty());
 
  
         assertThrows(NoSuchProjectException.class, () -> projectService.patchProject(updates, 999L));
-        verify(projectRepository, times(1)).findById(999L);
+        verify(projectRepository, times(1)).getProjectById(999L);
     }
 
-    @Test
-    @DisplayName("Should patch project with tags only")
-    void testPatchProject_TagsOnly() throws NoSuchProjectException {
-  
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("tags", Set.of(1L));
+     @Test
+     @DisplayName("Should patch project with tags only")
+     void testPatchProject_TagsOnly() throws NoSuchProjectException {
 
-        Project projectToPatch = testProject;
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(projectToPatch));
-        when(tagService.getTagsById(Set.of(1L))).thenReturn(Set.of(testTag));
-        when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
+         Map<String, Object> updates = new HashMap<>();
+         updates.put("tags", Set.of(1L));
 
-  
-        projectService.patchProject(updates, 1L);
+         Project projectToPatch = testProject;
+         when(projectRepository.getProjectById(1L)).thenReturn(Optional.of(projectToPatch));
+         when(tagService.getTagsById(Set.of(1L))).thenReturn(Set.of(testTag));
+         when(projectRepository.save(any(Project.class))).thenReturn(projectToPatch);
 
-  
-        verify(projectRepository, times(1)).findById(1L);
-        verify(tagService, times(1)).getTagsById(Set.of(1L));
-        verify(projectRepository, times(1)).save(projectToPatch);
-    }
+
+         ProjectTemplate result = projectService.patchProject(updates, 1L);
+
+
+         assertNotNull(result);
+         verify(projectRepository, times(1)).getProjectById(1L);
+         verify(tagService, times(1)).getTagsById(Set.of(1L));
+         verify(projectRepository, times(1)).save(projectToPatch);
+     }
 
     // ========== DELETE Tests ==========
 
@@ -409,31 +422,32 @@ class ProjectServiceTest {
 
     // ========== Edge Cases and Additional Tests ==========
 
-    @Test
-    @DisplayName("Should handle null tag IDs set in create request")
-    void testCreateProject_NullTagIds() {
-  
-        createProjectRequest.setTagIds(null);
-        Set<Tag> emptyTags = Collections.emptySet();
-        when(tagService.getTagsById(null)).thenReturn(emptyTags);
-        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+     @Test
+     @DisplayName("Should handle null tag IDs set in create request")
+     void testCreateProject_NullTagIds() {
+
+         createProjectRequest.setTagIds(null);
+         Set<Tag> emptyTags = Collections.emptySet();
+         when(tagService.getTagsById(null)).thenReturn(emptyTags);
+         when(projectRepository.save(any(Project.class))).thenReturn(testProject);
 
 
-        try {
-            projectService.createProject(createProjectRequest);
-            verify(projectRepository, times(1)).save(any(Project.class));
-        } catch (Exception e) {
-            // TODO: Document if null handling throws an exception
-            assertNotNull(e);
-        }
-    }
+         try {
+             ProjectTemplate result = projectService.createProject(createProjectRequest);
+             assertNotNull(result);
+             verify(projectRepository, times(1)).save(any(Project.class));
+         } catch (Exception e) {
+             // TODO: Document if null handling throws an exception
+             assertNotNull(e);
+         }
+     }
 
     @Test
     @DisplayName("Should properly map project entity to template")
     void testProjectMappingInGetAll() {
   
         List<Project> projects = List.of(testProject);
-        when(projectRepository.findAll()).thenReturn(projects);
+        when(projectRepository.getAllProjectsWithTags()).thenReturn(projects);
 
   
         List<ProjectTemplate> result = projectService.getAllProjects();
@@ -472,7 +486,7 @@ class ProjectServiceTest {
                 .build();
 
         List<Project> projects = List.of(testProject, project2);
-        when(projectRepository.findAll()).thenReturn(projects);
+        when(projectRepository.getAllProjectsWithTags()).thenReturn(projects);
 
   
         List<ProjectTemplate> result = projectService.getAllProjects();

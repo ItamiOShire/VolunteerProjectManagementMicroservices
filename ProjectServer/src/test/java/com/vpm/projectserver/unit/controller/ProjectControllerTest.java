@@ -1,6 +1,7 @@
-package com.vpm.projectserver.controller;
+package com.vpm.projectserver.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vpm.projectserver.controller.ProjectController;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
 import com.vpm.projectserver.dto.request.CreateProjectRequest;
@@ -43,12 +44,12 @@ class ProjectControllerTest {
     @BeforeEach
     void setUp() {
         testTagTemplate = TagTemplate.builder()
-                .tagId(1L)
+                .itemId(1L)
                 .tagName("Java")
                 .build();
 
         testProjectTemplate = ProjectTemplate.builder()
-                .projectId(1L)
+                .itemId(1L)
                 .projectTitle("Test Project")
                 .projectDescription("This is a test project")
                 .imgPath("/path/to/image.jpg")
@@ -87,7 +88,7 @@ class ProjectControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].projectId").value(1L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
                 .andExpect(jsonPath("$[0].projectTitle").value("Test Project"))
                 .andExpect(jsonPath("$[0].organizationName").value("Test Organization"));
 
@@ -116,7 +117,7 @@ class ProjectControllerTest {
     void testGetAllProjects_MultipleProjects() throws Exception {
   
         ProjectTemplate project2 = ProjectTemplate.builder()
-                .projectId(2L)
+                .itemId(2L)
                 .projectTitle("Project 2")
                 .projectDescription("Description 2")
                 .imgPath("/path/to/img2.jpg")
@@ -134,8 +135,8 @@ class ProjectControllerTest {
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].projectId").value(1L))
-                .andExpect(jsonPath("$[1].projectId").value(2L))
+                .andExpect(jsonPath("$[0].itemId").value(1L))
+                .andExpect(jsonPath("$[1].itemId").value(2L))
                 .andExpect(jsonPath("$[0].tags", hasSize(1)))
                 .andExpect(jsonPath("$[1].tags", hasSize(0)));
 
@@ -156,13 +157,13 @@ class ProjectControllerTest {
                 .header("X-User-Id", 12)
                 .header("X-User-Role", "ORGANIZATION"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.projectId").value(1L))
+                .andExpect(jsonPath("$.itemId").value(1L))
                 .andExpect(jsonPath("$.projectTitle").value("Test Project"))
                 .andExpect(jsonPath("$.projectDescription").value("This is a test project"))
                 .andExpect(jsonPath("$.imgPath").value("/path/to/image.jpg"))
                 .andExpect(jsonPath("$.organizationName").value("Test Organization"))
                 .andExpect(jsonPath("$.tags", hasSize(1)))
-                .andExpect(jsonPath("$.tags[0].tagId").value(1L))
+                .andExpect(jsonPath("$.tags[0].itemId").value(1L))
                 .andExpect(jsonPath("$.tags[0].tagName").value("Java"));
 
         verify(projectService, times(1)).getProjectById(1L);
@@ -196,63 +197,65 @@ class ProjectControllerTest {
 
     // ========== POST /api/projects ==========
 
-    @Test
-    @DisplayName("POST /api/projects - Should create project successfully")
-    void testCreateProject_Success() throws Exception {
-  
-        doNothing().when(projectService).createProject(any(CreateProjectRequest.class));
+     @Test
+     @DisplayName("POST /api/projects - Should create project successfully")
+     void testCreateProject_Success() throws Exception {
 
- 
-        mockMvc.perform(post("/api/projects")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(createProjectRequest)))
-                .andExpect(status().isOk());
+         when(projectService.createProject(any(CreateProjectRequest.class))).thenReturn(testProjectTemplate);
 
-        verify(projectService, times(1)).createProject(any(CreateProjectRequest.class));
-    }
 
-    @Test
-    @DisplayName("POST /api/projects - Should create project with correct request body")
-    void testCreateProject_VerifyRequestBody() throws Exception {
-  
-        doNothing().when(projectService).createProject(any(CreateProjectRequest.class));
+         mockMvc.perform(post("/api/projects")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(createProjectRequest)))
+                 .andExpect(status().isCreated())
+                 .andExpect(jsonPath("$.itemId").value(1L))
+                 .andExpect(jsonPath("$.projectTitle").value("Test Project"));
 
-  
-        mockMvc.perform(post("/api/projects")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(createProjectRequest)))
-                .andExpect(status().isOk());
+         verify(projectService, times(1)).createProject(any(CreateProjectRequest.class));
+     }
 
-  
-        verify(projectService, times(1)).createProject(argThat(request ->
-                request.getTitle().equals("New Project") &&
-                request.getDescription().equals("Description") &&
-                request.getOrganizationUserId() == 100L &&
-                request.getTagIds().contains(1L)
-        ));
-    }
+     @Test
+     @DisplayName("POST /api/projects - Should create project with correct request body")
+     void testCreateProject_VerifyRequestBody() throws Exception {
 
-    @Test
-    @DisplayName("POST /api/projects - Should create project without tags")
-    void testCreateProject_NoTags() throws Exception {
-  
-        createProjectRequest.setTagIds(Collections.emptySet());
-        doNothing().when(projectService).createProject(any(CreateProjectRequest.class));
+         when(projectService.createProject(any(CreateProjectRequest.class))).thenReturn(testProjectTemplate);
 
- 
-        mockMvc.perform(post("/api/projects")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(createProjectRequest)))
-                .andExpect(status().isOk());
 
-        verify(projectService, times(1)).createProject(any(CreateProjectRequest.class));
-    }
+         mockMvc.perform(post("/api/projects")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(createProjectRequest)))
+                 .andExpect(status().isCreated());
+
+
+         verify(projectService, times(1)).createProject(argThat(request ->
+                 request.getTitle().equals("New Project") &&
+                 request.getDescription().equals("Description") &&
+                 request.getOrganizationUserId() == 100L &&
+                 request.getTagIds().contains(1L)
+         ));
+     }
+
+     @Test
+     @DisplayName("POST /api/projects - Should create project without tags")
+     void testCreateProject_NoTags() throws Exception {
+
+         createProjectRequest.setTagIds(Collections.emptySet());
+         when(projectService.createProject(any(CreateProjectRequest.class))).thenReturn(testProjectTemplate);
+
+
+         mockMvc.perform(post("/api/projects")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(createProjectRequest)))
+                 .andExpect(status().isCreated());
+
+         verify(projectService, times(1)).createProject(any(CreateProjectRequest.class));
+     }
 
     @Test
     @DisplayName("POST /api/projects - Should return 400 for invalid request body")
@@ -287,29 +290,30 @@ class ProjectControllerTest {
 
     // ========== PUT /api/projects/{id} ==========
 
-    @Test
-    @DisplayName("PUT /api/projects/{id} - Should update project successfully")
-    void testUpdateProject_Success() throws Exception {
-  
-        testProjectTemplate.setProjectId(1L);
-        doNothing().when(projectService).updateProject(any(ProjectTemplate.class));
+     @Test
+     @DisplayName("PUT /api/projects/{id} - Should update project successfully")
+     void testUpdateProject_Success() throws Exception {
 
- 
-        mockMvc.perform(put("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(testProjectTemplate)))
-                .andExpect(status().isOk());
+         testProjectTemplate.setItemId(1L);
+         when(projectService.updateProject(any(ProjectTemplate.class))).thenReturn(testProjectTemplate);
 
-        verify(projectService, times(1)).updateProject(any(ProjectTemplate.class));
-    }
+
+         mockMvc.perform(put("/api/projects/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(testProjectTemplate)))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.itemId").value(1L));
+
+         verify(projectService, times(1)).updateProject(any(ProjectTemplate.class));
+     }
 
     @Test
     @DisplayName("PUT /api/projects/{id} - Should handle project not found exception")
     void testUpdateProject_NotFound() throws Exception {
   
-        testProjectTemplate.setProjectId(999L);
+        testProjectTemplate.setItemId(999L);
         doThrow(new NoSuchProjectException(999L))
                 .when(projectService).updateProject(any(ProjectTemplate.class));
 
@@ -324,28 +328,29 @@ class ProjectControllerTest {
         verify(projectService, times(1)).updateProject(any(ProjectTemplate.class));
     }
 
-    @Test
-    @DisplayName("PUT /api/projects/{id} - Should update project with all fields")
-    void testUpdateProject_AllFields() throws Exception {
-  
-        testProjectTemplate.setProjectId(1L);
-        testProjectTemplate.setProjectTitle("Updated Title");
-        testProjectTemplate.setProjectDescription("Updated Description");
-        doNothing().when(projectService).updateProject(any(ProjectTemplate.class));
+     @Test
+     @DisplayName("PUT /api/projects/{id} - Should update project with all fields")
+     void testUpdateProject_AllFields() throws Exception {
 
- 
-        mockMvc.perform(put("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(testProjectTemplate)))
-                .andExpect(status().isOk());
+         testProjectTemplate.setItemId(1L);
+         testProjectTemplate.setProjectTitle("Updated Title");
+         testProjectTemplate.setProjectDescription("Updated Description");
+         when(projectService.updateProject(any(ProjectTemplate.class))).thenReturn(testProjectTemplate);
 
-        verify(projectService, times(1)).updateProject(argThat(template ->
-                template.getProjectTitle().equals("Updated Title") &&
-                template.getProjectDescription().equals("Updated Description")
-        ));
-    }
+
+         mockMvc.perform(put("/api/projects/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(testProjectTemplate)))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.projectTitle").value("Updated Title"));
+
+         verify(projectService, times(1)).updateProject(argThat(template ->
+                 template.getProjectTitle().equals("Updated Title") &&
+                 template.getProjectDescription().equals("Updated Description")
+         ));
+     }
 
     @Test
     @DisplayName("PUT /api/projects/{id} - Should return 400 for invalid JSON")
@@ -363,47 +368,48 @@ class ProjectControllerTest {
 
     // ========== PATCH /api/projects/{id} ==========
 
-    @Test
-    @DisplayName("PATCH /api/projects/{id} - Should patch project successfully")
-    @SuppressWarnings("unchecked")
-    void testPatchProject_Success() throws Exception {
-  
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("title", "Updated Title");
-        doNothing().when(projectService).patchProject(any(Map.class), anyLong());
+     @Test
+     @DisplayName("PATCH /api/projects/{id} - Should patch project successfully")
+     @SuppressWarnings("unchecked")
+     void testPatchProject_Success() throws Exception {
 
- 
-        mockMvc.perform(patch("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(updates)))
-                .andExpect(status().isOk());
+         Map<String, Object> updates = new HashMap<>();
+         updates.put("title", "Updated Title");
+         when(projectService.patchProject(any(Map.class), anyLong())).thenReturn(testProjectTemplate);
 
-        verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
-    }
 
-    @Test
-    @DisplayName("PATCH /api/projects/{id} - Should patch with multiple fields")
-    @SuppressWarnings("unchecked")
-    void testPatchProject_MultipleFields() throws Exception {
-  
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("title", "New Title");
-        updates.put("description", "New Description");
-        updates.put("tags", Set.of(1L, 2L));
-        doNothing().when(projectService).patchProject(any(Map.class), anyLong());
+         mockMvc.perform(patch("/api/projects/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(updates)))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.itemId").value(1L));
 
- 
-        mockMvc.perform(patch("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(updates)))
-                .andExpect(status().isOk());
+         verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
+     }
 
-        verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
-    }
+     @Test
+     @DisplayName("PATCH /api/projects/{id} - Should patch with multiple fields")
+     @SuppressWarnings("unchecked")
+     void testPatchProject_MultipleFields() throws Exception {
+
+         Map<String, Object> updates = new HashMap<>();
+         updates.put("title", "New Title");
+         updates.put("description", "New Description");
+         updates.put("tags", Set.of(1L, 2L));
+         when(projectService.patchProject(any(Map.class), anyLong())).thenReturn(testProjectTemplate);
+
+
+         mockMvc.perform(patch("/api/projects/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(updates)))
+                 .andExpect(status().isOk());
+
+         verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
+     }
 
     @Test
     @DisplayName("PATCH /api/projects/{id} - Should handle project not found")
@@ -426,24 +432,24 @@ class ProjectControllerTest {
         verify(projectService, times(1)).patchProject(any(Map.class), eq(999L));
     }
 
-    @Test
-    @DisplayName("PATCH /api/projects/{id} - Should handle empty updates")
-    @SuppressWarnings("unchecked")
-    void testPatchProject_EmptyUpdates() throws Exception {
-  
-        Map<String, Object> updates = new HashMap<>();
-        doNothing().when(projectService).patchProject(any(Map.class), anyLong());
+     @Test
+     @DisplayName("PATCH /api/projects/{id} - Should handle empty updates")
+     @SuppressWarnings("unchecked")
+     void testPatchProject_EmptyUpdates() throws Exception {
 
- 
-        mockMvc.perform(patch("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id", 12)
-                .header("X-User-Role", "ORGANIZATION")
-                .content(objectMapper.writeValueAsString(updates)))
-                .andExpect(status().isOk());
+         Map<String, Object> updates = new HashMap<>();
+         when(projectService.patchProject(any(Map.class), anyLong())).thenReturn(testProjectTemplate);
 
-        verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
-    }
+
+         mockMvc.perform(patch("/api/projects/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("X-User-Id", 12)
+                 .header("X-User-Role", "ORGANIZATION")
+                 .content(objectMapper.writeValueAsString(updates)))
+                 .andExpect(status().isOk());
+
+         verify(projectService, times(1)).patchProject(any(Map.class), eq(1L));
+     }
 
     @Test
     @DisplayName("PATCH /api/projects/{id} - Should return 400 for invalid JSON")
