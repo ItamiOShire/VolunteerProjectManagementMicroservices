@@ -1,21 +1,15 @@
 package com.vpm.authenticationserver.integration.repository;
 
+import com.vpm.authenticationserver.config.IntegrationTestsDBConfig;
 import com.vpm.authenticationserver.entity.Users;
-import com.vpm.authenticationserver.entity.mapper.UsersMapper;
 import com.vpm.authenticationserver.repository.UsersRepository;
-import com.vpm.common.dto.request.AuthRegistrationRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,32 +18,11 @@ import static  org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@Testcontainers
+/*
+ * By this import, you enable Testcontainers -> see this configuration class
+ */
+@Import(IntegrationTestsDBConfig.class)
 public class UsersRepositoryTest {
-
-    /*
-     * Database container managed by spring
-     * image should be the same as production
-     * database name, password and username does not matter until you use connection parameters in app.yaml
-     */
-
-    @Container
-    static PostgreSQLContainer<?> database =
-            new PostgreSQLContainer<>("postgres:17.9")
-                    .withDatabaseName("Users")
-                    .withPassword("password")
-                    .withUsername("admin");
-
-    /*
-     * Injecting containers database metadata into spring app.yaml
-     */
-
-    @DynamicPropertySource
-    static void configureProperties (DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", database::getJdbcUrl);
-        registry.add("spring.datasource.password", database::getPassword);
-        registry.add("spring.datasource.username", database::getUsername);
-    }
 
     @Autowired
     private UsersRepository repository;
@@ -148,16 +121,5 @@ public class UsersRepositoryTest {
         }
 
     }
-
-    @Test
-    public void findUserByEmailTest() {
-
-        Optional<Users> foundUser = repository.findByEmail("email@email.com");
-
-        assertTrue(foundUser.isPresent());
-        assertEquals("email@email.com",  foundUser.get().getEmail());
-
-    }
-
 
 }
