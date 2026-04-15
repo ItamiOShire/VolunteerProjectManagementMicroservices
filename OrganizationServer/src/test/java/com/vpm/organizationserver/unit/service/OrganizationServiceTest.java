@@ -144,14 +144,18 @@ class OrganizationServiceTest {
         long organizationUserId = 1L;
         Organization organization = createOrganization(organizationUserId);
         CreateDescriptionRequest request = createDescriptionRequest();
+        OrganizationDescription savedDescription = createOrganizationDescription(organization);
 
         when(organizationRepository.findByUserId(organizationUserId))
                 .thenReturn(Optional.of(organization));
+        when(organizationDescriptionRepository.save(any(OrganizationDescription.class)))
+                .thenReturn(savedDescription);
 
   
-        organizationService.createOrganizationDescription(request, organizationUserId);
+        OrganizationDescriptionResponse result = organizationService.createOrganizationDescription(request, organizationUserId);
 
   
+        assertNotNull(result);
         verify(organizationRepository, times(1)).findByUserId(organizationUserId);
         verify(organizationDescriptionRepository, times(1)).save(any(OrganizationDescription.class));
     }
@@ -163,6 +167,7 @@ class OrganizationServiceTest {
         long organizationUserId = 1L;
         Organization organization = createOrganization(organizationUserId);
         CreateDescriptionRequest request = createDescriptionRequest();
+        OrganizationDescription savedDescription = createOrganizationDescription(organization);
 
         when(organizationRepository.findByUserId(organizationUserId))
                 .thenReturn(Optional.of(organization));
@@ -170,11 +175,14 @@ class OrganizationServiceTest {
         ArgumentCaptor<OrganizationDescription> descriptionCaptor =
                 ArgumentCaptor.forClass(OrganizationDescription.class);
 
-  
-        organizationService.createOrganizationDescription(request, organizationUserId);
+        when(organizationDescriptionRepository.save(descriptionCaptor.capture()))
+                .thenReturn(savedDescription);
 
-  
-        verify(organizationDescriptionRepository).save(descriptionCaptor.capture());
+
+        OrganizationDescriptionResponse result = organizationService.createOrganizationDescription(request, organizationUserId);
+
+
+        assertNotNull(result);
         OrganizationDescription capturedDescription = descriptionCaptor.getValue();
 
         assertEquals("Test Description", capturedDescription.getDescription());
@@ -212,11 +220,14 @@ class OrganizationServiceTest {
                 .thenReturn(Optional.of(organization));
         when(organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization))
                 .thenReturn(Optional.of(description));
+        when(organizationDescriptionRepository.save(any(OrganizationDescription.class)))
+                .thenReturn(description);
 
   
-        organizationService.updateOrganizationDescription(request, organizationUserId);
+        OrganizationDescriptionResponse result = organizationService.updateOrganizationDescription(request, organizationUserId);
 
   
+        assertNotNull(result);
         verify(organizationRepository, times(1)).findByUserId(organizationUserId);
         verify(organizationDescriptionRepository, times(1))
                 .findOrganizationDescriptionByOrganization(organization);
@@ -241,11 +252,14 @@ class OrganizationServiceTest {
         ArgumentCaptor<OrganizationDescription> descriptionCaptor =
                 ArgumentCaptor.forClass(OrganizationDescription.class);
 
-  
-        organizationService.updateOrganizationDescription(request, organizationUserId);
+        when(organizationDescriptionRepository.save(descriptionCaptor.capture()))
+                .thenReturn(description);
 
-  
-        verify(organizationDescriptionRepository).save(descriptionCaptor.capture());
+
+        OrganizationDescriptionResponse result = organizationService.updateOrganizationDescription(request, organizationUserId);
+
+
+        assertNotNull(result);
         OrganizationDescription capturedDescription = descriptionCaptor.getValue();
 
         assertEquals("Updated Description", capturedDescription.getDescription());
@@ -301,11 +315,14 @@ class OrganizationServiceTest {
                 .thenReturn(Optional.of(organization));
         when(organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization))
                 .thenReturn(Optional.of(description));
+        when(organizationDescriptionRepository.save(any(OrganizationDescription.class)))
+                .thenReturn(description);
 
   
-        organizationService.patchOrganizationDescription(updates, organizationUserId);
+        OrganizationDescriptionResponse result = organizationService.patchOrganizationDescription(updates, organizationUserId);
 
   
+        assertNotNull(result);
         verify(organizationRepository, times(1)).findByUserId(organizationUserId);
         verify(organizationDescriptionRepository, times(1))
                 .findOrganizationDescriptionByOrganization(organization);
@@ -328,11 +345,14 @@ class OrganizationServiceTest {
                 .thenReturn(Optional.of(organization));
         when(organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization))
                 .thenReturn(Optional.of(description));
+        when(organizationDescriptionRepository.save(any(OrganizationDescription.class)))
+                .thenReturn(description);
 
   
-        organizationService.patchOrganizationDescription(updates, organizationUserId);
+        OrganizationDescriptionResponse result = organizationService.patchOrganizationDescription(updates, organizationUserId);
 
   
+        assertNotNull(result);
         verify(organizationDescriptionRepository, times(1)).save(any(OrganizationDescription.class));
     }
 
@@ -385,11 +405,14 @@ class OrganizationServiceTest {
                 .thenReturn(Optional.of(organization));
         when(organizationDescriptionRepository.findOrganizationDescriptionByOrganization(organization))
                 .thenReturn(Optional.of(description));
+        when(organizationDescriptionRepository.save(any(OrganizationDescription.class)))
+                .thenReturn(description);
 
   
-        organizationService.patchOrganizationDescription(updates, organizationUserId);
+        OrganizationDescriptionResponse result = organizationService.patchOrganizationDescription(updates, organizationUserId);
 
   
+        assertNotNull(result);
         verify(organizationDescriptionRepository, times(1)).save(any(OrganizationDescription.class));
     }
 

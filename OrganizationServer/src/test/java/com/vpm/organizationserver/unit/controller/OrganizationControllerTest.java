@@ -1,6 +1,7 @@
 package com.vpm.organizationserver.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vpm.common.error.ErrorCode;
 import com.vpm.organizationserver.controller.OrganizationController;
 import com.vpm.organizationserver.dto.request.CreateDescriptionRequest;
 import com.vpm.organizationserver.dto.request.OrganizationRegisterRequest;
@@ -154,7 +155,7 @@ class OrganizationControllerTest {
     void testRegisterOrganization_AlreadyExists() throws Exception {
         OrganizationRegisterRequest request = createOrganizationRegisterRequest();
         OrganizationAlreadyExistsException exception =
-                new OrganizationAlreadyExistsException("Email already in use", null);
+                new OrganizationAlreadyExistsException("Email already in use", ErrorCode.USER_ALREADY_EXISTS);
 
         doThrow(exception).when(registrationService).register(any(OrganizationRegisterRequest.class));
 
@@ -173,16 +174,22 @@ class OrganizationControllerTest {
     void testCreateOrganizationDescription_Success() throws Exception {
         long organizationUserId = 1L;
         CreateDescriptionRequest request = createDescriptionRequest();
+        OrganizationDescriptionResponse response = OrganizationDescriptionResponse.builder()
+                .organizationName("Test Organization")
+                .description("Test Description")
+                .imagePath("/path/to/image.jpg")
+                .build();
 
-        doNothing().when(organizationService)
-                .createOrganizationDescription(any(CreateDescriptionRequest.class), anyLong());
+        when(organizationService.createOrganizationDescription(any(CreateDescriptionRequest.class), anyLong()))
+                .thenReturn(response);
 
         mockMvc.perform(post("/api/organizations/{id}/description", organizationUserId)
                 .header(USER_ID_HEADER, VALID_USER_ID)
                 .header(USER_ROLE_HEADER, VALID_USER_ROLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.description").value("Test Description"));
 
         verify(organizationService, times(1))
                 .createOrganizationDescription(any(CreateDescriptionRequest.class), eq(organizationUserId));
@@ -214,16 +221,22 @@ class OrganizationControllerTest {
     void testUpdateOrganizationDescription_Success() throws Exception {
         long organizationUserId = 1L;
         UpdateDescriptionRequest request = updateDescriptionRequest();
+        OrganizationDescriptionResponse response = OrganizationDescriptionResponse.builder()
+                .organizationName("Test Organization")
+                .description("Updated Description")
+                .imagePath("/path/to/updated/image.jpg")
+                .build();
 
-        doNothing().when(organizationService)
-                .updateOrganizationDescription(any(UpdateDescriptionRequest.class), anyLong());
+        when(organizationService.updateOrganizationDescription(any(UpdateDescriptionRequest.class), anyLong()))
+                .thenReturn(response);
 
         mockMvc.perform(put("/api/organizations/{id}/description", organizationUserId)
                 .header(USER_ID_HEADER, VALID_USER_ID)
                 .header(USER_ROLE_HEADER, VALID_USER_ROLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("Updated Description"));
 
         verify(organizationService, times(1))
                 .updateOrganizationDescription(any(UpdateDescriptionRequest.class), eq(organizationUserId));
@@ -277,16 +290,22 @@ class OrganizationControllerTest {
         long organizationUserId = 1L;
         Map<String, Object> updates = new HashMap<>();
         updates.put("description", "Updated Description");
+        OrganizationDescriptionResponse response = OrganizationDescriptionResponse.builder()
+                .organizationName("Test Organization")
+                .description("Updated Description")
+                .imagePath("/path/to/image.jpg")
+                .build();
 
-        doNothing().when(organizationService)
-                .patchOrganizationDescription(any(Map.class), anyLong());
+        when(organizationService.patchOrganizationDescription(any(Map.class), anyLong()))
+                .thenReturn(response);
 
         mockMvc.perform(patch("/api/organizations/{id}/description", organizationUserId)
                 .header(USER_ID_HEADER, VALID_USER_ID)
                 .header(USER_ROLE_HEADER, VALID_USER_ROLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updates)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("Updated Description"));
 
         verify(organizationService, times(1))
                 .patchOrganizationDescription(any(Map.class), eq(organizationUserId));
@@ -299,9 +318,14 @@ class OrganizationControllerTest {
         Map<String, Object> updates = new HashMap<>();
         updates.put("description", "Updated Description");
         updates.put("imagePath", "/new/path/image.jpg");
+        OrganizationDescriptionResponse response = OrganizationDescriptionResponse.builder()
+                .organizationName("Test Organization")
+                .description("Updated Description")
+                .imagePath("/new/path/image.jpg")
+                .build();
 
-        doNothing().when(organizationService)
-                .patchOrganizationDescription(any(Map.class), anyLong());
+        when(organizationService.patchOrganizationDescription(any(Map.class), anyLong()))
+                .thenReturn(response);
 
         mockMvc.perform(patch("/api/organizations/{id}/description", organizationUserId)
                 .header(USER_ID_HEADER, VALID_USER_ID)
@@ -401,12 +425,12 @@ class OrganizationControllerTest {
         request.setStreet("Main St");
         request.setApartmentNumber("10");
         request.setTown("New York");
-        request.setZipCode("10001");
-        request.setType("non-profit");
+        request.setZipCode("10-001");
         request.setOwnerFirstName("John");
         request.setOwnerLastName("Doe");
         request.setPhoneNumber("+1234567890");
         request.setEmail("test@example.com");
+        request.setContactEmail("test-contact@example.com");
         request.setPassword("password123");
         return request;
     }

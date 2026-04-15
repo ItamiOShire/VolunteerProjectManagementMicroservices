@@ -232,7 +232,6 @@ class RegistrationServiceTest {
         request.setApartmentNumber("10");
         request.setTown("New York");
         request.setZipCode("10001");
-        request.setType("non-profit");
         request.setOwnerFirstName("John");
         request.setOwnerLastName("Doe");
         request.setPhoneNumber("+1234567890");
