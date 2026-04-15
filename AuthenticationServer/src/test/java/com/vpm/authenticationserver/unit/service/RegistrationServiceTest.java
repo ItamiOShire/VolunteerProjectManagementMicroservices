@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -24,6 +25,9 @@ public class RegistrationServiceTest {
 
     @Mock
     UsersRepository  usersRepository;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
 
 
     @InjectMocks
@@ -69,6 +73,7 @@ public class RegistrationServiceTest {
             System.out.println("--- BEGIN OF TEST ---");
 
             when(usersRepository.findByEmail(volunteer.getEmail())).thenReturn(Optional.empty());
+            when(passwordEncoder.encode(volunteer.getPassword())).thenReturn("HASH FOR PASSWORD");
             Users savedVolunteer = volunteer;
             savedVolunteer.setId(1L);
             when(usersRepository.save(any(Users.class))).thenReturn(savedVolunteer);
@@ -115,6 +120,7 @@ public class RegistrationServiceTest {
         void shouldThrowErrorOnFindingUserWithTheSameEmail() {
 
             reset(usersRepository);
+            reset(passwordEncoder);
             when(usersRepository.findByEmail(volunteer.getEmail())).thenReturn(Optional.of(volunteer));
 
             assertThrows(
@@ -131,6 +137,7 @@ public class RegistrationServiceTest {
         void shouldThrowErrorOnNullRequest() {
 
             reset(usersRepository);
+            reset(passwordEncoder);
             assertThrows(
                     NullPointerException.class,
                     () -> registrationService.registerUserInAuthService(null)
