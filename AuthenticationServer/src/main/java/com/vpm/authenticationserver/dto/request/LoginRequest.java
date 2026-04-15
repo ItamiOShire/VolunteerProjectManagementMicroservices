@@ -1,13 +1,15 @@
 package com.vpm.authenticationserver.dto.request;
 
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 public record LoginRequest(
-        @NotNull(message = "email field cannot be null")
-        @NotEmpty(message = "email field cannot be empty") String email,
+        @NotBlank(message = "email field cannot be blank")
+        @Email
+        String email,
 
-        @NotEmpty(message = "password field cannot be null")
-        @NotNull(message = "password field cannot be empty") String password) {
+        @NotBlank(message = "password field cannot be null")
+        @Size(min = 8, max = 50, message = "password must be between 8 and 50 characters long")
+        String password
+) {
 }
