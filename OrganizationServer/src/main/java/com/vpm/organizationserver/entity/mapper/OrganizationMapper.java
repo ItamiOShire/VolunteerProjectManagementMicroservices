@@ -21,6 +21,7 @@ public class OrganizationMapper {
                 .ownerFirstName(request.getOwnerFirstName())
                 .ownerLastName(request.getOwnerLastName())
                 .phoneNumber(request.getPhoneNumber())
+                .contactEmail(request.getContactEmail())
                 .userId(response.getUserId())
                 .build();
     }
