@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/v1.0/04-fix-volunteer-project-relations.yaml
   - include:
       file: db/changelog/v1.0/05-fix-volunteer-task-relations.yaml
+  - include:
+      file: db/changelog/v1.0/06-add-columns-to-volunteer-table.yaml

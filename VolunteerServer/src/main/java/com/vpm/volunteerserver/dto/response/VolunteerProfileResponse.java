@@ -14,6 +14,7 @@ public class VolunteerProfileResponse {
 
     private LocalDate dateOfBirth;
 
+    // Combination of volunteer contact email and phone number
     private String contact;
 
 }

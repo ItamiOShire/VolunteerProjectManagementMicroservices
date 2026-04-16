@@ -16,6 +16,7 @@ public class VolunteerMapper {
                 .lastName(request.getLastName())
                 .dateOfBirth(request.getDateOfBirth())
                 .phoneNumber(request.getPhoneNumber())
+                .contactEmail(request.getEmail())
                 .build();
     }
 
@@ -27,10 +28,17 @@ public class VolunteerMapper {
                 .append(" ")
                 .append(volunteer.getLastName());
 
+        StringBuilder contactData = new StringBuilder();
+
+        contactData
+                .append(volunteer.getContactEmail())
+                .append(" / ")
+                .append(volunteer.getPhoneNumber());
+
         return VolunteerProfileResponse.builder()
                 .fullName(fullName.toString())
                 .dateOfBirth(volunteer.getDateOfBirth())
-                .contact(volunteer.getPhoneNumber())
+                .contact(contactData.toString())
                 .build();
     }
 

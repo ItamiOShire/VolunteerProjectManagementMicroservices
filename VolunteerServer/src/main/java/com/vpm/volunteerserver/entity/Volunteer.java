@@ -50,9 +50,17 @@ public class Volunteer {
 
     @Column(
             name = "phone_number",
-            nullable = false
+            nullable = false,
+            length = 12
     )
     private String phoneNumber;
+
+    @Column(
+            name = "contact_email",
+            nullable = false,
+            length = 400
+    )
+    private String contactEmail;
 
     @OneToMany(
             mappedBy = "volunteer",
