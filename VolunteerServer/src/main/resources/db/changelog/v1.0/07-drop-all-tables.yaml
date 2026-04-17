@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 07-drop-all-tables
+      author: admin
+      changes:
+        # Drop all tables (in reverse order of creation to handle FKs)
+        - dropTable:
+            tableName: task_suggestion
+            cascadeConstraints: true
+        - dropTable:
+            tableName: volunteer_task
+            cascadeConstraints: true
+        - dropTable:
+            tableName: volunteer_project
+            cascadeConstraints: true
+        - dropTable:
+            tableName: volunteer
+            cascadeConstraints: true
+
+        # Drop sequences if they exist
+        - sql:
+            dbms: postgresql
+            sql: DROP SEQUENCE IF EXISTS volunteer_id_seq CASCADE;

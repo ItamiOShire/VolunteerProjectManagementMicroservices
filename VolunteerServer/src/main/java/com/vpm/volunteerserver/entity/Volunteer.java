@@ -3,6 +3,7 @@ package com.vpm.volunteerserver.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,13 +19,8 @@ import java.util.List;
 public class Volunteer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
     @Column (
-            name = "user_id",
-            nullable = false,
-            unique = true
+            name = "user_id"
     )
     private long userId;
 

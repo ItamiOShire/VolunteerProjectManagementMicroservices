@@ -11,3 +11,9 @@ databaseChangeLog:
       file: db/changelog/v1.0/05-fix-volunteer-task-relations.yaml
   - include:
       file: db/changelog/v1.0/06-add-columns-to-volunteer-table.yaml
+  - include:
+      file: db/changelog/v1.0/07-drop-all-tables.yaml
+  - include:
+      file: db/changelog/v1.0/08-create-fixed-volunteer-table.yaml
+  - include:
+      file: db/changelog/v1.0/09-create-fixed-NtoMRelation-tables.yaml

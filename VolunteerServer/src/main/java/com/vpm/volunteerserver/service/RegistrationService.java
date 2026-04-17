@@ -71,7 +71,7 @@ public class RegistrationService {
 
             Volunteer saved = volunteerRepository.save(volunteer);
 
-            log.info("Saving successful - volunteer id: {}", saved.getId());
+            log.info("Saving successful - volunteer id: {}", saved.getUserId());
 
         } catch (Exception e) {
 

@@ -24,6 +24,8 @@ public class VolunteerProject {
     @JoinColumn(
             name = "volunteer_user_id",
             referencedColumnName = "user_id"
+            // Resolved: BUG! hibernate demands referenced columns to be primary key of that entity
+            //       it forbids to use any other field than primary key - otherwise, this leads to unpredictable behaviours, like generating non-existing sequences for referenced columns
     )
     private Volunteer volunteer;
 

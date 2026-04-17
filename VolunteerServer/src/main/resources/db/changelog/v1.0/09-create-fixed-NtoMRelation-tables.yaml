@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_fixed_n_to_m_relation_tables
+      author: admin
+      changes:
+        # Table: Volunteer <N----M> Project
+        - createTable:
+            tableName: volunteer_project
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: project_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: volunteer_project
+            columnNames: volunteer_user_id, project_id
+            constraintName: pk_volunteer_project
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: volunteer_project
+            constraintName: fk_volunteer_project_on_volunteer
+            referencedColumnNames: user_id
+            referencedTableName: volunteer
+
+        # Table: Volunteer <N----M> Task
+        - createTable:
+            tableName: volunteer_task
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: volunteer_task
+            columnNames: volunteer_user_id, task_id
+            constraintName: pk_volunteer_task
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: volunteer_task
+            constraintName: fk_volunteer_task_on_volunteer
+            referencedColumnNames: user_id
+            referencedTableName: volunteer
+
+        # Table: Volunteer <N----M> TaskSuggestion
+        - createTable:
+            tableName: task_suggestion
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: task_suggestion
+            columnNames: volunteer_user_id, task_id
+            constraintName: pk_task_suggestion
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: task_suggestion
+            constraintName: fk_task_suggestion_on_volunteer
+            referencedColumnNames: user_id
+            referencedTableName: volunteer
