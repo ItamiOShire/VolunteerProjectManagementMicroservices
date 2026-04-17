@@ -62,7 +62,7 @@ public class RegistrationServiceTest {
         authRegistrationResponse.setUserId(1L);
 
         savedVolunteer = Volunteer.builder()
-                .id(1L)
+                .userId(1L)
                 .userId(1L)
                 .firstName("John")
                 .lastName("Doe")
