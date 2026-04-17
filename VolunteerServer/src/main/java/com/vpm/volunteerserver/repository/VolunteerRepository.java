@@ -68,4 +68,19 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
             @Param("projectId") Long projectId,
             @Param("taskId") Long taskId
     );
+
+    @Query("""
+    SELECT v FROM Volunteer v
+    JOIN v.volunteerProjects vp
+    ON vp.volunteerProjectId.projectId = :projectId
+    LEFT JOIN v.volunteerTasks vt
+    ON vt.volunteerTaskId.taskId = :taskId
+    LEFT JOIN FETCH v.volunteerTaskSuggestions vts
+    WHERE vts.taskSuggestionId.taskId = :taskId
+""")
+    List<Volunteer> getVolunteersInProjectNotAssignedToTaskWithTaskSuggestion(
+            @Param("projectId") Long projectId,
+            @Param("taskId") Long taskId
+    );
+
 }

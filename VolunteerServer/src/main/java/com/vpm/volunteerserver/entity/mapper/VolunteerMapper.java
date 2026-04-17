@@ -3,6 +3,7 @@ package com.vpm.volunteerserver.entity.mapper;
 import com.vpm.common.dto.response.AuthRegistrationResponse;
 import com.vpm.volunteerserver.dto.request.VolunteerRegisterRequest;
 import com.vpm.volunteerserver.dto.response.VolunteerProfileResponse;
+import com.vpm.volunteerserver.dto.template.VolunteerToAssignToTaskTemplate;
 import com.vpm.volunteerserver.entity.Volunteer;
 
 public class VolunteerMapper {
@@ -23,10 +24,39 @@ public class VolunteerMapper {
     public static VolunteerProfileResponse toVolunteerProfileResponse(
             Volunteer volunteer
     ) {
+        return VolunteerProfileResponse.builder()
+                .fullName(buildFullName(volunteer))
+                .dateOfBirth(volunteer.getDateOfBirth())
+                .contact(buildContactData(volunteer))
+                .build();
+    }
+
+    public static VolunteerToAssignToTaskTemplate toVolunteerToAssignToTaskTemplate(
+            Volunteer volunteer
+    ) {
+
+        return VolunteerToAssignToTaskTemplate.builder()
+                .itemId(volunteer.getUserId())
+                .fullName(buildFullName(volunteer))
+                .build();
+
+    }
+
+    private static String buildFullName(
+            Volunteer volunteer
+    ) {
         StringBuilder fullName = new StringBuilder();
+
         fullName.append(volunteer.getFirstName())
                 .append(" ")
                 .append(volunteer.getLastName());
+
+        return fullName.toString();
+    }
+
+    private static String buildContactData(
+            Volunteer volunteer
+    ) {
 
         StringBuilder contactData = new StringBuilder();
 
@@ -35,11 +65,7 @@ public class VolunteerMapper {
                 .append(" / ")
                 .append(volunteer.getPhoneNumber());
 
-        return VolunteerProfileResponse.builder()
-                .fullName(fullName.toString())
-                .dateOfBirth(volunteer.getDateOfBirth())
-                .contact(contactData.toString())
-                .build();
+        return contactData.toString();
     }
 
 }
