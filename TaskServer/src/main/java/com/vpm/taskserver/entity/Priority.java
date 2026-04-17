@@ -28,8 +28,7 @@ public class Priority {
     private String name;
 
     @OneToMany(
-            mappedBy = "priority",
-            orphanRemoval = true
+            mappedBy = "priority"
     )
     private List<Task> tasks;
 
