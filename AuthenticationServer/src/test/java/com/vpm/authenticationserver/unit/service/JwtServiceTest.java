@@ -60,7 +60,6 @@ public class JwtServiceTest {
     @BeforeEach
     public void setUp() {
         // Mocks behaviour
-        //TODO: move those mocks into classes as not all tests cover utility of all mocks
         when(prop.getJwtExpirationTime()).thenReturn(900L);
         when(prop.getJwtRefreshTokenExpirationTime()).thenReturn(24600L);
         when(jwt.getTokenValue()).thenReturn(tokenTest);
