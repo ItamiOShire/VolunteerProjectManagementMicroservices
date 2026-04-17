@@ -116,8 +116,6 @@ public class TaskService {
      * POST HTTP method
      */
 
-    // TODO: replace Optional<Object> with Object and .orElseThrow with Optional API in every service and module!
-
     public TaskTemplate createTask(
             CreateTaskRequest request
     ) throws NoSuchPriorityException {
