@@ -408,10 +408,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskToDelete));
+            when(taskRepository.getTaskByIdWithVolunteers(taskId)).thenReturn(Optional.of(taskToDelete));
             taskService.deleteTask(taskId);
 
-            verify(taskRepository, times(1)).getTaskById(taskId);
+            verify(taskRepository, times(1)).getTaskByIdWithVolunteers(taskId);
             verify(taskRepository, times(1)).deleteById(taskId);
         }
 
@@ -419,10 +419,10 @@ class TaskServiceTest {
         @DisplayName("Should throw exception when task not found during deletion")
         void testDeleteTask_TaskNotFound() {
             long taskId = 1L;
-            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.empty());
+            when(taskRepository.getTaskByIdWithVolunteers(taskId)).thenReturn(Optional.empty());
 
             assertThrows(NoSuchTaskException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).getTaskById(taskId);
+            verify(taskRepository, times(1)).getTaskByIdWithVolunteers(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
 
@@ -445,10 +445,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskWithVolunteers));
+            when(taskRepository.getTaskByIdWithVolunteers(taskId)).thenReturn(Optional.of(taskWithVolunteers));
 
             assertThrows(AssignedVolunteersException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).getTaskById(taskId);
+            verify(taskRepository, times(1)).getTaskByIdWithVolunteers(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
 
@@ -476,10 +476,10 @@ class TaskServiceTest {
                     .taskSuggestions(new ArrayList<>())
                     .build();
 
-            when(taskRepository.getTaskById(taskId)).thenReturn(Optional.of(taskWithMultipleVolunteers));
+            when(taskRepository.getTaskByIdWithVolunteers(taskId)).thenReturn(Optional.of(taskWithMultipleVolunteers));
 
             assertThrows(AssignedVolunteersException.class, () -> taskService.deleteTask(taskId));
-            verify(taskRepository, times(1)).getTaskById(taskId);
+            verify(taskRepository, times(1)).getTaskByIdWithVolunteers(taskId);
             verify(taskRepository, never()).deleteById(taskId);
         }
     }
