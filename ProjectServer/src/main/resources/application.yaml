@@ -21,5 +21,33 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+  # RabbitMQ configuration
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+    # configuration variables
+    queue:
+      volunteer-assigned: queue.volunteer-project
+      dlq:
+        volunteer-assigned: dlq.volunteer-project
+
+    exchange:
+      volunteer-assigned: exchange.volunteer-project
+      dlx:
+        volunteer-assigned: dlx.volunteer-project
+
+    routing-key:
+      volunteer-assigned: volunteer-project.assigned
+      dlq:
+          volunteer-assigned: dlq.volunteer-project.assigned
+
+
 server:
   port: ${PORT_PROJECT_SERVICE:8084}

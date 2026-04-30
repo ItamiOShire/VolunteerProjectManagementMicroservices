@@ -1,12 +1,11 @@
 package com.vpm.projectserver.controller;
 
+import com.vpm.projectserver.dto.request.AssignVolunteerToProjectRequest;
 import com.vpm.projectserver.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -27,11 +26,19 @@ public class VolunteersProjectsController {
 
     @GetMapping("/{id}/projects")
     public ResponseEntity<?> getAllProjectsByVolunteer(
-            @PathVariable("id") Long id
+            @PathVariable Long id
     ) {
         return ResponseEntity
                 .ok(projectService.getAllVolunteerProjects(id));
     }
 
+    @PostMapping("/{id}/projects")
+    public ResponseEntity<?> assignVolunteerToProject(
+            @PathVariable("id") Long volunteerId,
+            @Validated @RequestBody AssignVolunteerToProjectRequest request
+    ) {
+        return ResponseEntity
+                .ok(projectService.assignVolunteerToProject(request.getProjectId(), volunteerId));
+    }
 
 }
