@@ -1,12 +1,18 @@
 package com.vpm.projectserver.service;
 
 
+import com.vpm.projectserver.config.properties.RabbitMQProperties;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
+import com.vpm.projectserver.dto.event.EventType;
 import com.vpm.projectserver.dto.request.CreateProjectRequest;
+import com.vpm.projectserver.dto.response.VolunteerAssignedResponse;
 import com.vpm.projectserver.entity.Project;
+import com.vpm.projectserver.entity.ProjectVolunteer;
 import com.vpm.projectserver.entity.Tag;
+import com.vpm.projectserver.entity.mapper.EventMapper;
 import com.vpm.projectserver.entity.mapper.ProjectMapper;
+import com.vpm.projectserver.entity.pks.ProjectVolunteerId;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +30,20 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final TagService tagService;
+    private final EventService eventService;
+    private final RabbitMQProperties rabbitMQProperties;
 
     @Autowired
     public ProjectService(
             ProjectRepository projectRepository,
-            TagService tagService) {
+            TagService tagService,
+            EventService eventService,
+            RabbitMQProperties rabbitMQProperties
+    ) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
+        this.eventService = eventService;
+        this.rabbitMQProperties = rabbitMQProperties;
     }
 
     /*
@@ -106,9 +119,7 @@ public class ProjectService {
 
         Set<Tag> tags = tagService.getTagsById(request.getTagIds());
 
-        if (tags.isEmpty()){
-            log.warn("No tags were selected to project");
-        }
+        logIfEmptyTags(tags);
 
         Project project = ProjectMapper.fromCreateProjectRequest(request, tags);
 
@@ -117,6 +128,42 @@ public class ProjectService {
         log.info("Project with id {} created", project.getId());
 
         return  ProjectMapper.mapToProjectTemplateFromProjectEntity(project);
+    }
+
+    /*
+     * This handles asynchronous event
+     * 1. Create VolunteerProject locally, assign object to Project and save project
+     * 2. use EventService to handle sending event
+     */
+
+    public VolunteerAssignedResponse assignVolunteerToProject(
+            Long projectId,
+            Long volunteerId
+    ) throws NoSuchProjectException {
+
+        Project project = findProjectById(projectId);
+
+        ProjectVolunteer projectVolunteer = new ProjectVolunteer(
+                new ProjectVolunteerId(projectId, volunteerId),
+                project,
+                volunteerId
+        );
+
+        project.getVolunteers().add(projectVolunteer);
+
+        projectRepository.save(project);
+
+        log.info("Volunteer with id {} assigned to project with id {}", volunteerId, projectId);
+
+        eventService.sendEvent(
+                EventMapper.formProjectVolunteer(projectVolunteer),
+                rabbitMQProperties.getExchange().getVolunteerAssigned(),
+                EventType.VOLUNTEER_ASSIGNED_TO_PROJECT
+        );
+
+        return ProjectMapper
+                .fromProjectVolunteerToVolunteerAssignedResponse(projectVolunteer);
+
     }
 
     /*
@@ -139,9 +186,7 @@ public class ProjectService {
                         .collect(Collectors.toSet())
         );
 
-        if (tags.isEmpty()){
-            log.warn("No tags were selected to project");
-        }
+        logIfEmptyTags(tags);
 
         project.update(
                 projectTemplate,
@@ -173,9 +218,7 @@ public class ProjectService {
 
             Set<Tag> tags = tagService.getTagsById(tagIds);
 
-            if (tags.isEmpty()){
-                log.warn("No tags were selected to project");
-            }
+            logIfEmptyTags(tags);
 
             beanWrapper.setPropertyValue("tags", tags);
             updates.remove("tags");
@@ -223,6 +266,12 @@ public class ProjectService {
                     return new NoSuchProjectException(projectId);
                 });
 
+    }
+
+    private void logIfEmptyTags(Set<Tag> tags) {
+        if (tags.isEmpty()){
+            log.warn("No tags were selected to project");
+        }
     }
 
 }
