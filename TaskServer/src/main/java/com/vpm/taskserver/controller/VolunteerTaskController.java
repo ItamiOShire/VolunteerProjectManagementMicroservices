@@ -1,13 +1,14 @@
 package com.vpm.taskserver.controller;
 
 
+import com.vpm.taskserver.dto.request.AssignVolunteerReportingTaskSuggestionRequest;
+import com.vpm.taskserver.dto.request.AssignVolunteerToTaskRequest;
 import com.vpm.taskserver.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 
 @RestController
@@ -67,6 +68,38 @@ public class VolunteerTaskController {
                         )
                 );
 
+    }
+
+    @PostMapping("{volunteerId}/tasks")
+    public ResponseEntity<?> assignTaskToVolunteer(
+            @PathVariable("volunteerId") Long volunteerId,
+            @RequestBody AssignVolunteerToTaskRequest request
+    ) {
+
+        return ResponseEntity
+                .created(URI.create("unavailable"))
+                .body(
+                        taskService.assignVolunteerToTask(
+                                request,
+                                volunteerId
+                        )
+                );
+    }
+
+    @PostMapping("{volunteerId}/tasks/suggestions")
+    public ResponseEntity<?> assignTaskToVolunteerSuggestion(
+            @PathVariable("volunteerId")  Long volunteerId,
+            @RequestBody AssignVolunteerReportingTaskSuggestionRequest request
+    ) {
+
+        return ResponseEntity
+                .created(URI.create("unavailable"))
+                .body(
+                        taskService.assignVolunteerReportingTaskSuggestion(
+                                request,
+                                volunteerId
+                        )
+                );
     }
 
 }

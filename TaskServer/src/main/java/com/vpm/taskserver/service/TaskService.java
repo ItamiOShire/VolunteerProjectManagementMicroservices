@@ -1,12 +1,21 @@
 package com.vpm.taskserver.service;
 
+import com.vpm.taskserver.config.properties.RabbitMQProperties;
+import com.vpm.taskserver.dto.event.EventType;
+import com.vpm.taskserver.dto.request.AssignVolunteerReportingTaskSuggestionRequest;
+import com.vpm.taskserver.dto.request.AssignVolunteerToTaskRequest;
 import com.vpm.taskserver.dto.request.CreateTaskRequest;
 import com.vpm.taskserver.dto.request.UpdateTaskRequest;
+import com.vpm.taskserver.dto.response.VolunteerAssignedToTaskResponse;
 import com.vpm.taskserver.dto.template.TaskTemplate;
 import com.vpm.taskserver.entity.Priority;
 import com.vpm.taskserver.entity.Task;
+import com.vpm.taskserver.entity.TaskSuggestion;
 import com.vpm.taskserver.entity.VolunteerTask;
+import com.vpm.taskserver.entity.mapper.EventMapper;
 import com.vpm.taskserver.entity.mapper.TaskMapper;
+import com.vpm.taskserver.entity.pks.TaskSuggestionId;
+import com.vpm.taskserver.entity.pks.VolunteerTaskId;
 import com.vpm.taskserver.exception.priority.NoSuchPriorityException;
 import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
@@ -20,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,13 +36,20 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final PriorityService priorityService;
+    private final RabbitMQProperties rabbitMQProperties;
+    private final EventService eventService;
 
     @Autowired
     public TaskService(
             TaskRepository taskRepository,
-            PriorityService priorityService) {
+            PriorityService priorityService,
+            RabbitMQProperties rabbitMQProperties,
+            EventService eventService
+    ) {
         this.taskRepository = taskRepository;
         this.priorityService = priorityService;
+        this.rabbitMQProperties = rabbitMQProperties;
+        this.eventService = eventService;
     }
 
     /*
@@ -133,6 +148,66 @@ public class TaskService {
                 .toTaskTemplate(
                         taskRepository.save(task)
                 );
+
+    }
+
+    public VolunteerAssignedToTaskResponse assignVolunteerToTask(
+            AssignVolunteerToTaskRequest request,
+            Long volunteerId
+    ) {
+
+            Task task = getTaskByIdWithVolunteers(
+                    request.getTaskId()
+            );
+
+            VolunteerTask volunteerTask = VolunteerTask.builder()
+                    .id(new VolunteerTaskId(volunteerId, request.getTaskId()))
+                    .task(task)
+                    .build();
+
+            task.getVolunteerTasks().add(volunteerTask);
+
+            taskRepository.save(task);
+
+            eventService.sendEvent(
+                    EventMapper.fromTaskVolunteer(volunteerTask),
+                    rabbitMQProperties.getExchange().getVolunteerAssigned(),
+                    EventType.VOLUNTEER_ASSIGNED_TO_TASK
+            );
+
+
+            return TaskMapper
+                    .fromVolunteerTaskToVolunteerAssignedToTaskResponse(volunteerTask);
+
+    }
+
+    public VolunteerAssignedToTaskResponse assignVolunteerReportingTaskSuggestion(
+            AssignVolunteerReportingTaskSuggestionRequest request,
+            Long volunteerId
+    ) {
+
+        Task task = getTaskByIdWithVolunteers(
+                request.getTaskId()
+        );
+
+        TaskSuggestion taskSuggestion = TaskSuggestion.builder()
+                    .id(new TaskSuggestionId(volunteerId, request.getTaskId()))
+                    .task(task)
+                    .build();
+
+        task.getTaskSuggestions().add(taskSuggestion);
+
+        taskRepository.save(task);
+
+        eventService.sendEvent(
+                EventMapper.fromTaskSuggestionReport(taskSuggestion),
+                rabbitMQProperties.getExchange().getVolunteerSuggestionReported(),
+                EventType.VOLUNTEER_REPORTED_TASK_SUGGESTION
+        );
+
+
+        return TaskMapper
+                .fromVolunteerTaskToVolunteerAssignedToReportedTaskSuggestion(taskSuggestion);
 
     }
 
