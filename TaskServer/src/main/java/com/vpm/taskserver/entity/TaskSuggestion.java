@@ -2,11 +2,15 @@ package com.vpm.taskserver.entity;
 
 import com.vpm.taskserver.entity.pks.TaskSuggestionId;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "task_suggestion")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TaskSuggestion {
 
     @EmbeddedId

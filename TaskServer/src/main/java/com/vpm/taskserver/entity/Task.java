@@ -2,17 +2,15 @@ package com.vpm.taskserver.entity;
 
 import com.vpm.taskserver.dto.request.UpdateTaskRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "task")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
