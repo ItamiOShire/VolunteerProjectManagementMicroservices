@@ -3,7 +3,9 @@ package com.vpm.projectserver.entity.mapper;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
 import com.vpm.projectserver.dto.request.CreateProjectRequest;
+import com.vpm.projectserver.dto.response.VolunteerAssignedResponse;
 import com.vpm.projectserver.entity.Project;
+import com.vpm.projectserver.entity.ProjectVolunteer;
 import com.vpm.projectserver.entity.Tag;
 
 import java.util.Set;
@@ -33,7 +35,7 @@ public class ProjectMapper {
             CreateProjectRequest request,
             Set<Tag> tags) {
 
-        return Project.builder()
+        Project project = Project.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .imgPath(request.getImgPath())
@@ -42,6 +44,22 @@ public class ProjectMapper {
                 .tags(tags)
                 .build();
 
+        for (Tag tag : tags) {
+            tag.getProjects().add(project);
+        }
+
+        return project;
+
+    }
+
+    public static VolunteerAssignedResponse fromProjectVolunteerToVolunteerAssignedResponse(
+            ProjectVolunteer projectVolunteer
+    ) {
+        return VolunteerAssignedResponse
+                .builder()
+                .volunteerId(projectVolunteer.getProjectVolunteerId().getVolunteerUserId())
+                .projectId(projectVolunteer.getProjectVolunteerId().getProjectId())
+                .build();
     }
 
 }
