@@ -27,13 +27,9 @@ public class Tag {
     )
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "project_tag",
-            joinColumns =
-                    @JoinColumn(name = "tag_id"),
-            inverseJoinColumns =
-                    @JoinColumn(name = "project_id")
+    @ManyToMany(
+            mappedBy = "tags",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     private Set<Project> projects = new HashSet<>();
 
