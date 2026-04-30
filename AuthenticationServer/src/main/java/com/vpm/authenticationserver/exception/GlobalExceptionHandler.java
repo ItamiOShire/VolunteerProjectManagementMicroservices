@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 400,
                 ErrorCode.BAD_REQUEST,
-                "Validation error: " + e.getMessage(),
+                "Validation error: " + e.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList(),
                 request.getContextPath()
         );
 
