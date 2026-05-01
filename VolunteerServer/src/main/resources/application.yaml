@@ -21,6 +21,62 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+  # RabbitMQ configuration
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:password}
+
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+    # ===== Listener Configuration with Built-in Retry =====
+    listener:
+      simple:
+        # Manual acknowledgment for full control
+        acknowledge-mode: MANUAL
+
+        # Prefetch one message at a time
+        prefetch: 1
+
+        # Built-in retry configuration
+        retry:
+          enabled: true
+          initial-interval: 1000          # Wait 1 second before first retry
+          max-interval: 10000             # Max 10 seconds between retries
+          multiplier: 2.0                 # Exponential backoff: 1s → 2s → 4s
+          max-retries: 3
+
+    # configuration variables
+    queue:
+      volunteer-assigned-to-task: queue.volunteer-task
+      volunteer-suggestion-reported: queue.volunteer-suggestion
+      volunteer-assigned-to-project: queue.volunteer-project
+      dlq:
+        volunteer-assigned-to-task: dlq.volunteer-task
+        volunteer-suggestion-reported: dlq.volunteer-suggestion
+        volunteer-assigned-to-project: dlq.volunteer-project
+
+    exchange:
+      volunteer-assigned-to-task: exchange.volunteer-task
+      volunteer-suggestion-reported: exchange.volunteer-suggestion
+      volunteer-assigned-to-project: exchange.volunteer-project
+      dlx:
+        volunteer-assigned-to-task: dlx.volunteer-task
+        volunteer-suggestion-reported: dlx.volunteer-suggestion
+        volunteer-assigned-to-project: dlx.volunteer-project
+
+    routing-key:
+      volunteer-assigned-to-task: volunteer-task.assigned
+      volunteer-suggestion-reported: volunteer-suggestion.reported
+      volunteer-assigned-to-project: volunteer-project.assigned
+      dlq:
+        volunteer-assigned-to-task: dlq.volunteer-task.assigned
+        volunteer-suggestion-reported: dlq.volunteer-suggestion.reported
+        volunteer-assigned-to-project: dlq.volunteer-project.assigned
+
 server:
   port: ${PORT_VOLUNTEER_SERVICE:8082}
 
