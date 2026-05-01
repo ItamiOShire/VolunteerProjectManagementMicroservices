@@ -97,16 +97,19 @@ public class RabbitMQConfig {
         template.setConfirmCallback(
                 (correlationData, ack, cause) -> {
                     if (!ack) {
-
                         log.error("Failed to publish message: {}", cause);
-
+                    } else {
+                        log.info("Message published successfully with id: {}",
+                                correlationData != null ? correlationData.getId() : "unknown");
                     }
                 }
         );
 
         template.setReturnsCallback(
-                returned ->
-                    log.error("Failed to route message: {}", returned.getMessage())
+                returned -> log.error("Failed to route message: {} from exchange: {} with routing key: {}",
+                        returned.getMessage(),
+                        returned.getExchange(),
+                        returned.getRoutingKey())
         );
 
         return template;
