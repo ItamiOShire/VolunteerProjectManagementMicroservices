@@ -24,10 +24,10 @@ public class RabbitMQProperties {
         private String volunteerAssigned;
         private String volunteerSuggestionReported;
 
-        private Dql dql = new Dql();
+        private Dlq dlq = new Dlq();
 
         @Data
-        public static class Dql {
+        public static class Dlq {
 
             private String volunteerAssigned;
             private String volunteerSuggestionReported;
@@ -60,10 +60,10 @@ public class RabbitMQProperties {
         private String volunteerAssigned;
         private String volunteerSuggestionReported;
 
-        private Dql dql = new Dql();
+        private Dlq dlq = new Dlq();
 
         @Data
-        public static class Dql {
+        public static class Dlq {
 
             private String volunteerAssigned;
             private String volunteerSuggestionReported;

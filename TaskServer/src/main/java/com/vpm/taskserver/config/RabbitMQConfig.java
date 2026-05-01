@@ -25,14 +25,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue volunteerAssignedToTaskDQL() {
         return QueueBuilder
-                .durable(rabbitMQProperties.getQueue().getDql().getVolunteerAssigned())
+                .durable(rabbitMQProperties.getQueue().getDlq().getVolunteerAssigned())
                 .build();
     }
 
     @Bean
     public Queue volunteerReportedTaskSuggestionDQL() {
         return QueueBuilder
-                .durable(rabbitMQProperties.getQueue().getDql().getVolunteerSuggestionReported())
+                .durable(rabbitMQProperties.getQueue().getDlq().getVolunteerSuggestionReported())
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(volunteerAssignedToTaskDQL())
                 .to(volunteerAssignedToTaskDLX())
-                .with(rabbitMQProperties.getRoutingKey().getDql().getVolunteerAssigned());
+                .with(rabbitMQProperties.getRoutingKey().getDlq().getVolunteerAssigned());
     }
 
     @Bean
@@ -59,7 +59,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(volunteerReportedTaskSuggestionDQL())
                 .to(volunteerReportedTaskSuggestionDLX())
-                .with(rabbitMQProperties.getRoutingKey().getDql().getVolunteerSuggestionReported());
+                .with(rabbitMQProperties.getRoutingKey().getDlq().getVolunteerSuggestionReported());
     }
 
     /*
@@ -67,11 +67,11 @@ public class RabbitMQConfig {
      */
 
     @Bean
-    public Queue volunteerAssignedToProjectQueue() {
+    public Queue volunteerAssignedToTaskQueue() {
         return QueueBuilder
                 .durable(rabbitMQProperties.getQueue().getVolunteerAssigned())
                 .withArgument("x-dead-letter-exchange", rabbitMQProperties.getExchange().getDlx().getVolunteerAssigned())
-                .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey().getDql().getVolunteerAssigned())
+                .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey().getDlq().getVolunteerAssigned())
                 .withArgument("x-message-ttl", 86400000) // Message TTL of 24h
                 .build();
     }
@@ -81,7 +81,7 @@ public class RabbitMQConfig {
         return QueueBuilder
                 .durable(rabbitMQProperties.getQueue().getVolunteerSuggestionReported())
                 .withArgument("x-dead-letter-exchange", rabbitMQProperties.getExchange().getDlx().getVolunteerSuggestionReported())
-                .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey().getDql().getVolunteerSuggestionReported())
+                .withArgument("x-dead-letter-routing-key", rabbitMQProperties.getRoutingKey().getDlq().getVolunteerSuggestionReported())
                 .withArgument("x-message-ttl", 86400000) // Message TTL of 24h
                 .build();
     }
@@ -105,12 +105,12 @@ public class RabbitMQConfig {
      */
 
     @Bean
-    public Binding volunteerAssignedToProjectExchangeBinding(
-            Queue volunteerAssignedToProjectQueue,
+    public Binding volunteerAssignedToTaskExchangeBinding(
+            Queue volunteerAssignedToTaskQueue,
             DirectExchange volunteerAssignedToTaskExchange
     ) {
         return BindingBuilder
-                .bind(volunteerAssignedToProjectQueue)
+                .bind(volunteerAssignedToTaskQueue)
                 .to(volunteerAssignedToTaskExchange)
                 .with(rabbitMQProperties.getRoutingKey().getVolunteerAssigned());
     }
