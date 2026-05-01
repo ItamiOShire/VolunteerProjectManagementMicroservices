@@ -3,10 +3,7 @@ package com.vpm.volunteerserver.entity;
 
 import com.vpm.volunteerserver.entity.pks.VolunteerProjectId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "volunteer_project")
@@ -14,6 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class VolunteerProject {
 
     @EmbeddedId

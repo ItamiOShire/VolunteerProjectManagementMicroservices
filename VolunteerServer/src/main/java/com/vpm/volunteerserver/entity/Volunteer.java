@@ -60,19 +60,22 @@ public class Volunteer {
 
     @OneToMany(
             mappedBy = "volunteer",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private List<VolunteerTask> volunteerTasks;
 
     @OneToMany(
             mappedBy = "volunteer",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private List<VolunteerProject> volunteerProjects;
 
     @OneToMany(
             mappedBy = "volunteer",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private List<TaskSuggestion> volunteerTaskSuggestions;
 
