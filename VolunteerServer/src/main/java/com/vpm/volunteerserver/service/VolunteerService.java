@@ -1,12 +1,22 @@
 package com.vpm.volunteerserver.service;
 
 
+import com.vpm.volunteerserver.dto.event.VolunteerAssignedToProjectEvent;
+import com.vpm.volunteerserver.dto.event.VolunteerAssignedToTaskEvent;
+import com.vpm.volunteerserver.dto.event.VolunteerReportedTaskSuggestionEvent;
 import com.vpm.volunteerserver.dto.response.VolunteerProfileResponse;
 import com.vpm.volunteerserver.dto.template.VolunteerToAssignToTaskTemplate;
+import com.vpm.volunteerserver.entity.TaskSuggestion;
 import com.vpm.volunteerserver.entity.Volunteer;
+import com.vpm.volunteerserver.entity.VolunteerProject;
+import com.vpm.volunteerserver.entity.VolunteerTask;
 import com.vpm.volunteerserver.entity.mapper.VolunteerMapper;
+import com.vpm.volunteerserver.entity.pks.TaskSuggestionId;
+import com.vpm.volunteerserver.entity.pks.VolunteerProjectId;
+import com.vpm.volunteerserver.entity.pks.VolunteerTaskId;
 import com.vpm.volunteerserver.exception.volunteer.NoSuchVolunteerException;
 import com.vpm.volunteerserver.repository.VolunteerRepository;
+import com.vpm.volunteerserver.service.util.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
@@ -23,11 +33,14 @@ import java.util.stream.Collectors;
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
+    private final ServiceUtils serviceUtils;
 
     public VolunteerService(
-            VolunteerRepository volunteerRepository
+            VolunteerRepository volunteerRepository,
+            ServiceUtils serviceUtils
     ) {
         this.volunteerRepository = volunteerRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     /*
@@ -38,7 +51,7 @@ public class VolunteerService {
             Long volunteerUserId
     ) throws NoSuchVolunteerException {
 
-        Volunteer volunteer = getVolunteerByUserId(
+        Volunteer volunteer = serviceUtils.getVolunteerByUserIdOrThrow(
                 volunteerUserId
         );
 
@@ -82,7 +95,7 @@ public class VolunteerService {
             Long taskId
     ) {
 
-        return getVolunteersNotAssignedToTask(
+        return serviceUtils.getVolunteersNotAssignedToTask(
                 projectId,
                 taskId
         )
@@ -121,7 +134,7 @@ public class VolunteerService {
             Long taskId
     ) {
 
-        List<Volunteer> volunteersAssignedOrNotToTask = getVolunteersNotAssignedToTask(
+        List<Volunteer> volunteersAssignedOrNotToTask = serviceUtils.getVolunteersNotAssignedToTask(
                 projectId,
                 taskId
         );
@@ -161,7 +174,7 @@ public class VolunteerService {
 
         log.info("Patching Volunteer Profile with user id {}", volunteerUserId);
 
-        Volunteer volunteer = getVolunteerByUserId(
+        Volunteer volunteer = serviceUtils.getVolunteerByUserIdOrThrow(
                 volunteerUserId
         );
 
@@ -173,50 +186,6 @@ public class VolunteerService {
         beanWrapper.setPropertyValues(updates);
 
         volunteerRepository.save(volunteer);
-
-    }
-
-    /*
-     * Logger helper class
-     */
-
-    private static class Logger {
-
-        public static void VolunteerNotFound(long volunteerUserId) {
-            log.error("Volunteer with user id {} not found", volunteerUserId);
-        }
-
-    }
-
-    /*
-     * Helper methods
-     */
-
-    private Volunteer getVolunteerByUserId(
-            long volunteerUserId
-    ) throws NoSuchVolunteerException {
-
-        return volunteerRepository.findByUserId(volunteerUserId)
-                .orElseThrow(() -> {
-                    Logger.VolunteerNotFound(volunteerUserId);
-                    return new NoSuchVolunteerException(volunteerUserId);}
-                );
-
-    }
-
-    private List<Volunteer> getVolunteersNotAssignedToTask(
-            Long projectId,
-            Long taskId
-    ) {
-
-        return volunteerRepository
-                .getAllVolunteersInProjectAssignedOrNotToTask(
-                        projectId,
-                        taskId
-                )
-                .stream()
-                .filter(volunteer -> volunteer.getVolunteerTasks().isEmpty())
-                .toList();
 
     }
 
