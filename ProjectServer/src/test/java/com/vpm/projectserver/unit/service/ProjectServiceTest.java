@@ -1,12 +1,16 @@
 package com.vpm.projectserver.unit.service;
 
+import com.vpm.projectserver.config.properties.RabbitMQProperties;
 import com.vpm.projectserver.dto.ProjectTemplate;
 import com.vpm.projectserver.dto.TagTemplate;
+import com.vpm.projectserver.dto.event.EventType;
 import com.vpm.projectserver.dto.request.CreateProjectRequest;
+import com.vpm.projectserver.dto.response.VolunteerAssignedResponse;
 import com.vpm.projectserver.entity.Project;
 import com.vpm.projectserver.entity.Tag;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
+import com.vpm.projectserver.service.EventService;
 import com.vpm.projectserver.service.ProjectService;
 import com.vpm.projectserver.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -34,6 +40,12 @@ class ProjectServiceTest {
     @Mock
     private TagService tagService;
 
+    @Mock
+    private EventService eventService;
+
+    @Mock
+    private RabbitMQProperties rabbitMQProperties;
+
     @InjectMocks
     private ProjectService projectService;
 
@@ -42,6 +54,11 @@ class ProjectServiceTest {
     private Tag testTag;
     private TagTemplate testTagTemplate;
     private CreateProjectRequest createProjectRequest;
+
+    private static final Long PROJECT_ID = 1L;
+    private static final Long VOLUNTEER_ID = 100L;
+    private static final String EXCHANGE_NAME = "exchange.volunteer-project";
+    private static final String ROUTING_KEY_NAME = "volunteer-project.assigned";
 
     @BeforeEach
     void setUp() {
@@ -65,6 +82,7 @@ class ProjectServiceTest {
                 .organizationUserId(100L)
                 .organizationName("Test Organization")
                 .tags(Set.of(testTag))
+                .volunteers(new ArrayList<>())
                 .build();
 
         testProjectTemplate = ProjectTemplate.builder()
@@ -498,5 +516,180 @@ class ProjectServiceTest {
         assertEquals(1, result.get(0).getTags().size());
         assertEquals(1, result.get(1).getTags().size());
     }
+
+    @Test
+    @DisplayName("Should successfully assign volunteer to project")
+    void testAssignVolunteerToProject_Success() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(rabbitMQProperties.getExchange()).thenReturn(createMockExchange());
+        when(rabbitMQProperties.getRoutingKey()).thenReturn(createMockRoutingKey());
+        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+        doNothing().when(eventService).sendEvent(any(), anyString(), anyString(), any(EventType.class));
+
+        // Act
+        VolunteerAssignedResponse response = projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID);
+
+        // Assert
+        assertThat(response)
+                .isNotNull()
+                .extracting("volunteerId", "projectId")
+                .containsExactly(VOLUNTEER_ID, PROJECT_ID);
+
+        verify(projectRepository).getProjectById(PROJECT_ID);
+        verify(projectRepository).save(argThat(project ->
+                !project.getVolunteers().isEmpty()
+        ));
+        verify(eventService).sendEvent(any(), eq(ROUTING_KEY_NAME), eq(EXCHANGE_NAME), eq(EventType.VOLUNTEER_ASSIGNED_TO_PROJECT));
+    }
+
+    @Test
+    @DisplayName("Should add volunteer to project's volunteer list")
+    void testAssignVolunteerToProject_AddsVolunteerToList() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(rabbitMQProperties.getExchange()).thenReturn(createMockExchange());
+        when(rabbitMQProperties.getRoutingKey()).thenReturn(createMockRoutingKey());
+        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+        doNothing().when(eventService).sendEvent(any(), anyString(), anyString(), any(EventType.class));
+
+        // Act
+        projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID);
+
+        // Assert - Verify volunteer was added to project
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        verify(projectRepository).save(projectCaptor.capture());
+
+        Project savedProject = projectCaptor.getValue();
+        assertThat(savedProject.getVolunteers())
+                .isNotEmpty()
+                .hasSize(1)
+                .anySatisfy(pv -> assertThat(pv.getProjectVolunteerId().getVolunteerUserId())
+                        .isEqualTo(VOLUNTEER_ID));
+    }
+
+    @Test
+    @DisplayName("Should publish event with correct parameters")
+    void testAssignVolunteerToProject_PublishesEvent() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(rabbitMQProperties.getExchange()).thenReturn(createMockExchange());
+        when(rabbitMQProperties.getRoutingKey()).thenReturn(createMockRoutingKey());
+        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+
+        // Act
+        projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID);
+
+        // Assert - Verify event was published with correct parameters
+        ArgumentCaptor<Object> eventCaptor = ArgumentCaptor.forClass(Object.class);
+        ArgumentCaptor<String> exchangeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<EventType> eventTypeCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        verify(eventService).sendEvent(
+                eventCaptor.capture(),
+                routingKeyCaptor.capture(),
+                exchangeCaptor.capture(),
+                eventTypeCaptor.capture()
+        );
+
+        assertThat(exchangeCaptor.getValue()).isEqualTo(EXCHANGE_NAME);
+        assertThat(eventTypeCaptor.getValue()).isEqualTo(EventType.VOLUNTEER_ASSIGNED_TO_PROJECT);
+    }
+
+    @Test
+    @DisplayName("Should throw NoSuchProjectException when project not found")
+    void testAssignVolunteerToProject_ProjectNotFound() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID))
+                .isInstanceOf(NoSuchProjectException.class)
+                .hasMessageContaining(String.valueOf(PROJECT_ID));
+
+        // Verify no save was attempted
+        verify(projectRepository, never()).save(any());
+        // Verify no event was sent
+        verify(eventService, never()).sendEvent(any(), anyString() ,anyString(), any(EventType.class));
+    }
+
+    @Test
+    @DisplayName("Should not publish event if repository save fails")
+    void testAssignVolunteerToProject_SaveFailsBeforeEventPublish() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(projectRepository.save(any(Project.class))).thenThrow(new RuntimeException("DB Error"));
+
+        // Act & Assert
+        assertThatThrownBy(() -> projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("DB Error");
+
+        // Verify event was NOT published (since save failed)
+        verify(eventService, never()).sendEvent(any(),anyString() ,anyString(), any(EventType.class));
+    }
+
+    @Test
+    @DisplayName("Should persist project with volunteer assignment")
+    void testAssignVolunteerToProject_PersistsData() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(rabbitMQProperties.getExchange()).thenReturn(createMockExchange());
+        when(rabbitMQProperties.getRoutingKey()).thenReturn(createMockRoutingKey());
+        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+        doNothing().when(eventService).sendEvent(any(), anyString(), anyString(), any(EventType.class));
+
+        // Act
+        projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID);
+
+        // Assert
+        verify(projectRepository).getProjectById(eq(PROJECT_ID));
+        verify(projectRepository).save(any(Project.class));
+
+        // Verify the saved project contains the volunteer
+        ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
+        verify(projectRepository).save(captor.capture());
+        Project saved = captor.getValue();
+
+        assertThat(saved.getVolunteers()).isNotEmpty();
+        assertThat(saved.getVolunteers())
+                .extracting(pv -> pv.getProjectVolunteerId().getVolunteerUserId())
+                .contains(VOLUNTEER_ID);
+    }
+
+    @Test
+    @DisplayName("Should return response with correct volunteer and project IDs")
+    void testAssignVolunteerToProject_ResponseContainsCorrectIds() {
+        // Arrange
+        when(projectRepository.getProjectById(PROJECT_ID)).thenReturn(Optional.of(testProject));
+        when(rabbitMQProperties.getExchange()).thenReturn(createMockExchange());
+        when(rabbitMQProperties.getRoutingKey()).thenReturn(createMockRoutingKey());
+        when(projectRepository.save(any(Project.class))).thenReturn(testProject);
+        doNothing().when(eventService).sendEvent(any(), anyString(), anyString(), any(EventType.class));
+
+        // Act
+        VolunteerAssignedResponse response = projectService.assignVolunteerToProject(PROJECT_ID, VOLUNTEER_ID);
+
+        // Assert
+        assertThat(response)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("volunteerId", VOLUNTEER_ID)
+                .hasFieldOrPropertyWithValue("projectId", PROJECT_ID);
+    }
+
+    // Helper method to create mock RabbitMQProperties
+    private RabbitMQProperties.Exchange createMockExchange() {
+        RabbitMQProperties.Exchange exchange = new RabbitMQProperties.Exchange();
+        exchange.setVolunteerAssigned(EXCHANGE_NAME);
+        return exchange;
+    }
+
+    private RabbitMQProperties.RoutingKey createMockRoutingKey() {
+        RabbitMQProperties.RoutingKey routingKey = new RabbitMQProperties.RoutingKey();
+        routingKey.setVolunteerAssigned(ROUTING_KEY_NAME);
+        return routingKey;
+    }
+
 }
 
