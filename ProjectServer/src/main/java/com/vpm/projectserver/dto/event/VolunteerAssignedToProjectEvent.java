@@ -3,14 +3,15 @@ package com.vpm.projectserver.dto.event;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @Builder
-public class VolunteerAssignedToProjectEvent {
+public class VolunteerAssignedToProjectEvent implements Serializable {
 
-    private long projectId;
-    private long volunteerId;
+    private Long projectId;
+    private Long volunteerId;
     private LocalDate createdAt;
 
 }

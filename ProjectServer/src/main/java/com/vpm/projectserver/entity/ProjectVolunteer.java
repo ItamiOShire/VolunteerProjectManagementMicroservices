@@ -29,5 +29,7 @@ public class ProjectVolunteer {
             insertable = false,
             updatable = false
     )
-    private long volunteerUserId;
+    private Long volunteerUserId;
+
+
 }

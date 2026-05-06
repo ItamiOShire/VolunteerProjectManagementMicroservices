@@ -19,12 +19,12 @@ public class ProjectVolunteerId implements Serializable {
             name = "project_id",
             nullable = false
     )
-    private long projectId;
+    private Long projectId;
 
     @Column(
             name = "volunteer_user_id",
             nullable = false
     )
-    private long volunteerUserId;
+    private Long volunteerUserId;
 
 }
