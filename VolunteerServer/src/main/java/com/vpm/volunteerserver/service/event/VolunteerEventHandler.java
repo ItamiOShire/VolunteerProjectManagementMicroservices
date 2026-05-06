@@ -32,7 +32,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ProjectEventHandler {
+public class VolunteerEventHandler {
 
     private final VolunteerEventService volunteerEventService;
 
