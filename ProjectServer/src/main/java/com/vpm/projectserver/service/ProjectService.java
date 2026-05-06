@@ -143,11 +143,12 @@ public class ProjectService {
 
         Project project = findProjectById(projectId);
 
-        ProjectVolunteer projectVolunteer = new ProjectVolunteer(
-                new ProjectVolunteerId(projectId, volunteerId),
-                project,
-                volunteerId
-        );
+        // TODO: Add manual checking if volunteer is already assigned to project, to prevent duplicate entries in database and multiple events sent
+
+        ProjectVolunteer projectVolunteer = new ProjectVolunteer();
+        projectVolunteer.setProject(project);
+        projectVolunteer.setVolunteerUserId(volunteerId);
+        projectVolunteer.setProjectVolunteerId(new ProjectVolunteerId(projectId, volunteerId));
 
         project.getVolunteers().add(projectVolunteer);
 
