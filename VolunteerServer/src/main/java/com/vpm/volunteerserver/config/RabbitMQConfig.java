@@ -1,10 +1,15 @@
 package com.vpm.volunteerserver.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vpm.volunteerserver.config.properties.RabbitMQProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +21,13 @@ public class RabbitMQConfig {
 
     public RabbitMQConfig(RabbitMQProperties rabbitMQProperties) {
         this.rabbitMQProperties = rabbitMQProperties;
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        admin.setAutoStartup(true); // important
+        return admin;
     }
 
     /*
@@ -185,6 +197,7 @@ public class RabbitMQConfig {
             ConnectionFactory connectionFactory
     ) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(jsonMessageConverter());
         template.setMandatory(true);
 
         // Confirm callback: Message reached broker?
@@ -207,6 +220,11 @@ public class RabbitMQConfig {
         );
 
         return template;
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
 }
