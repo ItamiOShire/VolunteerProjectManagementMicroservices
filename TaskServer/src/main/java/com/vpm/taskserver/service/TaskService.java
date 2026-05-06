@@ -171,6 +171,7 @@ public class TaskService {
 
             eventService.sendEvent(
                     EventMapper.fromTaskVolunteer(volunteerTask),
+                    rabbitMQProperties.getRoutingKey().getVolunteerAssigned(),
                     rabbitMQProperties.getExchange().getVolunteerAssigned(),
                     EventType.VOLUNTEER_ASSIGNED_TO_TASK
             );
@@ -201,6 +202,7 @@ public class TaskService {
 
         eventService.sendEvent(
                 EventMapper.fromTaskSuggestionReport(taskSuggestion),
+                rabbitMQProperties.getRoutingKey().getVolunteerSuggestionReported(),
                 rabbitMQProperties.getExchange().getVolunteerSuggestionReported(),
                 EventType.VOLUNTEER_REPORTED_TASK_SUGGESTION
         );
