@@ -7,6 +7,7 @@ import com.vpm.volunteerserver.entity.VolunteerTask;
 import com.vpm.volunteerserver.exception.volunteer.NoSuchVolunteerException;
 import com.vpm.volunteerserver.repository.VolunteerRepository;
 import com.vpm.volunteerserver.service.VolunteerService;
+import com.vpm.volunteerserver.service.util.ServiceUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,9 @@ public class VolunteerServiceTest {
 
     @Mock
     private VolunteerRepository volunteerRepository;
+
+    @Mock
+    private ServiceUtils serviceUtils;
 
     @InjectMocks
     private VolunteerService volunteerService;
@@ -68,8 +72,8 @@ public class VolunteerServiceTest {
             @BeforeEach
             void setUp() {
                 System.out.println("--- BEGIN OF GET PROFILE TEST ---");
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.of(testVolunteer));
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenReturn(testVolunteer);
             }
 
             @AfterEach
@@ -87,7 +91,7 @@ public class VolunteerServiceTest {
                 assertEquals(expectedResponse.getDateOfBirth(), response.getDateOfBirth(), "Date of birth should match");
                 assertEquals(expectedResponse.getContact(), response.getContact(), "Contact should match");
 
-                verify(volunteerRepository, times(1)).findByUserId(testVolunteerUserId);
+                verify(serviceUtils, times(1)).getVolunteerByUserIdOrThrow(testVolunteerUserId);
             }
 
             @Test
@@ -134,8 +138,8 @@ public class VolunteerServiceTest {
             @Test
             @DisplayName("Should throw NoSuchVolunteerException when volunteer not found")
             void shouldThrowNoSuchVolunteerException() {
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.empty());
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenThrow(new NoSuchVolunteerException(testVolunteerUserId));
 
                 assertThrows(
                         NoSuchVolunteerException.class,
@@ -143,38 +147,9 @@ public class VolunteerServiceTest {
                         "Should throw NoSuchVolunteerException when volunteer not found"
                 );
 
-                verify(volunteerRepository, times(1)).findByUserId(testVolunteerUserId);
+                verify(serviceUtils, times(1)).getVolunteerByUserIdOrThrow(testVolunteerUserId);
             }
 
-            @Test
-            @DisplayName("Should call repository with correct userId")
-            void shouldCallRepositoryWithCorrectUserId() {
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.empty());
-
-                try {
-                    volunteerService.getVolunteerProfile(testVolunteerUserId);
-                } catch (NoSuchVolunteerException e) {
-                    // Expected
-                }
-
-                verify(volunteerRepository, times(1)).findByUserId(testVolunteerUserId);
-            }
-
-            @Test
-            @DisplayName("Should throw exception for non-existent user ID")
-            void shouldThrowExceptionForNonExistentUserId() {
-                Long nonExistentUserId = 999L;
-                when(volunteerRepository.findByUserId(nonExistentUserId))
-                        .thenReturn(Optional.empty());
-
-                assertThrows(
-                        NoSuchVolunteerException.class,
-                        () -> volunteerService.getVolunteerProfile(nonExistentUserId)
-                );
-
-                verify(volunteerRepository, times(1)).findByUserId(nonExistentUserId);
-            }
         }
     }
 
@@ -189,8 +164,8 @@ public class VolunteerServiceTest {
             @BeforeEach
             void setUp() {
                 System.out.println("--- BEGIN OF PATCH PROFILE TEST ---");
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.of(testVolunteer));
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenReturn(testVolunteer);
                 when(volunteerRepository.save(any(Volunteer.class)))
                         .thenReturn(testVolunteer);
             }
@@ -211,7 +186,7 @@ public class VolunteerServiceTest {
                     "Should not throw exception when patching valid profile"
                 );
 
-                verify(volunteerRepository, times(1)).findByUserId(testVolunteerUserId);
+                verify(serviceUtils, times(1)).getVolunteerByUserIdOrThrow(testVolunteerUserId);
                 verify(volunteerRepository, times(1)).save(any(Volunteer.class));
             }
 
@@ -280,8 +255,8 @@ public class VolunteerServiceTest {
             @Test
             @DisplayName("Should throw NoSuchVolunteerException when volunteer not found")
             void shouldThrowNoSuchVolunteerExceptionWhenNotFound() {
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.empty());
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenThrow(new NoSuchVolunteerException(testVolunteerUserId));
 
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("firstName", "Jane");
@@ -292,7 +267,7 @@ public class VolunteerServiceTest {
                         "Should throw NoSuchVolunteerException when volunteer not found"
                 );
 
-                verify(volunteerRepository, times(1)).findByUserId(testVolunteerUserId);
+                verify(serviceUtils, times(1)).getVolunteerByUserIdOrThrow(testVolunteerUserId);
                 verify(volunteerRepository, never()).save(any(Volunteer.class));
             }
 
@@ -300,8 +275,8 @@ public class VolunteerServiceTest {
             @DisplayName("Should throw exception for non-existent volunteer ID")
             void shouldThrowExceptionForNonExistentVolunteerId() {
                 Long nonExistentUserId = 999L;
-                when(volunteerRepository.findByUserId(nonExistentUserId))
-                        .thenReturn(Optional.empty());
+                when(serviceUtils.getVolunteerByUserIdOrThrow(nonExistentUserId))
+                        .thenThrow(new NoSuchVolunteerException(nonExistentUserId));
 
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("firstName", "Jane");
@@ -317,8 +292,8 @@ public class VolunteerServiceTest {
             @Test
             @DisplayName("Should not save when volunteer not found")
             void shouldNotSaveWhenVolunteerNotFound() {
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.empty());
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenThrow(new NoSuchVolunteerException(testVolunteerUserId));
 
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("firstName", "Jane");
@@ -335,8 +310,8 @@ public class VolunteerServiceTest {
             @Test
             @DisplayName("Should throw BeansException on invalid property")
             void shouldThrowBeansExceptionOnInvalidProperty() {
-                when(volunteerRepository.findByUserId(testVolunteerUserId))
-                        .thenReturn(Optional.of(testVolunteer));
+                when(serviceUtils.getVolunteerByUserIdOrThrow(testVolunteerUserId))
+                        .thenReturn(testVolunteer);
 
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("invalidProperty", "someValue");
@@ -579,8 +554,6 @@ public class VolunteerServiceTest {
             @BeforeEach
             void setUp() {
                 System.out.println("--- BEGIN OF GET VOLUNTEERS NOT IN TASK TEST ---");
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(anyLong(), anyLong()))
-                        .thenReturn(new ArrayList<>());
             }
 
             @AfterEach
@@ -603,10 +576,11 @@ public class VolunteerServiceTest {
                         .volunteerTasks(new ArrayList<>())
                         .build();
 
+
                 List<Volunteer> volunteers = new ArrayList<>();
                 volunteers.add(volunteerNotAssigned);
 
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
+                when(serviceUtils.getVolunteersNotAssignedToTask(projectId, taskId))
                         .thenReturn(volunteers);
 
                 List<VolunteerProfileResponse> response = volunteerService.getVolunteersInProjectWhoAreNotInTask(projectId, taskId);
@@ -614,37 +588,9 @@ public class VolunteerServiceTest {
                 assertEquals(1, response.size(), "Should return one volunteer");
                 assertEquals("Jane Smith", response.get(0).getFullName());
 
-                verify(volunteerRepository, times(1)).getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId);
+                verify(serviceUtils, times(1)).getVolunteersNotAssignedToTask(projectId, taskId);
             }
 
-            @Test
-            @DisplayName("Should filter out assigned volunteers")
-            void shouldFilterOutAssignedVolunteers() {
-                Long projectId = 1L;
-                Long taskId = 1L;
-
-                VolunteerTask task = new VolunteerTask();
-                Volunteer assignedVolunteer = Volunteer.builder()
-                        .userId(2L)
-                        .firstName("Jane")
-                        .lastName("Smith")
-                        .dateOfBirth(LocalDate.of(1995, 3, 20))
-                        .phoneNumber("555-9999")
-                        .volunteerTasks(new ArrayList<>(Collections.singletonList(task)))
-                        .build();
-
-                List<Volunteer> volunteers = new ArrayList<>();
-                volunteers.add(assignedVolunteer);
-
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
-                        .thenReturn(volunteers);
-
-                List<VolunteerProfileResponse> response = volunteerService.getVolunteersInProjectWhoAreNotInTask(projectId, taskId);
-
-                assertTrue(response.isEmpty(), "Should not return assigned volunteers");
-
-                verify(volunteerRepository, times(1)).getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId);
-            }
         }
     }
 
@@ -697,10 +643,12 @@ public class VolunteerServiceTest {
                 List<Volunteer> whoReportedSuggestion = new ArrayList<>();
                 whoReportedSuggestion.add(volunteer1);
 
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
-                        .thenReturn(allVolunteers);
                 when(volunteerRepository.getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId))
                         .thenReturn(whoReportedSuggestion);
+
+
+                when(serviceUtils.getVolunteersNotAssignedToTask(projectId, taskId))
+                        .thenReturn(allVolunteers);
 
                 List<VolunteerToAssignToTaskTemplate> response = volunteerService.getVolunteersNotAssignedToTaskWithTaskSuggestion(projectId, taskId);
 
@@ -708,7 +656,7 @@ public class VolunteerServiceTest {
                 assertTrue(response.get(0).isReportedTaskSuggestion(), "First volunteer should have reported task suggestion");
                 assertFalse(response.get(1).isReportedTaskSuggestion(), "Second volunteer should not have reported task suggestion");
 
-                verify(volunteerRepository, times(1)).getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId);
+                verify(serviceUtils, times(1)).getVolunteersNotAssignedToTask(projectId, taskId);
                 verify(volunteerRepository, times(1)).getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId);
             }
 
@@ -718,7 +666,7 @@ public class VolunteerServiceTest {
                 Long projectId = 1L;
                 Long taskId = 1L;
 
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
+                when(serviceUtils.getVolunteersNotAssignedToTask(projectId, taskId))
                         .thenReturn(new ArrayList<>());
                 when(volunteerRepository.getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId))
                         .thenReturn(new ArrayList<>());
@@ -727,7 +675,8 @@ public class VolunteerServiceTest {
 
                 assertTrue(response.isEmpty(), "Should return empty list");
 
-                verify(volunteerRepository, times(1)).getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId);
+                verify(serviceUtils, times(1)).getVolunteersNotAssignedToTask(projectId, taskId);
+                verify(volunteerRepository, times(1)).getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId);
             }
 
             @Test
@@ -748,7 +697,7 @@ public class VolunteerServiceTest {
                 List<Volunteer> allVolunteers = new ArrayList<>();
                 allVolunteers.add(volunteer);
 
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
+                when(serviceUtils.getVolunteersNotAssignedToTask(projectId, taskId))
                         .thenReturn(allVolunteers);
                 when(volunteerRepository.getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId))
                         .thenReturn(allVolunteers);
@@ -782,13 +731,13 @@ public class VolunteerServiceTest {
                 Long projectId = 1L;
                 Long taskId = 1L;
 
-                when(volunteerRepository.getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId))
+                when(volunteerRepository.getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId))
                         .thenThrow(new RuntimeException("Database error"));
 
                 assertThrows(RuntimeException.class,
                         () -> volunteerService.getVolunteersNotAssignedToTaskWithTaskSuggestion(projectId, taskId));
 
-                verify(volunteerRepository, times(1)).getAllVolunteersInProjectAssignedOrNotToTask(projectId, taskId);
+                verify(volunteerRepository, times(1)).getVolunteersInProjectWhoReportedTaskSuggestion(projectId, taskId);
             }
         }
     }
