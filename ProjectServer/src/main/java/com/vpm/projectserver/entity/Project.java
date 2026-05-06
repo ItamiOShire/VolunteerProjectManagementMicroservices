@@ -22,7 +22,7 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(
             name = "title",
@@ -65,7 +65,7 @@ public class Project {
     @OneToMany(
             mappedBy = "project", // name of field in other table (with ManyToOne)
             orphanRemoval = true,
-            cascade = CascadeType.PERSIST
+            cascade = CascadeType.ALL
     )
     private List<ProjectVolunteer> volunteers = new ArrayList<>();
 
@@ -88,6 +88,20 @@ public class Project {
         this.imgPath = projectTemplate.getImgPath();
         this.tags = tags;
 
+    }
+
+    public List<ProjectVolunteer> getVolunteers() {
+        if (volunteers == null) {
+            volunteers = new ArrayList<>();
+        }
+        return volunteers;
+    }
+
+     public Set<Tag> getTags() {
+        if (tags == null) {
+            tags = new HashSet<>();
+        }
+        return tags;
     }
 
 }
