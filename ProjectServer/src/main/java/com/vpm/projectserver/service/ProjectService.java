@@ -157,6 +157,7 @@ public class ProjectService {
 
         eventService.sendEvent(
                 EventMapper.formProjectVolunteer(projectVolunteer),
+                rabbitMQProperties.getRoutingKey().getVolunteerAssigned(),
                 rabbitMQProperties.getExchange().getVolunteerAssigned(),
                 EventType.VOLUNTEER_ASSIGNED_TO_PROJECT
         );

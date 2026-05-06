@@ -3,6 +3,8 @@ package com.vpm.projectserver.service;
 import com.vpm.projectserver.dto.event.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.CorrelationDataPostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,24 +24,30 @@ public class EventService {
      * Generic method to send any event to RabbitMQ
      *
      * @param event the event object to send (already mapped from domain object)
-     * @param exchange the RabbitMQ exchange name
+     * @param routingKey the RabbitMQ routing key name
      * @param eventType the type of event (for header)
      * @param <T> the type of event
      */
-    public <T> void sendEvent(T event, String exchange, EventType eventType) {
+    public <T> void sendEvent(T event, String routingKey, String exchange, EventType eventType) {
+
+        String correlationId = UUID.randomUUID().toString();
 
         MessagePostProcessor messagePostProcessor = message -> {
-            message.getMessageProperties().setCorrelationId(UUID.randomUUID().toString());
+            message.getMessageProperties().setCorrelationId(correlationId);
             message.getMessageProperties().setHeader("eventType", eventType);
             return message;
         };
+
+        CorrelationData correlationData = new CorrelationData(correlationId);
 
         log.info("Attempting to send event of type: {}", eventType);
 
         rabbitTemplate.convertAndSend(
                 exchange,
+                routingKey,
                 event,
-                messagePostProcessor
+                messagePostProcessor,
+                correlationData
         );
 
         log.info("Event of type {} successfully sent", eventType);
