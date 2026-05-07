@@ -30,7 +30,13 @@ public class Users implements UserDetails {
 
     private String role;
 
-    @OneToMany(mappedBy = "user")
+    /*
+     * To remove refresh token, detach it from the user and let orphanRemoval handle the deletion.
+     */
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true
+    )
     @ToString.Exclude
     List<RefreshToken> refreshTokens;
 
