@@ -2,6 +2,7 @@ package com.vpm.authenticationserver.controller;
 
 
 import com.vpm.authenticationserver.dto.request.LoginRequest;
+import com.vpm.authenticationserver.dto.request.LogoutRequest;
 import com.vpm.authenticationserver.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,14 @@ public class AuthenticationController {
                 .ok(authenticationService.login(loginRequest));
     }
 
-    //TODO: logout functionality
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @Validated @RequestBody LogoutRequest logoutRequest
+    ) {
+        authenticationService.logout(logoutRequest);
+
+        return ResponseEntity
+                .noContent().build();
+    }
 
 }

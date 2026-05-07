@@ -1,10 +1,12 @@
 package com.vpm.authenticationserver.service;
 
+import com.vpm.authenticationserver.dto.request.LogoutRequest;
 import com.vpm.authenticationserver.dto.response.LoginResponse;
 import com.vpm.authenticationserver.dto.request.LoginRequest;
 import com.vpm.authenticationserver.entity.RefreshToken;
 import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
+import com.vpm.authenticationserver.exception.user.InvalidRefreshTokenException;
 import com.vpm.authenticationserver.repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +101,19 @@ public class AuthenticationService {
             throw new InvalidCredentialsException();
 
         }
+
+    }
+
+    public void logout(LogoutRequest request) throws InvalidRefreshTokenException {
+
+        RefreshToken refreshToken = refreshTokenRepository
+                .findByToken(request.getRefreshToken())
+                .orElseThrow(
+                        () -> new InvalidRefreshTokenException(request.getRefreshToken())
+                );
+
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
 
     }
 
