@@ -22,7 +22,7 @@ public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String email;
 
@@ -41,11 +41,13 @@ public class Users implements UserDetails {
     List<RefreshToken> refreshTokens;
 
     @Override
+    @NullMarked
     public Set<GrantedAuthority> getAuthorities() {
         return Set.of(() -> role);
     }
 
     @Override
+    @NullMarked
     public String getUsername() {
         return email;
     }
