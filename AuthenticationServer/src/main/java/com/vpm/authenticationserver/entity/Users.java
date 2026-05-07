@@ -2,9 +2,11 @@ package com.vpm.authenticationserver.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +47,13 @@ public class Users implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public List<RefreshToken> getRefreshTokens() {
+        if (refreshTokens == null) {
+            refreshTokens = new ArrayList<>();
+        }
+        return refreshTokens;
     }
 
 }
