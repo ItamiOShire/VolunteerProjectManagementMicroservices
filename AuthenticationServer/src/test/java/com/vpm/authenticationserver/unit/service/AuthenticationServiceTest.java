@@ -66,7 +66,7 @@ public class AuthenticationServiceTest {
                 "testpassword"
         );
         mockedUser = new Users(
-                1,
+                1L,
                 "testemail@gmail.com",
                 "hashedpassword",
                 "VOLUNTEER",

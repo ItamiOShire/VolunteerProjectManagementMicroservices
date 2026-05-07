@@ -30,7 +30,7 @@ public class CustomUserDetailsServiceTest {
     @BeforeEach
     public void setup(){
         mockedUser = new Users(
-                1,
+                1L,
                 "testemail@gmail.com",
                 "hashedpassword",
                 "VOLUNTEER",

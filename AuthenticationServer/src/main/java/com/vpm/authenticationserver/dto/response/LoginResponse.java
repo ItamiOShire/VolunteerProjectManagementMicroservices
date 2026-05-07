@@ -6,7 +6,7 @@ public record LoginResponse(
         String accessToken,
         String refreshToken,
         String role,
-        long id) {
+        Long id) {
 
     public LoginResponse(
             String accessToken,

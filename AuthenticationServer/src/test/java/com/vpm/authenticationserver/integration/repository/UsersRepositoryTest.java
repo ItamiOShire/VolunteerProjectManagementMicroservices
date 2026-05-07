@@ -32,7 +32,7 @@ public class UsersRepositoryTest {
      */
 
     Users volunteer = new Users(
-            0,
+            null,
             "integrationtestvolunteer@gmail.com",
             "hashedpassword",
             "VOLUNTEER",
@@ -40,7 +40,7 @@ public class UsersRepositoryTest {
     );
 
     Users organization = new Users(
-            0,
+            null,
             "integrationtestorganization@gmail.com",
             "hashedpassword",
             "ORGANIZATION",

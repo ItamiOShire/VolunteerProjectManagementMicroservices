@@ -42,7 +42,7 @@ public class JwtServiceTest {
     private final String tokenTest = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3N1ZXIiOiJodHRwOi8vbG9jYWxob3N0OjgwODEiLCJzdWIiOiJ0ZXN0ZW1haWxAZ21haWwuY29tIiwiaWF0IjoxNzczOTk3MTU2LCJlbWFpbCI6InRlc3RlbWFpbEBnbWFpbC5jb20iLCJ1c2VySWQiOiIxIiwicm9sZSI6IlZPTFVOVEVFUiJ9.HOQZN518VLYTZe5c8bCYIPZ3ttxopr7Q9a4hXdsyFh2fO3yp6vxc8CZs1JoxiHooCxukhEQ4tESB-8BnvsuixIAIWGP9EtYCm82DX1KW1xxQM78JAG2PEpRr0pCu0QehfXkySH2MrN5_kZRLUjejy_AqMq2rKjKRAOml6nwVIExfsFANp9TVVkhsL4V8Mx_VwNPc9dZnw1EKwtjZV2ipjxjc9lzUTG2DB7I_jvMqwvFoLDTCSzzwsYxhENGkYN42rB2lbWpxojtOR6r4v5HSFrEw1jazLLOunJ9S9wmMsHhRyv9uLuADVV_oHW84Xv7CTDuz1VF9yO9OW2Cx4Tgplw";
 
     Users userTest1 = new Users(
-            1,
+            1L,
             "testemail@gmail.com",
             "hashedpassword",
             "VOLUNTEER",
@@ -50,7 +50,7 @@ public class JwtServiceTest {
     );
 
     Users userTest2 = new Users(
-            2,
+            2L,
             "testemail2@gmail.com",
             "hashedpassword2",
             "ORGANIZATION",
