@@ -7,7 +7,6 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -107,7 +106,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 500,
                 ErrorCode.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred: " + e.getClass().getName() + " - " + e.getMessage() ,
+                "An unexpected server error occurred" ,
                 request.getContextPath()
         );
 

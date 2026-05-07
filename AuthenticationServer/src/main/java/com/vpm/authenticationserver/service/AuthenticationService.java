@@ -6,13 +6,13 @@ import com.vpm.authenticationserver.entity.RefreshToken;
 import com.vpm.authenticationserver.entity.Users;
 import com.vpm.authenticationserver.exception.user.InvalidCredentialsException;
 import com.vpm.authenticationserver.repository.RefreshTokenRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +54,7 @@ public class AuthenticationService {
     }
 
 
+    @Transactional
     public LoginResponse login(LoginRequest loginRequest) throws InvalidCredentialsException {
 
         log.info("Attempting to authenticate user with email: {}", loginRequest.email());
@@ -79,6 +80,8 @@ public class AuthenticationService {
                     Instant.now().plusSeconds(jwtService.getRefreshTokenExpirationTime()),
                     user
             );
+
+            user.getRefreshTokens().add(refreshTokenEntity);
 
             log.info("Refresh token generated: {}", refreshTokenEntity);
 
