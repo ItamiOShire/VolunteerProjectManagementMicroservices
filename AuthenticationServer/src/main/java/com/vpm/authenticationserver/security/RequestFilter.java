@@ -25,19 +25,21 @@ public class RequestFilter extends OncePerRequestFilter {
             )
     );
 
-    //TODO: change hardcoded values of headers in filter
+    private final String internalEndpointPrefix = "/api/internal";
+    private final String internalRequestHeader = "X-INTERNAL-REQUEST";
+    private final String serviceNameHeader = "X-SERVICE-NAME";
 
     @Override
     @NullMarked
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getRequestURI().startsWith("/api/internal")) {
-            String internalRequest = request.getHeader("X-INTERNAL-REQUEST");
-            String serviceName = request.getHeader("X-SERVICE-NAME");
+        if (request.getRequestURI().startsWith(internalEndpointPrefix)) {
+
+            String internalRequest = request.getHeader(internalRequestHeader);
+            String serviceName = request.getHeader(serviceNameHeader);
 
             if (internalRequest == null || !internalRequest.equals("true")) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or missing X-INTERNAL-REQUEST header");
-
                 return;
             }
 
