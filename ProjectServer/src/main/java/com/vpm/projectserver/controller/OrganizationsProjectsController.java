@@ -6,10 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controller responsible for handling request about specific organization's project
- * All HTTP methods included
- */
 
 @RestController
 @RequestMapping("/api/organizations")

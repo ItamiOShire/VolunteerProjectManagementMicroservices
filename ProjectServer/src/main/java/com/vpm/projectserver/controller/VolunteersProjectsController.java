@@ -8,11 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
-/**
- * Controller responsible for handling request about specific volunteer's project
- * All HTTP methods included
- */
-
 @RestController
 @RequestMapping("/api/volunteers")
 public class VolunteersProjectsController {

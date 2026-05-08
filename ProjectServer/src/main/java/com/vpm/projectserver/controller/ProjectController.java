@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.Map;
 
-/**
- * Rest controller for handling request purely concerning projects - without any dependencies, like user ID
- * All HTTP methods included
- */
 
 @RestController
 @RequestMapping("/api/projects")
