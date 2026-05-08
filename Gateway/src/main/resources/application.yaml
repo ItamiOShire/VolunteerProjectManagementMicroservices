@@ -4,7 +4,20 @@ spring:
 
   cloud:
     gateway:
+      # Rule of thumb: more specific routes should be defined first, as the gateway matches routes in order
+      # TODO: add rate limiting and retry filters
+      # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
       routes:
+        - id: project-service
+        - uri: lb://project-service
+        - predicates:
+        - Path=/api/projects/**, /api/organizations/**/projects, /api/volunteers/**/projects
+
+        - id: task-service
+        - uri: lb://task-service
+        - predicates:
+        - Path=/api/tasks/**, /api/projects/**/tasks, /api/volunteers/**/tasks, /api/volunteers/**/tasks/suggestions
+
         - id: auth-service
           uri: lb://auth-service
           predicates:
@@ -19,16 +32,6 @@ spring:
           uri: lb://organization-service
           predicates:
               - Path=/api/organizations/**
-
-        - id: project-service
-          uri: lb://project-service
-          predicates:
-              - Path=/api/projects/**, /api/organizations/**/projects, /api/volunteers/**/projects
-
-        - id: task-service
-          uri: lb://task-service
-          predicates:
-              - Path=/api/tasks/**, /api/projects/**/tasks, /api/volunteers/**/tasks, /api/volunteers/**/tasks/suggestions
 
 
   security:
