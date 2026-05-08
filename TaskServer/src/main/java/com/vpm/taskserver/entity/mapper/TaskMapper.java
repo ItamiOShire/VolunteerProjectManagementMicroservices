@@ -29,13 +29,17 @@ public class TaskMapper {
             CreateTaskRequest request,
             Priority priority){
 
-        return Task.builder()
+        Task task = Task.builder()
                 .description(request.getDescription())
                 .title(request.getTitle())
                 .deadline(request.getDeadline())
                 .projectId(request.getProjectId())
                 .priority(priority)
                 .build();
+
+        priority.getTasks().add(task);
+
+        return task;
 
     }
 

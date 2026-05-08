@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -74,6 +75,20 @@ public class Task {
         this.description = request.getDescription();
         this.deadline = request.getDeadline();
         this.priority = priority;
+    }
+
+    public List<TaskSuggestion> getTaskSuggestions() {
+        if (taskSuggestions == null) {
+            taskSuggestions = new ArrayList<>();
+        }
+        return taskSuggestions;
+    }
+
+    public List<VolunteerTask> getVolunteerTasks() {
+        if (volunteerTasks == null) {
+            volunteerTasks = new ArrayList<>();
+        }
+        return volunteerTasks;
     }
 
 }
