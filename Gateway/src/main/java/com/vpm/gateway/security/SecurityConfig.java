@@ -11,7 +11,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    // TODO: Add custom logging during jwt validation e.g. InvalidSignatureException, TokenExpiredException
+    // TODO: apply route filters for authenticated endpoints
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {

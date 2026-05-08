@@ -1,11 +1,13 @@
 package com.vpm.gateway.config;
 
 import com.vpm.gateway.properties.PropertiesConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 
 import java.io.IOException;
 import java.security.KeyFactory;
@@ -16,6 +18,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 @Configuration
+@Slf4j
 public class JwtConfig {
 
     private final PropertiesConfig properties;
@@ -44,9 +47,24 @@ public class JwtConfig {
         return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     }
 
+
+    // TODO: Test if custom jwt logging works
+
     @Bean
-    public JwtDecoder jwtDecoder(RSAPublicKey  publicKey) {
-        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    public ReactiveJwtDecoder jwtDecoder(RSAPublicKey  publicKey) {
+
+        NimbusReactiveJwtDecoder decoder = NimbusReactiveJwtDecoder.withPublicKey(publicKey).build();
+
+        decoder.setJwtValidator(token -> {
+            try {
+                return OAuth2TokenValidatorResult.success();
+            } catch (Exception e) {
+                log.error("JWT validation failure: {}", e.getMessage(), e);
+                throw e;
+            }
+        });
+
+        return decoder;
     }
 
 }
