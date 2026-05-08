@@ -104,6 +104,8 @@ public class AuthenticationService {
 
     }
 
+    // TODO: Test logout functionality
+
     public void logout(LogoutRequest request) throws InvalidRefreshTokenException {
 
         RefreshToken refreshToken = refreshTokenRepository
