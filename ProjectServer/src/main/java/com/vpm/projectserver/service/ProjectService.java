@@ -14,6 +14,7 @@ import com.vpm.projectserver.entity.mapper.EventMapper;
 import com.vpm.projectserver.entity.mapper.ProjectMapper;
 import com.vpm.projectserver.entity.pks.ProjectVolunteerId;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
+import com.vpm.projectserver.exception.project.VolunteerAlreadyAssignedToProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
@@ -136,14 +137,21 @@ public class ProjectService {
      * 2. use EventService to handle sending event
      */
 
+    // TODO: To test
+
     public VolunteerAssignedResponse assignVolunteerToProject(
             Long projectId,
             Long volunteerId
-    ) throws NoSuchProjectException {
+    ) throws NoSuchProjectException, VolunteerAlreadyAssignedToProjectException {
 
         Project project = findProjectById(projectId);
 
-        // TODO: Add manual checking if volunteer is already assigned to project, to prevent duplicate entries in database and multiple events sent
+        // TODO: Add manual checking if volunteer is already assigned to project (which should not happen), to prevent duplicate entries in database and multiple events sent
+
+        if (isVolunteerAlreadyAssignedToProject(project, volunteerId)){
+            log.error("Volunteer with id {} is already assigned to project with id {}", volunteerId, projectId);
+            throw new VolunteerAlreadyAssignedToProjectException(volunteerId, projectId);
+        }
 
         ProjectVolunteer projectVolunteer = new ProjectVolunteer();
         projectVolunteer.setProject(project);
@@ -268,6 +276,15 @@ public class ProjectService {
                     return new NoSuchProjectException(projectId);
                 });
 
+    }
+
+    private boolean isVolunteerAlreadyAssignedToProject(
+            Project project,
+            Long volunteerId
+    ) {
+        return project.getVolunteers().stream().anyMatch(
+                projectVolunteer -> projectVolunteer.getProjectVolunteerId().getVolunteerUserId().equals(volunteerId)
+        );
     }
 
     private void logIfEmptyTags(Set<Tag> tags) {
