@@ -9,3 +9,7 @@ databaseChangeLog:
       file: db/changelog/v1.0/04-create-organization-description-table-fixed.yaml
   - include:
       file: db/changelog/v1.0/05-add-columns-to-organization-table.yaml
+  - include:
+      file: db/changelog/v1.0/06-seed-organization-table.yaml
+  - include:
+      file: db/changelog/v1.0/07-seed-organization-description-table.yaml

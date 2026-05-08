@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-seed-organization-table
+      author: Adam
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: organization_name
+                  value: "Test Organization"
+              - column:
+                  name: krs_number
+                  value: "1234567890"
+              - column:
+                  name: street
+                  value: "Test Street"
+              - column:
+                  name: apartment_number
+                  value: "10"
+              - column:
+                  name: town
+                  value: "Test Town"
+              - column:
+                  name: zip_code
+                  value: "00-000"
+              - column:
+                  name: owner_first_name
+                  value: "John"
+              - column:
+                  name: owner_last_name
+                  value: "Doe"
+              - column:
+                  name: phone_number
+                  value: "+48123456789"
+              - column:
+                  name: contact_email
+                  value: "contact@test.com"
+            tableName: organization

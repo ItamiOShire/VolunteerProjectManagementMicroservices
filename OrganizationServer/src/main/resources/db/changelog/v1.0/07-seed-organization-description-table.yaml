@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-organization-description-table
+      author: Adam
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 1
+              - column:
+                  name: description
+                  value: "This is a test organization used for development and testing purposes."
+              - column:
+                  name: image_path
+                  value: "/images/test-organization.png"
+            tableName: organization_description
