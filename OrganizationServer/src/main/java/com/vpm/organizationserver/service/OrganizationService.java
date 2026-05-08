@@ -91,6 +91,9 @@ public class OrganizationService {
         OrganizationDescription organizationDescription = OrganizationDescriptionMapper
                 .fromCreateDescriptionRequest(request, organization);
 
+        organization.setOrganizationDescription(organizationDescription);
+        organizationDescription.setOrganization(organization);
+
        return OrganizationDescriptionMapper
                        .toOrganizationDescriptionResponse(
                                organizationDescriptionRepository.save(organizationDescription)

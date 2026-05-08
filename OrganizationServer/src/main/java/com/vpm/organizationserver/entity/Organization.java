@@ -13,6 +13,8 @@ import lombok.*;
 @Builder
 public class Organization {
 
+    // TODO: it is better to use userId as primary key, since it is unique and there is one-to-one relation between organization and user (hibernate does not accept as foreign key anything else but primary key)
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -97,7 +99,7 @@ public class Organization {
     @OneToOne(
             mappedBy = "organization",
             orphanRemoval = true,
-            cascade = CascadeType.PERSIST
+            cascade = CascadeType.ALL
     )
     private OrganizationDescription organizationDescription;
 
