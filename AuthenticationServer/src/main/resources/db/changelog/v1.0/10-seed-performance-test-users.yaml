@@ -1,0 +1,91 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-seed-performance-test-users
+      author: performance-testing
+      description: "Seed test users for performance testing"
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: volunteer1@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: VOLUNTEER
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: volunteer2@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: VOLUNTEER
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: volunteer3@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: VOLUNTEER
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: volunteer4@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: VOLUNTEER
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: org2@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: ORGANIZATION
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: org3@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: ORGANIZATION
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: org4@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$slYQmyNdGzin7olVAkleu.oCuVAi0K1TsE0yMG.UnU3FmBoEj5pSW"
+              - column:
+                  name: role
+                  value: ORGANIZATION
+

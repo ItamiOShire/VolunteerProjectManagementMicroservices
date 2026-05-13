@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/v1.0/08-change-refresh-token-expiry-date-column-type-and-name.yaml
   - include:
       file: db/changelog/v1.0/09-seed-refresh-token-table.yaml
+  - include:
+      file: db/changelog/v1.0/10-seed-performance-test-users.yaml
