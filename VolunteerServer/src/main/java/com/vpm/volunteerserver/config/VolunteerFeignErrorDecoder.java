@@ -5,6 +5,7 @@ import com.vpm.common.error.ErrorResponse;
 import com.vpm.volunteerserver.exception.volunteer.VolunteerAlreadyExistsException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -14,9 +15,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class VolunteerFeignErrorDecoder implements ErrorDecoder {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    // TODO: fix exceptions decoding - throwing error 500
+
+    private final ObjectMapper objectMapper;
 
     private final Map<ErrorCode, Function<String, RuntimeException>> exceptions = new HashMap<>(Map.of(
             ErrorCode.USER_ALREADY_EXISTS, (message) -> new VolunteerAlreadyExistsException(message, ErrorCode.USER_ALREADY_EXISTS)
