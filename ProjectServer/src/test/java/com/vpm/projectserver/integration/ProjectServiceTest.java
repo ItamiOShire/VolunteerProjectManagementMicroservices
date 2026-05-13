@@ -10,6 +10,7 @@ import com.vpm.projectserver.dto.response.VolunteerAssignedResponse;
 import com.vpm.projectserver.entity.Project;
 import com.vpm.projectserver.entity.Tag;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
+import com.vpm.projectserver.exception.project.VolunteerAlreadyAssignedToProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
 import com.vpm.projectserver.repository.TagRepository;
 import com.vpm.projectserver.service.EventService;
@@ -37,7 +38,6 @@ import static org.mockito.Mockito.*;
         IntegrationTestsRabbitMQConfig.class
 })
 @DisplayName("ProjectService Integration Tests")
-@Transactional
 public class ProjectServiceTest {
 
     @Autowired
@@ -458,7 +458,7 @@ public class ProjectServiceTest {
             projectService.assignVolunteerToProject(projectId, VOLUNTEER_ID_1);
 
             // Assert - Verify project now has the volunteer in its volunteers collection
-            Project updatedProject = projectRepository.findById(projectId).orElseThrow();
+            Project updatedProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             assertNotNull(updatedProject.getVolunteers());
             assertEquals(1, updatedProject.getVolunteers().size());
             assertTrue(updatedProject.getVolunteers().stream()
@@ -470,14 +470,14 @@ public class ProjectServiceTest {
         public void testUpdateProjectVolunteersCollection() {
             // Arrange
             Long projectId = testProject1.getId();
-            Project initialProject = projectRepository.findById(projectId).orElseThrow();
+            Project initialProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             int initialVolunteerCount = initialProject.getVolunteers().size();
 
             // Act
             projectService.assignVolunteerToProject(projectId, VOLUNTEER_ID_1);
 
             // Assert
-            Project updatedProject = projectRepository.findById(projectId).orElseThrow();
+            Project updatedProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             assertEquals(initialVolunteerCount + 1, updatedProject.getVolunteers().size());
         }
 
@@ -529,7 +529,7 @@ public class ProjectServiceTest {
             projectService.assignVolunteerToProject(projectId, volunteerId3);
 
             // Assert
-            Project updatedProject = projectRepository.findById(projectId).orElseThrow();
+            Project updatedProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             assertEquals(3, updatedProject.getVolunteers().size());
 
             assertTrue(updatedProject.getVolunteers().stream()
@@ -561,13 +561,15 @@ public class ProjectServiceTest {
             projectService.assignVolunteerToProject(projectId2, volunteerId);
 
             // Assert
-            Project project1 = projectRepository.findById(projectId1).orElseThrow();
-            Project project2 = projectRepository.findById(projectId2).orElseThrow();
+            Project project1 = projectRepository.getProjectByIdWithVolunteers(projectId1).orElseThrow();
+            Project project2 = projectRepository.getProjectByIdWithVolunteers(projectId2).orElseThrow();
 
             assertTrue(project1.getVolunteers().stream()
                     .anyMatch(pv -> pv.getVolunteerUserId() == volunteerId));
             assertTrue(project2.getVolunteers().stream()
                     .anyMatch(pv -> pv.getVolunteerUserId() == volunteerId));
+
+            project2.getVolunteers().forEach(pv -> System.out.println("Project: " + pv.getProjectVolunteerId().getProjectId() + " Volunteer: " + pv.getVolunteerUserId()));
 
             assertEquals(1, project1.getVolunteers().size());
             assertEquals(1, project2.getVolunteers().size());
@@ -597,32 +599,34 @@ public class ProjectServiceTest {
             verify(eventService, never()).sendEvent(any(), anyString(), anyString(), any());
         }
 
-/*        @Test
-        @DisplayName("Should assign same volunteer twice to same project successfully")
+        @Test
+        @DisplayName("Should not assign same volunteer twice to same project successfully")
         public void testAssignSameVolunteerTwiceToSameProject() {
             // Arrange
             Long projectId = testProject1.getId();
 
             // Act - Assign twice (second assignment might replace or update the first)
             VolunteerAssignedResponse response1 = projectService.assignVolunteerToProject(projectId, VOLUNTEER_ID_1);
-            VolunteerAssignedResponse response2 = projectService.assignVolunteerToProject(projectId, VOLUNTEER_ID_1);
+            assertThrows(
+                VolunteerAlreadyAssignedToProjectException.class,
+                () -> projectService.assignVolunteerToProject(projectId, VOLUNTEER_ID_1)
+            );
 
             // Assert - Both responses should be valid
             assertNotNull(response1);
-            assertNotNull(response2);
 
             // Verify both assignments were processed
-            Project updatedProject = projectRepository.findById(projectId).orElseThrow();
+            Project updatedProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             assertNotNull(updatedProject.getVolunteers());
 
             // Events should be sent for both calls (or deduplicated depending on business logic)
-            verify(eventService, atLeast(2)).sendEvent(
+            verify(eventService, atLeast(1)).sendEvent(
                 any(),
                 anyString(),
                 anyString(),
                 eq(EventType.VOLUNTEER_ASSIGNED_TO_PROJECT)
             );
-        }*/
+        }
 
         @Test
         @DisplayName("Should verify ProjectVolunteer ID is correctly set")
@@ -635,7 +639,7 @@ public class ProjectServiceTest {
             projectService.assignVolunteerToProject(projectId, volunteerId);
 
             // Assert
-            Project updatedProject = projectRepository.findById(projectId).orElseThrow();
+            Project updatedProject = projectRepository.getProjectByIdWithVolunteers(projectId).orElseThrow();
             var projectVolunteer = updatedProject.getVolunteers().stream()
                     .filter(pv -> pv.getVolunteerUserId() == volunteerId)
                     .findFirst()
