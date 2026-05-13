@@ -20,7 +20,7 @@ public class TagService {
     }
 
     public Set<Tag> getTagsById(Set<Long> tagIds) {
-        return new HashSet<>(tagRepository.findAllById(tagIds));
+        return new HashSet<>(tagRepository.getAllTagsWithProjects(tagIds));
     }
 
 }
