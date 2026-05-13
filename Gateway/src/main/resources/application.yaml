@@ -4,34 +4,36 @@ spring:
 
   cloud:
     gateway:
-      # Rule of thumb: more specific routes should be defined first, as the gateway matches routes in order
-      # TODO: add rate limiting and retry filters
-      # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
-      routes:
-        - id: project-service
-        - uri: lb://project-service
-        - predicates:
-        - Path=/api/projects/**, /api/organizations/**/projects, /api/volunteers/**/projects
+      server:
+        webflux:
+          # Rule of thumb: more specific routes should be defined first, as the gateway matches routes in order
+          # TODO: add rate limiting and retry filters, fix routes (** should be at the the beginning or the end of the path)
+          # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html
+          routes:
+            - id: project-service
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/api/organizations/{id}/projects,/api/volunteers/{id}/projects,/api/projects/**,
 
-        - id: task-service
-        - uri: lb://task-service
-        - predicates:
-        - Path=/api/tasks/**, /api/projects/**/tasks, /api/volunteers/**/tasks, /api/volunteers/**/tasks/suggestions
+            - id: task-service
+              uri: lb://TASK-SERVICE
+              predicates:
+                - Path=/api/projects/{id}/tasks,/api/volunteers/{id}/tasks/**,/api/volunteers/{volunteerId}/projects/{projectId}/**,/api/tasks/**
 
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
+            - id: volunteer-service
+              uri: lb://VOLUNTEER-SERVICE
+              predicates:
+                - Path=/api/tasks/{taskId}/projects/{projectId}/volunteers/**,/api/projects/{projectId}/volunteers/**,/api/volunteers/**
 
-        - id: volunteer-service
-          uri: lb://volunteer-service
-          predicates:
-              - Path=/api/volunteers/**
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/auth/**
 
-        - id: organization-service
-          uri: lb://organization-service
-          predicates:
-              - Path=/api/organizations/**
+            - id: organization-service
+              uri: lb://ORGANIZATION-SERVICE
+              predicates:
+                - Path=/api/organizations/**
 
           discovery:
             locator:
