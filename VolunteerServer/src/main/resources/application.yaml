@@ -84,4 +84,4 @@ server:
 
 services:
     auth-service:
-        url: auth-service:${PORT_AUTH_SERVICE:8081}/api/internal/registration
+        url: localhost:${PORT_AUTH_SERVICE:8081}

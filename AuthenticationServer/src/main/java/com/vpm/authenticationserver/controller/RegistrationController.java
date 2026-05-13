@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/internal/registration")
+@RequestMapping("/api/internal")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
@@ -23,7 +23,7 @@ public class RegistrationController {
      *  - X-SERVICE-NAME (String)
      */
 
-    @PostMapping
+    @PostMapping("/register")
     public AuthRegistrationResponse registerUser(
             @RequestHeader ( value = "X-INTERNAL-REQUEST") String internalRequestHeader,
             @RequestHeader ( value = "X-SERVICE-NAME") String serviceNameHeader,
