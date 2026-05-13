@@ -108,6 +108,25 @@ public class ProjectService {
         return projects;
     }
 
+    public Boolean isVolunteerAssignedToProject(
+            Long volunteerId,
+            Long projectId
+    ) throws NoSuchProjectException {
+
+        Project project = findProjectByIdWithVolunteers(projectId);
+
+        Boolean isAssigned = isVolunteerAlreadyAssignedToProject(project, volunteerId);
+
+        if (isAssigned){
+            log.info("Volunteer with id {} is assigned to project with id {}", volunteerId, projectId);
+        } else {
+            log.warn("Volunteer with id {} is not assigned to project with id {}", volunteerId, projectId);
+        }
+
+        return isAssigned;
+
+    }
+
     /*
      * POST HTTP method
      */
@@ -276,6 +295,18 @@ public class ProjectService {
                     return new NoSuchProjectException(projectId);
                 });
 
+    }
+
+    private Project findProjectByIdWithVolunteers(
+            Long projectId
+    ) throws NoSuchProjectException {
+
+        return projectRepository
+                .getProjectByIdWithVolunteers(projectId)
+                .orElseThrow( () -> {
+                    log.error("Project with id {} does not exist", projectId);
+                    return new NoSuchProjectException(projectId);
+                });
     }
 
     private boolean isVolunteerAlreadyAssignedToProject(

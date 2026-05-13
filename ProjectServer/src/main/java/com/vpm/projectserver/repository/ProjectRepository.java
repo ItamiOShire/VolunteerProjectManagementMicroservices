@@ -1,6 +1,7 @@
 package com.vpm.projectserver.repository;
 
 import com.vpm.projectserver.entity.Project;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,6 +37,13 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     WHERE p.id = :projectId
 """)
     Optional<Project> getProjectById(@Param("projectId")Long id);
+
+    @Query("""
+    SELECT p FROM Project p
+    LEFT JOIN FETCH p.volunteers
+    WHERE p.id = :projectId
+""")
+    Optional<Project> getProjectByIdWithVolunteers(@Param("projectId")Long id);
 
     @Query("""
     SELECT p FROM Project p

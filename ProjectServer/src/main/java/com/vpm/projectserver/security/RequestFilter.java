@@ -36,6 +36,13 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws IOException, ServletException {
 
+        // TODO: apply proper internal api filtration
+
+        if (request.getRequestURI().startsWith("/api/internal")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             for (String header : requiredHeaders) {
 
