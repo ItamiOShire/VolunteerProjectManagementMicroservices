@@ -1,0 +1,152 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-seed-performance-test-organizations
+      author: performance-testing
+      description: "Seed test organizations for performance testing"
+      changes:
+        - insert:
+            tableName: organization
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Red Cross
+              - column:
+                  name: krs_number
+                  value: "6003456"
+              - column:
+                  name: street
+                  value: "2025 E Street NW"
+              - column:
+                  name: apartment_number
+                  value: "100"
+              - column:
+                  name: town
+                  value: Washington
+              - column:
+                  name: zip_code
+                  value: "20006"
+              - column:
+                  name: owner_first_name
+                  value: John
+              - column:
+                  name: owner_last_name
+                  value: Doe
+              - column:
+                  name: phone_number
+                  value: "+1-800-REDCROSS"
+              - column:
+                  name: contact_email
+                  value: contact@redcross.org
+        - insert:
+            tableName: organization
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 8
+              - column:
+                  name: organization_name
+                  value: Doctors Without Borders
+              - column:
+                  name: krs_number
+                  value: "3334567"
+              - column:
+                  name: street
+                  value: "Rue Crébillon"
+              - column:
+                  name: apartment_number
+                  value: "50"
+              - column:
+                  name: town
+                  value: Paris
+              - column:
+                  name: zip_code
+                  value: "75005"
+              - column:
+                  name: owner_first_name
+                  value: Marie
+              - column:
+                  name: owner_last_name
+                  value: Dupont
+              - column:
+                  name: phone_number
+                  value: "+33-1-40-21-29-29"
+              - column:
+                  name: contact_email
+                  value: info@msf.org
+        - insert:
+            tableName: organization
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 9
+              - column:
+                  name: organization_name
+                  value: World Wildlife Fund
+              - column:
+                  name: krs_number
+                  value: "4445678"
+              - column:
+                  name: street
+                  value: "Av. du Mont-Blanc"
+              - column:
+                  name: apartment_number
+                  value: "1"
+              - column:
+                  name: town
+                  value: Gland
+              - column:
+                  name: zip_code
+                  value: "1196"
+              - column:
+                  name: owner_first_name
+                  value: Hans
+              - column:
+                  name: owner_last_name
+                  value: Müller
+              - column:
+                  name: phone_number
+                  value: "+41-44-297-2147"
+              - column:
+                  name: contact_email
+                  value: info@wwf.org
+        - insert:
+            tableName: organization
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Unicef
+              - column:
+                  name: krs_number
+                  value: "5556789"
+              - column:
+                  name: street
+                  value: "3 UN Plaza"
+              - column:
+                  name: apartment_number
+                  value: "2000"
+              - column:
+                  name: town
+                  value: "New York"
+              - column:
+                  name: zip_code
+                  value: "10017"
+              - column:
+                  name: owner_first_name
+                  value: Robert
+              - column:
+                  name: owner_last_name
+                  value: Johnson
+              - column:
+                  name: phone_number
+                  value: "+1-212-326-7000"
+              - column:
+                  name: contact_email
+                  value: info@unicef.org
+
+
