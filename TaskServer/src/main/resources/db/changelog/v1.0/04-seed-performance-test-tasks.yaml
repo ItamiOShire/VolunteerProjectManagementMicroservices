@@ -1,0 +1,414 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-seed-performance-test-priorities
+      author: performance-testing
+      description: "Seed test priorities for performance testing"
+      changes:
+        - insert:
+            tableName: priority
+            columns:
+              - column:
+                  name: name
+                  value: LOW
+        - insert:
+            tableName: priority
+            columns:
+              - column:
+                  name: name
+                  value: MEDIUM
+        - insert:
+            tableName: priority
+            columns:
+              - column:
+                  name: name
+                  value: HIGH
+        - insert:
+            tableName: priority
+            columns:
+              - column:
+                  name: name
+                  value: CRITICAL
+  - changeSet:
+      id: 05-seed-performance-test-tasks
+      author: performance-testing
+      description: "Seed test tasks for performance testing"
+      changes:
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Setup Relief Camp
+              - column:
+                  name: description
+                  value: "Set up the main relief distribution center with all necessary supplies"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-18"
+              - column:
+                  name: project_id
+                  valueNumeric: 1
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Distribute Aid Packages
+              - column:
+                  name: description
+                  value: "Distribute emergency aid packages to affected families"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-14"
+              - column:
+                  name: project_id
+                  valueNumeric: 1
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Assess Damage
+              - column:
+                  name: description
+                  value: "Survey and document damage in affected areas for resource allocation"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-16"
+              - column:
+                  name: project_id
+                  valueNumeric: 1
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Coordinate Medical Support
+              - column:
+                  name: description
+                  value: "Arrange medical teams and supplies for immediate healthcare"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-13"
+              - column:
+                  name: project_id
+                  valueNumeric: 1
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Conduct Health Screening
+              - column:
+                  name: description
+                  value: "Perform comprehensive health assessments for community members"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-21"
+              - column:
+                  name: project_id
+                  valueNumeric: 2
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Deliver Medications
+              - column:
+                  name: description
+                  value: "Distribute prescribed medications to patients"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-18"
+              - column:
+                  name: project_id
+                  valueNumeric: 2
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Health Education Workshop
+              - column:
+                  name: description
+                  value: "Conduct preventive health education sessions"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-18"
+              - column:
+                  name: project_id
+                  valueNumeric: 2
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Data Collection
+              - column:
+                  name: description
+                  value: "Collect health statistics and demographic information"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-25"
+              - column:
+                  name: project_id
+                  valueNumeric: 2
+              - column:
+                  name: priority_id
+                  valueNumeric: 1
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Survey Water Access
+              - column:
+                  name: description
+                  value: "Identify water access points and assess water quality"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-25"
+              - column:
+                  name: project_id
+                  valueNumeric: 3
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Develop Training Materials
+              - column:
+                  name: description
+                  value: "Create comprehensive first aid training curriculum"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-18"
+              - column:
+                  name: project_id
+                  valueNumeric: 4
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Conduct Training Sessions
+              - column:
+                  name: description
+                  value: "Run first aid certification courses for volunteers"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-21"
+              - column:
+                  name: project_id
+                  valueNumeric: 4
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Setup Camp Site
+              - column:
+                  name: description
+                  value: "Prepare medical camp location with necessary infrastructure"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-13"
+              - column:
+                  name: project_id
+                  valueNumeric: 5
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Medical Consultations
+              - column:
+                  name: description
+                  value: "Provide general medical consultations to patients"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-16"
+              - column:
+                  name: project_id
+                  valueNumeric: 5
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Tree Planting Day 1
+              - column:
+                  name: description
+                  value: "Plant 500 trees in designated reforestation area"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-14"
+              - column:
+                  name: project_id
+                  valueNumeric: 7
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Tree Planting Day 2
+              - column:
+                  name: description
+                  value: "Plant additional 500 trees in expansion area"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-18"
+              - column:
+                  name: project_id
+                  valueNumeric: 7
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Soil Preparation
+              - column:
+                  name: description
+                  value: "Prepare soil and compost for tree planting"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-13"
+              - column:
+                  name: project_id
+                  valueNumeric: 7
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Ocean Cleanup Event
+              - column:
+                  name: description
+                  value: "Organize beach cleanup activity to remove plastic waste"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-25"
+              - column:
+                  name: project_id
+                  valueNumeric: 8
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Waste Sorting
+              - column:
+                  name: description
+                  value: "Sort and categorize collected waste for proper disposal"
+              - column:
+                  name: deadline
+                  valueDate: "2026-05-25"
+              - column:
+                  name: project_id
+                  valueNumeric: 8
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: School Construction
+              - column:
+                  name: description
+                  value: "Build new classroom structure with sustainable materials"
+              - column:
+                  name: deadline
+                  valueDate: "2026-07-11"
+              - column:
+                  name: project_id
+                  valueNumeric: 9
+              - column:
+                  name: priority_id
+                  valueNumeric: 3
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Install Furniture
+              - column:
+                  name: description
+                  value: "Set up desks and chairs in classrooms"
+              - column:
+                  name: deadline
+                  valueDate: "2026-07-16"
+              - column:
+                  name: project_id
+                  valueNumeric: 9
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+        - insert:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  value: Supply Delivery
+              - column:
+                  name: description
+                  value: "Deliver school supplies and learning materials"
+              - column:
+                  name: deadline
+                  valueDate: "2026-07-21"
+              - column:
+                  name: project_id
+                  valueNumeric: 9
+              - column:
+                  name: priority_id
+                  valueNumeric: 2
+

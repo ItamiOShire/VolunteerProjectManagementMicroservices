@@ -6,3 +6,5 @@ databaseChangeLog:
       file: db/changelog/v1.0/02-create-n-to-m-relation-tables.yaml
   - include:
       file: db/changelog/v1.0/03-fix-n-to-m-relation-table.yaml
+  - include:
+      file: db/changelog/v1.0/04-seed-performance-test-tasks.yaml
