@@ -1,5 +1,7 @@
 package com.vpm.taskserver.service;
 
+import com.vpm.common.error.ErrorCode;
+import com.vpm.taskserver.api.internal.ProjectClient;
 import com.vpm.taskserver.config.properties.RabbitMQProperties;
 import com.vpm.taskserver.dto.event.EventType;
 import com.vpm.taskserver.dto.request.AssignVolunteerReportingTaskSuggestionRequest;
@@ -19,6 +21,8 @@ import com.vpm.taskserver.entity.pks.VolunteerTaskId;
 import com.vpm.taskserver.exception.priority.NoSuchPriorityException;
 import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
+import com.vpm.taskserver.exception.task.VolunteerAlreadyAssignedToTaskException;
+import com.vpm.taskserver.exception.task.VolunteerNotAssignedToProjectException;
 import com.vpm.taskserver.repository.TaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
@@ -38,18 +42,21 @@ public class TaskService {
     private final PriorityService priorityService;
     private final RabbitMQProperties rabbitMQProperties;
     private final EventService eventService;
+    private final ProjectClient projectClient;
 
     @Autowired
     public TaskService(
             TaskRepository taskRepository,
             PriorityService priorityService,
             RabbitMQProperties rabbitMQProperties,
-            EventService eventService
+            EventService eventService,
+            ProjectClient projectClient
     ) {
         this.taskRepository = taskRepository;
         this.priorityService = priorityService;
         this.rabbitMQProperties = rabbitMQProperties;
         this.eventService = eventService;
+        this.projectClient = projectClient;
     }
 
     /*
@@ -144,9 +151,13 @@ public class TaskService {
                 priority
         );
 
+        task = taskRepository.save(task);
+
+        log.info("Creating task with id {}", task.getId());
+
         return TaskMapper
                 .toTaskTemplate(
-                        taskRepository.save(task)
+                        task
                 );
 
     }
@@ -154,20 +165,51 @@ public class TaskService {
     public VolunteerAssignedToTaskResponse assignVolunteerToTask(
             AssignVolunteerToTaskRequest request,
             Long volunteerId
-    ) {
+    ) throws VolunteerNotAssignedToProjectException, NoSuchTaskException {
 
             Task task = getTaskByIdWithVolunteers(
                     request.getTaskId()
             );
 
-            VolunteerTask volunteerTask = VolunteerTask.builder()
-                    .id(new VolunteerTaskId(volunteerId, request.getTaskId()))
-                    .task(task)
-                    .build();
+            log.info("Assigning volunteer to task with id {}", task.getId());
+
+            if(isVolunteerAssignedToTask(task, volunteerId)) {
+                log.error("Volunteer with id {} is already assigned to task with id {}", volunteerId, request.getTaskId());
+                throw new VolunteerAlreadyAssignedToTaskException(volunteerId, request.getTaskId());
+            }
+
+            log.info("Volunteer with id {} is not assigned to task with id {}",volunteerId, task.getId());
+
+            try {
+
+                Boolean isAssigned = projectClient.isVolunteerAssignedToProject(
+                        volunteerId,
+                        task.getProjectId()
+                );
+
+                if (!isAssigned) {
+                    throw new VolunteerNotAssignedToProjectException("Volunteer not assigned to project with id " + task.getProjectId(), ErrorCode.BAD_REQUEST);
+                }
+
+            } catch (Exception e) {
+                if (e instanceof VolunteerNotAssignedToProjectException) {
+                    log.error("Error during assigning volunteer to task: {}", e.getMessage());
+                }
+                throw e;
+            }
+
+            log.info("Volunteer with id {} is assigned to project with id {}, proceeding with task assignment", volunteerId, task.getProjectId());
+
+            VolunteerTask volunteerTask = new VolunteerTask();
+            volunteerTask.setTask(task);
+            volunteerTask.setVolunteerId(volunteerId);
+            volunteerTask.setId(new VolunteerTaskId(volunteerId, request.getTaskId()));
 
             task.getVolunteerTasks().add(volunteerTask);
 
             taskRepository.save(task);
+
+            log.info("Volunteer with id {} assigned to task with id {}. Sending event", volunteerId, task.getId());
 
             eventService.sendEvent(
                     EventMapper.fromTaskVolunteer(volunteerTask),
@@ -397,6 +439,17 @@ public class TaskService {
                             return new NoSuchPriorityException(priorityId);
                         }
                 );
+
+    }
+
+    private Boolean isVolunteerAssignedToTask(
+            Task task,
+            Long volunteerId
+    ) {
+
+        return task.getVolunteerTasks().stream().anyMatch(
+                volunteerTask -> volunteerTask.getId().getVolunteerUserId().equals(volunteerId)
+        );
 
     }
 

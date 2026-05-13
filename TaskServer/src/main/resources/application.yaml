@@ -55,3 +55,7 @@ spring:
 
 server:
   port: ${PORT_TASK_SERVICE:8085}
+
+services:
+  project-service:
+    url: localhost:${PORT_PROJECT_SERVICE:8084}
