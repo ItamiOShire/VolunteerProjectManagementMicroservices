@@ -1,0 +1,421 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-seed-performance-test-projects
+      author: performance-testing
+      description: "Seed test projects for performance testing"
+      changes:
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Emergency Relief 2026
+              - column:
+                  name: description
+                  value: "Disaster relief efforts providing emergency aid to affected communities"
+              - column:
+                  name: img_path
+                  value: "/images/emergency-relief.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Red Cross
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Community Health Initiative
+              - column:
+                  name: description
+                  value: "Rural healthcare program providing medical services to underserved areas"
+              - column:
+                  name: img_path
+                  value: "/images/health-initiative.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Red Cross
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Water Sanitation Project
+              - column:
+                  name: description
+                  value: "Clean water access program ensuring safe drinking water in rural communities"
+              - column:
+                  name: img_path
+                  value: "/images/water-sanitation.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Red Cross
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Medical Camp 2026
+              - column:
+                  name: description
+                  value: "Free medical services in remote areas providing comprehensive healthcare"
+              - column:
+                  name: img_path
+                  value: "/images/medical-camp.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Doctors Without Borders
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Surgery Assistance Program
+              - column:
+                  name: description
+                  value: "Surgical team support providing assistance during critical operations"
+              - column:
+                  name: img_path
+                  value: "/images/surgery-assistance.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 2
+              - column:
+                  name: organization_name
+                  value: Doctors Without Borders
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Wildlife Protection Drive
+              - column:
+                  name: description
+                  value: "Animal conservation effort protecting endangered species and their habitats"
+              - column:
+                  name: img_path
+                  value: "/images/wildlife-protection.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: World Wildlife Fund
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Forest Restoration
+              - column:
+                  name: description
+                  value: "Tree planting campaign reforesting degraded areas to combat climate change"
+              - column:
+                  name: img_path
+                  value: "/images/forest-restoration.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: World Wildlife Fund
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Ocean Cleanup Initiative
+              - column:
+                  name: description
+                  value: "Marine pollution reduction through organized cleanup activities"
+              - column:
+                  name: img_path
+                  value: "/images/ocean-cleanup.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: World Wildlife Fund
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Child Education Program
+              - column:
+                  name: description
+                  value: "School building and supplies providing quality education to children"
+              - column:
+                  name: img_path
+                  value: "/images/child-education.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Unicef
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Nutrition Program
+              - column:
+                  name: description
+                  value: "Child nutritional support ensuring proper development and health"
+              - column:
+                  name: img_path
+                  value: "/images/nutrition-program.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Unicef
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Vaccination Campaign
+              - column:
+                  name: description
+                  value: "Immunization program protecting children from preventable diseases"
+              - column:
+                  name: img_path
+                  value: "/images/vaccination.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Unicef
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: School Support Program
+              - column:
+                  name: description
+                  value: "Educational materials distribution supporting quality education"
+              - column:
+                  name: img_path
+                  value: "/images/school-support.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Save the Children
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Child Protection Initiative
+              - column:
+                  name: description
+                  value: "Safeguarding program protecting vulnerable children from harm"
+              - column:
+                  name: img_path
+                  value: "/images/child-protection.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Save the Children
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Clean Energy Initiative
+              - column:
+                  name: description
+                  value: "Solar power installation reducing carbon footprint and providing energy"
+              - column:
+                  name: img_path
+                  value: "/images/clean-energy.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Greenpeace
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Renewable Energy Education
+              - column:
+                  name: description
+                  value: "STEM program for renewable energy fostering sustainable practices"
+              - column:
+                  name: img_path
+                  value: "/images/renewable-energy.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Greenpeace
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Human Rights Awareness
+              - column:
+                  name: description
+                  value: "Education and advocacy program promoting human rights globally"
+              - column:
+                  name: img_path
+                  value: "/images/human-rights.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Amnesty International
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Refugee Support Program
+              - column:
+                  name: description
+                  value: "Legal aid and assistance supporting displaced populations"
+              - column:
+                  name: img_path
+                  value: "/images/refugee-support.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 7
+              - column:
+                  name: organization_name
+                  value: Amnesty International
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Poverty Alleviation Program
+              - column:
+                  name: description
+                  value: "Income generation activities helping families escape poverty"
+              - column:
+                  name: img_path
+                  value: "/images/poverty-alleviation.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 8
+              - column:
+                  name: organization_name
+                  value: Oxfam
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Emergency Food Aid
+              - column:
+                  name: description
+                  value: "Hunger relief initiative providing food security to vulnerable communities"
+              - column:
+                  name: img_path
+                  value: "/images/food-aid.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 8
+              - column:
+                  name: organization_name
+                  value: Oxfam
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Community Development
+              - column:
+                  name: description
+                  value: "Infrastructure improvement enhancing quality of life in communities"
+              - column:
+                  name: img_path
+                  value: "/images/community-dev.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 8
+              - column:
+                  name: organization_name
+                  value: World Vision
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Education Access Program
+              - column:
+                  name: description
+                  value: "Scholarship and mentorship providing educational opportunities"
+              - column:
+                  name: img_path
+                  value: "/images/education-access.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 9
+              - column:
+                  name: organization_name
+                  value: World Vision
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Women Empowerment
+              - column:
+                  name: description
+                  value: "Skills and leadership training empowering women to achieve their potential"
+              - column:
+                  name: img_path
+                  value: "/images/women-empowerment.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 9
+              - column:
+                  name: organization_name
+                  value: Plan International
+        - insert:
+            tableName: project
+            columns:
+              - column:
+                  name: title
+                  value: Livelihood Skills Development
+              - column:
+                  name: description
+                  value: "Vocational training program equipping people with marketable skills"
+              - column:
+                  name: img_path
+                  value: "/images/livelihood-skills.jpg"
+              - column:
+                  name: organization_user_id
+                  valueNumeric: 9
+              - column:
+                  name: organization_name
+                  value: Plan International
+

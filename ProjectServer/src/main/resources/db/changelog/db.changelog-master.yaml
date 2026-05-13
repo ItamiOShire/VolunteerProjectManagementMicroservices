@@ -7,3 +7,5 @@ databaseChangeLog:
       file: /db/changelog/v1.0/03-seed-project-table.yaml
   - include:
       file: /db/changelog/v1.0/04-seed-tag-table.yaml
+  - include:
+      file: /db/changelog/v1.0/05-seed-performance-test-projects.yaml
