@@ -59,14 +59,14 @@ public class Task {
     @OneToMany(
             mappedBy = "task",
             orphanRemoval = true,
-            cascade = CascadeType.PERSIST
+            cascade = CascadeType.ALL
     )
     private List<VolunteerTask>  volunteerTasks;
 
     @OneToMany(
             mappedBy = "task",
             orphanRemoval = true,
-            cascade = CascadeType.PERSIST
+            cascade = CascadeType.ALL
     )
     private List<TaskSuggestion> taskSuggestions;
 
