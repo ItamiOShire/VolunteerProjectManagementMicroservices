@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/v1.0/08-create-fixed-volunteer-table.yaml
   - include:
       file: db/changelog/v1.0/09-create-fixed-NtoMRelation-tables.yaml
+  - include:
+      file: db/changelog/v1.0/10-seed-performance-test-volunteers.yaml
