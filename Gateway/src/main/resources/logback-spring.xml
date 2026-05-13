@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <springProperty scope="context" name="LOG_FILE" source="logging.file.name" defaultValue="logs/gateway.log"/>
+  <springProperty scope="context" name="LOG_FILE_MAX_SIZE" source="logging.file.max-size" defaultValue="10MB"/>
+  <springProperty scope="context" name="LOG_FILE_MAX_HISTORY" source="logging.file.max-history" defaultValue="30"/>
+
+  <!-- Console Appender -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Logger Configurations -->
+  <logger name="org.springframework.cloud.gateway" level="INFO"/>
+  <logger name="org.springframework.web" level="INFO"/>
+  <logger name="org.springframework.security" level="DEBUG"/>
+  <logger name="reactor.netty" level="INFO"/>
+  <logger name="org.springframework.webflux.handler.AbstractHandlerMapping" level="TRACE"/>
+  <logger name="org.springframework.cloud.gateway.filter" level="DEBUG"/>
+
+  <!-- Spring Cloud Gateway WebFlux Routing Debug -->
+  <logger name="org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping" level="DEBUG"/>
+  <logger name="org.springframework.cloud.gateway.route" level="DEBUG"/>
+
+  <!-- Development Profile: More verbose logging -->
+  <springProfile name="dev">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+
+  <!-- Production Profile: Less verbose -->
+  <springProfile name="prod">
+    <root level="WARN">
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+
+  <!-- Default: Both console and file -->
+  <springProfile name="!prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+</configuration>
+
