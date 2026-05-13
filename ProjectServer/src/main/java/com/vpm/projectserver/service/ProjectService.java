@@ -16,6 +16,7 @@ import com.vpm.projectserver.entity.pks.ProjectVolunteerId;
 import com.vpm.projectserver.exception.project.NoSuchProjectException;
 import com.vpm.projectserver.exception.project.VolunteerAlreadyAssignedToProjectException;
 import com.vpm.projectserver.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -156,16 +157,12 @@ public class ProjectService {
      * 2. use EventService to handle sending event
      */
 
-    // TODO: To test
-
     public VolunteerAssignedResponse assignVolunteerToProject(
             Long projectId,
             Long volunteerId
     ) throws NoSuchProjectException, VolunteerAlreadyAssignedToProjectException {
 
-        Project project = findProjectById(projectId);
-
-        // TODO: Add manual checking if volunteer is already assigned to project (which should not happen), to prevent duplicate entries in database and multiple events sent
+        Project project = findProjectByIdWithVolunteers(projectId);
 
         if (isVolunteerAlreadyAssignedToProject(project, volunteerId)){
             log.error("Volunteer with id {} is already assigned to project with id {}", volunteerId, projectId);
@@ -180,8 +177,6 @@ public class ProjectService {
         project.getVolunteers().add(projectVolunteer);
 
         projectRepository.save(project);
-
-        log.info("Volunteer with id {} assigned to project with id {}", volunteerId, projectId);
 
         eventService.sendEvent(
                 EventMapper.formProjectVolunteer(projectVolunteer),

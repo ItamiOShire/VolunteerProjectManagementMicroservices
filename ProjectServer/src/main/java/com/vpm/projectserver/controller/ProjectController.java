@@ -68,7 +68,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateProject(
+    public ResponseEntity<?> patchProject(
             @PathVariable("id") Long projectId,
             @RequestBody Map<String, Object> updates
     ) {
