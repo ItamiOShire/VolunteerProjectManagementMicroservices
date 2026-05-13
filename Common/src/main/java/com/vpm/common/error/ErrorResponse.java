@@ -1,10 +1,16 @@
 package com.vpm.common.error;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
