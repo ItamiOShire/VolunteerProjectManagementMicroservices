@@ -1,0 +1,426 @@
+# Apply with:
+#   kubectl apply -f k8s/all-services.yaml
+#
+# Images referenced below are built from the Dockerfiles added to each service.
+# Adjust the image tags if you publish them to a registry.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vpm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      initContainers:
+        - name: wait-for-auth-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z auth-db 5432; do echo waiting for auth-db; sleep 2; done']
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: auth-service
+          image: vpm/authentication-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            - name: PORT_AUTH_SERVICE
+              value: "8081"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://auth-db:5432/Users
+            - name: SPRING_DATASOURCE_USERNAME
+              value: vpm-dev
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+          readinessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: vpm
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: volunteer-service
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: volunteer-service
+  template:
+    metadata:
+      labels:
+        app: volunteer-service
+    spec:
+      initContainers:
+        - name: wait-for-volunteer-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z volunteer-db 5432; do echo waiting for volunteer-db; sleep 2; done']
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: volunteer-service
+          image: vpm/volunteer-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: PORT_VOLUNTEER_SERVICE
+              value: "8082"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://volunteer-db:5432/Volunteers
+            - name: SPRING_DATASOURCE_USERNAME
+              value: vpm-dev
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USERNAME
+              value: admin
+            - name: RABBITMQ_PASSWORD
+              value: password
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+            - name: SERVICES_AUTH_SERVICE_URL
+              value: auth-service:8081
+          readinessProbe:
+            tcpSocket:
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8082
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: volunteer-service
+  namespace: vpm
+spec:
+  selector:
+    app: volunteer-service
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: organization-service
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: organization-service
+  template:
+    metadata:
+      labels:
+        app: organization-service
+    spec:
+      initContainers:
+        - name: wait-for-organization-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z organization-db 5432; do echo waiting for organization-db; sleep 2; done']
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: organization-service
+          image: vpm/organization-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: PORT_ORGANIZATION_SERVICE
+              value: "8083"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://organization-db:5432/Organizations
+            - name: SPRING_DATASOURCE_USERNAME
+              value: vpm-dev
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+            - name: SERVICES_AUTH_SERVICE_URL
+              value: auth-service:8081
+          readinessProbe:
+            tcpSocket:
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8083
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: organization-service
+  namespace: vpm
+spec:
+  selector:
+    app: organization-service
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-service
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-service
+  template:
+    metadata:
+      labels:
+        app: project-service
+    spec:
+      initContainers:
+        - name: wait-for-project-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z project-db 5432; do echo waiting for project-db; sleep 2; done']
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: project-service
+          image: vpm/project-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8084
+          env:
+            - name: PORT_PROJECT_SERVICE
+              value: "8084"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://project-db:5432/Projects
+            - name: SPRING_DATASOURCE_USERNAME
+              value: vpm-dev
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USERNAME
+              value: admin
+            - name: RABBITMQ_PASSWORD
+              value: password
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+          readinessProbe:
+            tcpSocket:
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8084
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-service
+  namespace: vpm
+spec:
+  selector:
+    app: project-service
+  ports:
+    - name: http
+      port: 8084
+      targetPort: 8084
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-service
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-service
+  template:
+    metadata:
+      labels:
+        app: task-service
+    spec:
+      initContainers:
+        - name: wait-for-task-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z task-db 5432; do echo waiting for task-db; sleep 2; done']
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: task-service
+          image: vpm/task-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: PORT_TASK_SERVICE
+              value: "8085"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://task-db:5432/Tasks
+            - name: SPRING_DATASOURCE_USERNAME
+              value: vpm-dev
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USERNAME
+              value: admin
+            - name: RABBITMQ_PASSWORD
+              value: password
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+            - name: SERVICES_PROJECT_SERVICE_URL
+              value: project-service:8084
+          readinessProbe:
+            tcpSocket:
+              port: 8085
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8085
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-service
+  namespace: vpm
+spec:
+  selector:
+    app: task-service
+  ports:
+    - name: http
+      port: 8085
+      targetPort: 8085
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: vpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      initContainers:
+        - name: wait-for-eureka
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
+      containers:
+        - name: gateway
+          image: vpm/gateway:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GATEWAY_PORT
+              value: "8080"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka:8761/eureka/
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: vpm
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
+
