@@ -35,6 +35,11 @@ public class RequestFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws IOException, ServletException {
 
+        if (request.getRequestURI().contains("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             for (String header : requiredHeaders) {
 
