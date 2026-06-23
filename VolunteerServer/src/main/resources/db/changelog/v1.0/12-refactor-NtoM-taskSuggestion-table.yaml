@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12.1-drop-task-suggestion-table
+      author: Adam
+      changes:
+        - dropTable:
+            tableName: task_suggestion
+            cascadeConstraints: true
+  - changeSet:
+      id: 12.2-create-task_suggestion-table-with-constraints
+      author: Adam
+      changes:
+        - createTable:
+            tableName: task_suggestion
+            columns:
+              - column:
+                  name: volunteer_user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: project_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: task_suggestion
+            columnNames: volunteer_user_id, task_id, project_id
+            constraintName: pk_task_suggestion
+        - addForeignKeyConstraint:
+            baseColumnNames: volunteer_user_id
+            baseTableName: task_suggestion
+            constraintName: fk_task_suggestion_on_volunteer
+            referencedColumnNames: user_id
+            referencedTableName: volunteer

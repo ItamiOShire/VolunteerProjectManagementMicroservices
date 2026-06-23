@@ -10,6 +10,7 @@ public class VolunteerAssignedToTaskEvent implements Serializable {
 
     private Long volunteerId;
     private Long taskId;
+    private Long projectId;
     private LocalDate assignedDate;
 
 }

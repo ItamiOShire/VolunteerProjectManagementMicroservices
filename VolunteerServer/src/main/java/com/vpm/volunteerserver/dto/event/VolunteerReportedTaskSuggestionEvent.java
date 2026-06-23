@@ -10,6 +10,7 @@ public class VolunteerReportedTaskSuggestionEvent implements Serializable {
 
     private Long volunteerId;
     private Long taskId;
+    private Long projectId;
     private LocalDate assignedDate;
 
 }

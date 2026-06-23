@@ -66,7 +66,8 @@ public class VolunteerEventService {
         VolunteerTask volunteerTask = VolunteerTask.builder()
                 .volunteerTaskId(new VolunteerTaskId(
                         volunteer.getUserId(),
-                        event.getTaskId()
+                        event.getTaskId(),
+                        event.getProjectId()
                 ))
                 .volunteer(volunteer)
                 .taskId(event.getTaskId())
@@ -89,7 +90,8 @@ public class VolunteerEventService {
                 .taskSuggestionId(
                         new TaskSuggestionId(
                                 volunteer.getUserId(),
-                                event.getTaskId()
+                                event.getTaskId(),
+                                event.getProjectId()
                         )
                 )
                 .volunteer(volunteer)

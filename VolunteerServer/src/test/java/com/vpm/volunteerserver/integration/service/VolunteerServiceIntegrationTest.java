@@ -302,7 +302,7 @@ public class VolunteerServiceIntegrationTest {
 
                 // Add task assignment - only volunteer1 assigned to task using actual userId
                 VolunteerTask vt1 = new VolunteerTask(
-                        new VolunteerTaskId(testVolunteer1.getUserId(), TASK_ID),
+                        new VolunteerTaskId(testVolunteer1.getUserId(), TASK_ID, PROJECT_ID),
                         testVolunteer1,
                         TASK_ID
                 );
@@ -332,8 +332,8 @@ public class VolunteerServiceIntegrationTest {
 
                 // Both assigned to same task using actual userIds
                 volunteerTaskRepository.saveAll(List.of(
-                        new VolunteerTask(new VolunteerTaskId(testVolunteer1.getUserId(), TASK_ID), testVolunteer1, TASK_ID),
-                        new VolunteerTask(new VolunteerTaskId(testVolunteer2.getUserId(), TASK_ID), testVolunteer2, TASK_ID)
+                        new VolunteerTask(new VolunteerTaskId(testVolunteer1.getUserId(), TASK_ID, PROJECT_ID), testVolunteer1, TASK_ID),
+                        new VolunteerTask(new VolunteerTaskId(testVolunteer2.getUserId(), TASK_ID, PROJECT_ID), testVolunteer2, TASK_ID)
                 ));
 
                 List<VolunteerProfileResponse> response = volunteerService
@@ -466,7 +466,7 @@ public class VolunteerServiceIntegrationTest {
 
                 // Only volunteer1 reported suggestion using actual userId
                 TaskSuggestion ts = new TaskSuggestion(
-                        new TaskSuggestionId(testVolunteer1.getUserId(), TASK_ID),
+                        new TaskSuggestionId(testVolunteer1.getUserId(), TASK_ID, PROJECT_ID),
                         testVolunteer1,
                         TASK_ID
                 );
@@ -495,8 +495,8 @@ public class VolunteerServiceIntegrationTest {
 
                 // Both reported suggestions using actual userIds
                 taskSuggestionRepository.saveAll(List.of(
-                        new TaskSuggestion(new TaskSuggestionId(testVolunteer1.getUserId(), TASK_ID), testVolunteer1, TASK_ID),
-                        new TaskSuggestion(new TaskSuggestionId(testVolunteer2.getUserId(), TASK_ID), testVolunteer2, TASK_ID)
+                        new TaskSuggestion(new TaskSuggestionId(testVolunteer1.getUserId(), TASK_ID, PROJECT_ID), testVolunteer1, TASK_ID),
+                        new TaskSuggestion(new TaskSuggestionId(testVolunteer2.getUserId(), TASK_ID, PROJECT_ID), testVolunteer2, TASK_ID)
                 ));
 
                 List<VolunteerToAssignToTaskTemplate> response = volunteerService

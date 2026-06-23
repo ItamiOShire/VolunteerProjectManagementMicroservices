@@ -17,12 +17,18 @@ public class VolunteerTaskId {
             name = "volunteer_user_id",
             nullable = false
     )
-    private long volunteerUserId;
+    private Long volunteerUserId;
 
     @Column(
             name = "task_id",
             nullable = false
     )
-    private long taskId;
+    private Long taskId;
+
+    @Column(
+            name = "project_id",
+            nullable = false
+    )
+    private Long projectId;
 
 }

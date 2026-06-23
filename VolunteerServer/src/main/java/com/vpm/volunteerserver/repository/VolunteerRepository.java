@@ -28,10 +28,8 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
 
     @Query("""
     SELECT v FROM Volunteer v
-    JOIN v.volunteerProjects vp
-    ON vp.volunteerProjectId.projectId = :projectId
     JOIN v.volunteerTasks vt
-    ON vt.volunteerTaskId.taskId = :taskId
+    ON vt.volunteerTaskId.taskId = :taskId AND vt.volunteerTaskId.projectId = :projectId
 """
     )
     List<Volunteer> getVolunteersInProjectAssignedToTask(
@@ -46,10 +44,8 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
      */
     @Query("""
     SELECT v FROM Volunteer v
-    JOIN v.volunteerProjects vp
-    ON vp.volunteerProjectId.projectId = :projectId
     LEFT JOIN FETCH v.volunteerTasks vt
-    WHERE vt.volunteerTaskId.taskId = :taskId
+    WHERE vt.volunteerTaskId.taskId = :taskId AND vt.volunteerTaskId.projectId = :projectId
 """)
     List<Volunteer> getAllVolunteersInProjectAssignedOrNotToTask(
             @Param("projectId") Long projectId,
@@ -59,10 +55,8 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
 
     @Query("""
     SELECT v FROM Volunteer v
-    JOIN v.volunteerProjects vp
-    ON vp.volunteerProjectId.projectId = :projectId
     JOIN FETCH v.volunteerTaskSuggestions vts
-    WHERE vts.taskSuggestionId.taskId = :taskId
+    WHERE vts.taskSuggestionId.taskId = :taskId AND vts.taskSuggestionId.projectId = :projectId
 """)
     List<Volunteer> getVolunteersInProjectWhoReportedTaskSuggestion(
             @Param("projectId") Long projectId,
