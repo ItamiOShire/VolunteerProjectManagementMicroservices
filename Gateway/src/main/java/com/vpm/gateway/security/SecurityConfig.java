@@ -20,7 +20,8 @@ public class SecurityConfig {
                 .authorizeExchange( exchange -> exchange
                         .pathMatchers(
                             "/**"
-                        ).permitAll())
+                        ).permitAll()
+                        .pathMatchers("/actuator/**").permitAll())
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(Customizer.withDefaults())
                 );
