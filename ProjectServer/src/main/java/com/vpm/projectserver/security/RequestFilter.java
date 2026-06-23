@@ -38,6 +38,11 @@ public class RequestFilter extends OncePerRequestFilter {
 
         // TODO: apply proper internal api filtration
 
+        if (request.getRequestURI().contains("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (request.getRequestURI().startsWith("/api/internal")) {
             filterChain.doFilter(request, response);
             return;
