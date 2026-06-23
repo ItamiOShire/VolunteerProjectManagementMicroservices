@@ -10,21 +10,25 @@ import java.time.LocalDate;
 public class EventMapper {
 
     public static VolunteerAssignedToTaskEvent fromTaskVolunteer(
-            VolunteerTask volunteerTask
+            VolunteerTask volunteerTask,
+            Long projectId
     ) {
         return VolunteerAssignedToTaskEvent.builder()
                 .taskId(volunteerTask.getId().getTaskId())
                 .volunteerId(volunteerTask.getId().getVolunteerUserId())
+                .projectId(projectId)
                 .createdAt(LocalDate.now())
                 .build();
     }
 
     public static VolunteerReportedTaskSuggestionEvent fromTaskSuggestionReport(
-            TaskSuggestion taskSuggestion
+            TaskSuggestion taskSuggestion,
+            Long projectId
     ) {
         return VolunteerReportedTaskSuggestionEvent.builder()
                 .taskId(taskSuggestion.getId().getTaskId())
                 .volunteerId(taskSuggestion.getId().getVolunteerUserId())
+                .projectId(projectId)
                 .createdAt(LocalDate.now())
                 .build();
     }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: refactor queries as tables task_volunteer and task_suggestion got refactored and adjusted
+
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 

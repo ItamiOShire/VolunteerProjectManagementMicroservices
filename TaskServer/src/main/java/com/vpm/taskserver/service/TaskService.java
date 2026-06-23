@@ -18,12 +18,17 @@ import com.vpm.taskserver.entity.mapper.EventMapper;
 import com.vpm.taskserver.entity.mapper.TaskMapper;
 import com.vpm.taskserver.entity.pks.TaskSuggestionId;
 import com.vpm.taskserver.entity.pks.VolunteerTaskId;
+import com.vpm.taskserver.exception.ApiException;
 import com.vpm.taskserver.exception.priority.NoSuchPriorityException;
+import com.vpm.taskserver.exception.response.GatewayTimeoutException;
+import com.vpm.taskserver.exception.response.ServiceTimeoutException;
 import com.vpm.taskserver.exception.task.AssignedVolunteersException;
 import com.vpm.taskserver.exception.task.NoSuchTaskException;
 import com.vpm.taskserver.exception.task.VolunteerAlreadyAssignedToTaskException;
 import com.vpm.taskserver.exception.task.VolunteerNotAssignedToProjectException;
 import com.vpm.taskserver.repository.TaskRepository;
+import feign.FeignException;
+import feign.RetryableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
@@ -31,8 +36,11 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -43,6 +51,10 @@ public class TaskService {
     private final RabbitMQProperties rabbitMQProperties;
     private final EventService eventService;
     private final ProjectClient projectClient;
+
+    Map<Class<? extends Exception>, Function<String, String>> feignClientExceptions = new HashMap<>(Map.of(
+            RetryableException.class, (message) -> "Server is not available right now"
+    ));
 
     @Autowired
     public TaskService(
@@ -165,7 +177,7 @@ public class TaskService {
     public VolunteerAssignedToTaskResponse assignVolunteerToTask(
             AssignVolunteerToTaskRequest request,
             Long volunteerId
-    ) throws VolunteerNotAssignedToProjectException, NoSuchTaskException {
+    ) throws VolunteerNotAssignedToProjectException, NoSuchTaskException, ServiceTimeoutException {
 
             Task task = getTaskByIdWithVolunteers(
                     request.getTaskId()
@@ -180,22 +192,31 @@ public class TaskService {
 
             log.info("Volunteer with id {} is not assigned to task with id {}",volunteerId, task.getId());
 
+            Boolean isAssigned = false;
             try {
 
-                Boolean isAssigned = projectClient.isVolunteerAssignedToProject(
+                isAssigned = projectClient.isVolunteerAssignedToProject(
                         volunteerId,
                         task.getProjectId()
                 );
-
-                if (!isAssigned) {
-                    throw new VolunteerNotAssignedToProjectException("Volunteer not assigned to project with id " + task.getProjectId(), ErrorCode.BAD_REQUEST);
-                }
-
             } catch (Exception e) {
-                if (e instanceof VolunteerNotAssignedToProjectException) {
-                    log.error("Error during assigning volunteer to task: {}", e.getMessage());
+
+                log.error("Exception occurred while calling project service");
+
+                if (feignClientExceptions.containsKey(e.getClass())) {
+                    TaskServiceLogger.serviceUnavailable(
+                            feignClientExceptions.get(e.getClass()).apply(e.getMessage())
+                    );
+
+                    throw new ServiceTimeoutException(feignClientExceptions.get(e.getClass()).apply(e.getMessage()));
                 }
+
                 throw e;
+
+            }
+
+            if (!isAssigned) {
+                throw new VolunteerNotAssignedToProjectException("Volunteer not assigned to project with id " + task.getProjectId(), ErrorCode.BAD_REQUEST);
             }
 
             log.info("Volunteer with id {} is assigned to project with id {}, proceeding with task assignment", volunteerId, task.getProjectId());
@@ -212,7 +233,7 @@ public class TaskService {
             log.info("Volunteer with id {} assigned to task with id {}. Sending event", volunteerId, task.getId());
 
             eventService.sendEvent(
-                    EventMapper.fromTaskVolunteer(volunteerTask),
+                    EventMapper.fromTaskVolunteer(volunteerTask, task.getProjectId()),
                     rabbitMQProperties.getRoutingKey().getVolunteerAssigned(),
                     rabbitMQProperties.getExchange().getVolunteerAssigned(),
                     EventType.VOLUNTEER_ASSIGNED_TO_TASK
@@ -243,7 +264,7 @@ public class TaskService {
         taskRepository.save(task);
 
         eventService.sendEvent(
-                EventMapper.fromTaskSuggestionReport(taskSuggestion),
+                EventMapper.fromTaskSuggestionReport(taskSuggestion, task.getProjectId()),
                 rabbitMQProperties.getRoutingKey().getVolunteerSuggestionReported(),
                 rabbitMQProperties.getExchange().getVolunteerSuggestionReported(),
                 EventType.VOLUNTEER_REPORTED_TASK_SUGGESTION
@@ -374,6 +395,10 @@ public class TaskService {
         
         public static void taskIndelible(String volunteersWithTasks) {
             log.error("Cannot delete task - volunteers are assigned to this task: {}", volunteersWithTasks);
+        }
+
+        public static void serviceUnavailable(String message) {
+            log.error("{}", message);
         }
 
         /**
