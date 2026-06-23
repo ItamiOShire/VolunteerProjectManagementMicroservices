@@ -3,7 +3,6 @@ package com.vpm.common.error;
 public enum ErrorCode {
     USER_NOT_FOUND,
     USER_ALREADY_EXISTS,
-    SERV0CE_UNAVAILABLE,
     INVALID_INPUT,
     INVALID_CREDENTIALS,
     UNAUTHORIZED,
@@ -18,5 +17,7 @@ public enum ErrorCode {
     TASK_NOT_FOUND,
     TASK_INDELIBLE,
     PROFILE_NOT_FOUND,
-    ALREADY_ASSIGNED
+    ALREADY_ASSIGNED,
+    GATEWAY_TIMEOUT,
+    SERVICE_UNAVAILABLE,
 }
