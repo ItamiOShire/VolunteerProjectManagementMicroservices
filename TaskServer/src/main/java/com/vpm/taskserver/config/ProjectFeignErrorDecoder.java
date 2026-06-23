@@ -7,7 +7,6 @@ import com.vpm.taskserver.exception.response.ServiceTimeoutException;
 import com.vpm.taskserver.exception.task.VolunteerNotAssignedToProjectException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import jakarta.ws.rs.ServiceUnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

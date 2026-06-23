@@ -13,7 +13,7 @@ spring:
   # Database configuration
 
   datasource:
-    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_ORGANIZATION:5553}/Organizations
+    url: jdbc:postgresql://organization-db:${PORT_DATABASE_ORGANIZATION:5553}/Organizations
     username: ${POSTGRES_USER:vpm-dev}
     password: ${POSTGRES_PASSWORD:password}
 
@@ -28,4 +28,4 @@ server:
 
 services:
   auth-service:
-    url: localhost:${PORT_AUTH_SERVICE:8081}
+    url: http://auth-server:${PORT_AUTH_SERVICE:8081}

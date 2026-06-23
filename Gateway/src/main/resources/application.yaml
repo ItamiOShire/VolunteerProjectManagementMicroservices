@@ -35,9 +35,6 @@ spring:
               predicates:
                 - Path=/api/organizations/**
 
-          discovery:
-            locator:
-              enabled: true
           httpclient:
             wiretap: true # Enable HTTP traffic logging for debugging purposes (optional, can be removed in production)
           httpserver:

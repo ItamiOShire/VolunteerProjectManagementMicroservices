@@ -2,9 +2,9 @@ package com.vpm.gateway.security;
 
 import com.vpm.common.error.ErrorCode;
 import com.vpm.common.error.ErrorResponse;
-import org.apache.http.HttpStatus;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class AuthenticationFailureConfig implements ServerAuthenticationEntryPoi
     ) {
 
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.SC_UNAUTHORIZED,
+                HttpStatus.UNAUTHORIZED.value(),
                 ErrorCode.UNAUTHORIZED,
                 e.getMessage(),
                 exchange.getRequest().getPath().toString()

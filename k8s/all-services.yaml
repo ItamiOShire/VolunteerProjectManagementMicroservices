@@ -15,7 +15,7 @@ metadata:
   name: auth-service
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: auth-service
@@ -26,31 +26,33 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: vpm/authentication-server:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/authentication-server:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8081
           env:
             - name: PORT_AUTH_SERVICE
               value: "8081"
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://auth-db:5432/Users
+              value: jdbc:postgresql://172.21.0.1:5551/Users
             - name: SPRING_DATASOURCE_USERNAME
               value: vpm-dev
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8081
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8081
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service
@@ -72,7 +74,7 @@ metadata:
   name: volunteer-service
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: volunteer-service
@@ -83,41 +85,43 @@ spec:
     spec:
       containers:
         - name: volunteer-service
-          image: vpm/volunteer-server:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/volunteer-server:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8082
           env:
             - name: PORT_VOLUNTEER_SERVICE
               value: "8082"
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://volunteer-db:5432/Volunteers
+              value: jdbc:postgresql://172.21.0.1:5552/Volunteers
             - name: SPRING_DATASOURCE_USERNAME
               value: vpm-dev
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
             - name: RABBITMQ_HOST
-              value: rabbitmq
+              value: 172.21.0.1
             - name: RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USERNAME
               value: admin
             - name: RABBITMQ_PASSWORD
               value: password
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
             - name: SERVICES_AUTH_SERVICE_URL
               value: auth-service:8081
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8082
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8082
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8082
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8082
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service
@@ -139,7 +143,7 @@ metadata:
   name: organization-service
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: organization-service
@@ -150,33 +154,35 @@ spec:
     spec:
       containers:
         - name: organization-service
-          image: vpm/organization-server:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/organization-server:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8083
           env:
             - name: PORT_ORGANIZATION_SERVICE
               value: "8083"
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://organization-db:5432/Organizations
+              value: jdbc:postgresql://172.21.0.1:5553/Organizations
             - name: SPRING_DATASOURCE_USERNAME
               value: vpm-dev
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
             - name: SERVICES_AUTH_SERVICE_URL
               value: auth-service:8081
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8083
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8083
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8083
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8083
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service
@@ -198,7 +204,7 @@ metadata:
   name: project-service
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 6
   selector:
     matchLabels:
       app: project-service
@@ -209,39 +215,41 @@ spec:
     spec:
       containers:
         - name: project-service
-          image: vpm/project-server:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/project-server:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8084
           env:
             - name: PORT_PROJECT_SERVICE
               value: "8084"
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://project-db:5432/Projects
+              value: jdbc:postgresql://172.21.0.1:5554/Projects
             - name: SPRING_DATASOURCE_USERNAME
               value: vpm-dev
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
             - name: RABBITMQ_HOST
-              value: rabbitmq
+              value: 172.21.0.1
             - name: RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USERNAME
               value: admin
             - name: RABBITMQ_PASSWORD
               value: password
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8084
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8084
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8084
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8084
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service
@@ -263,7 +271,7 @@ metadata:
   name: task-service
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: task-service
@@ -274,41 +282,43 @@ spec:
     spec:
       containers:
         - name: task-service
-          image: vpm/task-server:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/task-server:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8085
           env:
             - name: PORT_TASK_SERVICE
               value: "8085"
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://task-db:5432/Tasks
+              value: jdbc:postgresql://172.21.0.1:5555/Tasks
             - name: SPRING_DATASOURCE_USERNAME
               value: vpm-dev
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
             - name: RABBITMQ_HOST
-              value: rabbitmq
+              value: 172.21.0.1
             - name: RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USERNAME
               value: admin
             - name: RABBITMQ_PASSWORD
               value: password
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
             - name: SERVICES_PROJECT_SERVICE_URL
               value: project-service:8084
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8085
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8085
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8085
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8085
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service
@@ -330,7 +340,7 @@ metadata:
   name: gateway
   namespace: vpm
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: gateway
@@ -341,25 +351,27 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: vpm/gateway:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vpm/gateway:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: GATEWAY_PORT
               value: "8080"
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka:8761/eureka/
-          readinessProbe:
-            tcpSocket:
+          startupProbe:
+            httpGet:
+              path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 60
+            failureThreshold: 30
             periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
 ---
 apiVersion: v1
 kind: Service

@@ -20,7 +20,7 @@ spring:
 # Database configuration
 
   datasource:
-    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_AUTH:5551}/Users
+    url: jdbc:postgresql://auth-db:${PORT_DATABASE_AUTH:5551}/Users
     username: vpm-dev
     password: ${POSTGRES_PASSWORD:password}
 

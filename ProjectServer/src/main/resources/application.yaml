@@ -13,7 +13,7 @@ spring:
   # Database configuration
 
   datasource:
-    url: jdbc:postgresql://127.0.0.1:${PORT_DATABASE_PROJECT:5554}/Projects
+    url: jdbc:postgresql://project-db:${PORT_DATABASE_PROJECT:5554}/Projects
     username: ${POSTGRES_USER:vpm-dev}
     password: ${POSTGRES_PASSWORD:password}
 
