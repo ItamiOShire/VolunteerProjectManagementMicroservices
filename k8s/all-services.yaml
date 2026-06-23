@@ -24,13 +24,6 @@ spec:
       labels:
         app: auth-service
     spec:
-      initContainers:
-        - name: wait-for-auth-db
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z auth-db 5432; do echo waiting for auth-db; sleep 2; done']
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: auth-service
           image: vpm/authentication-server:1.0.0
@@ -88,16 +81,6 @@ spec:
       labels:
         app: volunteer-service
     spec:
-      initContainers:
-        - name: wait-for-volunteer-db
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z volunteer-db 5432; do echo waiting for volunteer-db; sleep 2; done']
-        - name: wait-for-rabbitmq
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: volunteer-service
           image: vpm/volunteer-server:1.0.0
@@ -165,13 +148,6 @@ spec:
       labels:
         app: organization-service
     spec:
-      initContainers:
-        - name: wait-for-organization-db
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z organization-db 5432; do echo waiting for organization-db; sleep 2; done']
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: organization-service
           image: vpm/organization-server:1.0.0
@@ -231,16 +207,6 @@ spec:
       labels:
         app: project-service
     spec:
-      initContainers:
-        - name: wait-for-project-db
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z project-db 5432; do echo waiting for project-db; sleep 2; done']
-        - name: wait-for-rabbitmq
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: project-service
           image: vpm/project-server:1.0.0
@@ -306,16 +272,6 @@ spec:
       labels:
         app: task-service
     spec:
-      initContainers:
-        - name: wait-for-task-db
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z task-db 5432; do echo waiting for task-db; sleep 2; done']
-        - name: wait-for-rabbitmq
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: task-service
           image: vpm/task-server:1.0.0
@@ -383,10 +339,6 @@ spec:
       labels:
         app: gateway
     spec:
-      initContainers:
-        - name: wait-for-eureka
-          image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done']
       containers:
         - name: gateway
           image: vpm/gateway:1.0.0
