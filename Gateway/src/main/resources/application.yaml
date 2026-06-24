@@ -21,7 +21,7 @@ spring:
                 - Path=/api/projects/{id}/tasks,/api/volunteers/{id}/tasks/**,/api/volunteers/{volunteerId}/projects/{projectId}/**,/api/tasks/**
 
             - id: volunteer-service
-              uri: http://volunteer-service:8086
+              uri: http://volunteer-service:8082
               predicates:
                 - Path=/api/tasks/{taskId}/projects/{projectId}/volunteers/**,/api/projects/{projectId}/volunteers/**,/api/volunteers/**
 
@@ -31,7 +31,7 @@ spring:
                 - Path=/api/auth/**
 
             - id: organization-service
-              uri: http://organization-service:8082
+              uri: http://organization-service:8083
               predicates:
                 - Path=/api/organizations/**
 
